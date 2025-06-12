@@ -26,6 +26,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/{id}', [BlacklistController::class, 'destroy'])->name('destroy');
         Route::post('/search', [BlacklistController::class, 'searchForDashboard'])->name('search');
     });
+
+    // Admin Settings
+    Route::get('/admin/settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('admin.settings.index');
+    Route::put('/admin/settings', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('admin.settings.update');
 });
 
 Route::middleware('auth')->group(function () {

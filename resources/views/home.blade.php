@@ -1,12 +1,12 @@
 @extends('layouts.main')
 
-@section('title', 'RentalGuard - Sistem Blacklist Rental Indonesia')
+@section('title', $settings['meta_title'])
 
 @section('meta')
-<meta name="description" content="Sistem blacklist rental terpercaya di Indonesia. Cek data pelanggan bermasalah sebelum menyewakan barang Anda. Gratis untuk pengusaha rental.">
-<meta name="keywords" content="blacklist rental, rental indonesia, cek pelanggan rental, sistem blacklist, rental bermasalah">
-<meta property="og:title" content="RentalGuard - Sistem Blacklist Rental Indonesia">
-<meta property="og:description" content="Cek data pelanggan bermasalah sebelum menyewakan barang Anda">
+<meta name="description" content="{{ $settings['meta_description'] }}">
+<meta name="keywords" content="{{ $settings['meta_keywords'] }}">
+<meta property="og:title" content="{{ $settings['meta_title'] }}">
+<meta property="og:description" content="{{ $settings['meta_description'] }}">
 <meta property="og:type" content="website">
 @endsection
 
@@ -21,9 +21,9 @@
                     <div class="flex-shrink-0">
                         <h1 class="text-2xl font-bold text-red-600">
                             <i class="fas fa-shield-alt mr-2"></i>
-                            RentalGuard
+                            {{ $settings['site_name'] }}
                         </h1>
-                        <p class="text-sm text-gray-500">Sistem Blacklist Rental</p>
+                        <p class="text-sm text-gray-500">{{ $settings['site_tagline'] }}</p>
                     </div>
                 </div>
                 <nav class="flex items-center space-x-4">
@@ -50,11 +50,10 @@
         <!-- Hero Content -->
         <div class="text-center mb-16">
             <h2 class="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-                Lindungi Bisnis Rental Anda
+                {{ $settings['hero_title'] }}
             </h2>
             <p class="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto">
-                Cek data blacklist pelanggan sebelum menyewakan barang.
-                <span class="text-red-600 font-semibold">100% Gratis</span> untuk pengusaha rental!
+                {{ $settings['hero_subtitle'] }}
             </p>
 
             <!-- Search Form -->
@@ -245,24 +244,32 @@
                 <div class="col-span-1 md:col-span-2">
                     <h3 class="text-2xl font-bold text-red-400 mb-4">
                         <i class="fas fa-shield-alt mr-2"></i>
-                        RentalGuard
+                        {{ $settings['site_name'] }}
                     </h3>
                     <p class="text-gray-300 mb-4">
-                        Sistem blacklist rental terpercaya di Indonesia. Melindungi bisnis rental dari pelanggan bermasalah.
+                        {{ $settings['meta_description'] }}
                     </p>
                     <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white transition duration-200">
+                        @if($settings['facebook_url'])
+                        <a href="{{ $settings['facebook_url'] }}" target="_blank" class="text-gray-400 hover:text-white transition duration-200">
                             <i class="fab fa-facebook-f"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition duration-200">
+                        @endif
+                        @if($settings['twitter_url'])
+                        <a href="{{ $settings['twitter_url'] }}" target="_blank" class="text-gray-400 hover:text-white transition duration-200">
                             <i class="fab fa-twitter"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition duration-200">
+                        @endif
+                        @if($settings['instagram_url'])
+                        <a href="{{ $settings['instagram_url'] }}" target="_blank" class="text-gray-400 hover:text-white transition duration-200">
                             <i class="fab fa-instagram"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition duration-200">
+                        @endif
+                        @if($settings['whatsapp_number'])
+                        <a href="https://wa.me/{{ $settings['whatsapp_number'] }}" target="_blank" class="text-gray-400 hover:text-white transition duration-200">
                             <i class="fab fa-whatsapp"></i>
                         </a>
+                        @endif
                     </div>
                 </div>
 

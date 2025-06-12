@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\RentalBlacklist;
+use App\Models\Setting;
 
 class PublicController extends Controller
 {
@@ -20,7 +21,23 @@ class PublicController extends Controller
                 ->count(),
         ];
 
-        return view('home', compact('stats'));
+        // Get settings untuk tampilan
+        $settings = [
+            'site_name' => Setting::get('site_name', 'RentalGuard'),
+            'site_tagline' => Setting::get('site_tagline', 'Sistem Blacklist Rental Indonesia'),
+            'hero_title' => Setting::get('hero_title', 'Lindungi Bisnis Rental Anda'),
+            'hero_subtitle' => Setting::get('hero_subtitle', 'Cek data blacklist pelanggan sebelum menyewakan barang. 100% Gratis untuk pengusaha rental!'),
+            'meta_title' => Setting::get('meta_title', 'RentalGuard - Sistem Blacklist Rental Indonesia'),
+            'meta_description' => Setting::get('meta_description', 'Sistem blacklist rental terpercaya di Indonesia. Cek data pelanggan bermasalah sebelum menyewakan barang Anda. Gratis untuk pengusaha rental.'),
+            'meta_keywords' => Setting::get('meta_keywords', 'blacklist rental, rental indonesia, cek pelanggan rental, sistem blacklist, rental bermasalah'),
+            'contact_email' => Setting::get('contact_email', 'support@rentalguard.id'),
+            'facebook_url' => Setting::get('facebook_url', ''),
+            'twitter_url' => Setting::get('twitter_url', ''),
+            'instagram_url' => Setting::get('instagram_url', ''),
+            'whatsapp_number' => Setting::get('whatsapp_number', ''),
+        ];
+
+        return view('home', compact('stats', 'settings'));
     }
 
     public function search(Request $request)

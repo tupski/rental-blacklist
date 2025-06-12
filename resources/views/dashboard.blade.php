@@ -155,6 +155,10 @@
                             <i class="fas fa-search mr-2"></i>
                             Cari Publik
                         </a>
+                        <a href="{{ route('admin.settings.index') }}" class="block w-full px-4 py-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white text-center font-semibold rounded-lg hover:from-purple-600 hover:to-purple-700 transition duration-200 transform hover:scale-105 shadow-md">
+                            <i class="fas fa-cog mr-2"></i>
+                            Pengaturan Situs
+                        </a>
                     </div>
 
                     <!-- Tips -->
