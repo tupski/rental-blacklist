@@ -16,7 +16,13 @@
     <!-- Hero Content -->
     <div class="container py-5">
         <div class="row justify-content-center text-center">
-            <div class="col-lg-10">
+            <div class="col-lg-10 fade-in">
+                <div class="mb-3">
+                    <span class="badge bg-danger fs-6 pulse">
+                        <i class="fas fa-gift me-1"></i>
+                        100% GRATIS
+                    </span>
+                </div>
                 <h1 class="display-3 fw-bold text-dark mb-4">
                     {{ $settings['hero_title'] }}
                 </h1>
@@ -230,6 +236,97 @@
                                 Beli Kredit
                             </button>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Testimonial Section -->
+    <div class="bg-primary text-white py-5">
+        <div class="container">
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-8">
+                    <h3 class="fw-bold mb-4">Dipercaya oleh Ribuan Pengusaha Rental</h3>
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="card bg-transparent border-light text-white">
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                    </div>
+                                    <p class="mb-3">"Sangat membantu untuk screening pelanggan sebelum menyewakan motor."</p>
+                                    <small class="fw-bold">- Rental Motor Jakarta</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-transparent border-light text-white">
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                    </div>
+                                    <p class="mb-3">"Database lengkap dan selalu update. Recommended!"</p>
+                                    <small class="fw-bold">- Rental Mobil Bandung</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-transparent border-light text-white">
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                    </div>
+                                    <p class="mb-3">"Gratis tapi kualitas premium. Terima kasih RentalGuard!"</p>
+                                    <small class="fw-bold">- Rental Alat Surabaya</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="bg-light py-5">
+        <div class="container">
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-8">
+                    <h3 class="fw-bold mb-3">Siap Melindungi Bisnis Rental Anda?</h3>
+                    <p class="text-muted mb-4">Bergabunglah dengan ribuan pengusaha rental yang sudah merasakan manfaatnya</p>
+                    <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
+                        @guest
+                            <a href="{{ route('register') }}" class="btn btn-danger btn-lg">
+                                <i class="fas fa-user-plus me-2"></i>
+                                Daftar Gratis Sekarang
+                            </a>
+                            <a href="{{ route('login') }}" class="btn btn-outline-primary btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>
+                                Sudah Punya Akun? Login
+                            </a>
+                        @else
+                            <a href="{{ route('dashboard') }}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-tachometer-alt me-2"></i>
+                                Ke Dashboard
+                            </a>
+                            <a href="{{ route('dashboard.blacklist.create') }}" class="btn btn-danger btn-lg">
+                                <i class="fas fa-plus me-2"></i>
+                                Tambah Laporan
+                            </a>
+                        @endguest
                     </div>
                 </div>
             </div>
