@@ -324,7 +324,10 @@ $(document).ready(function() {
         $.ajax({
             url: '{{ route("dashboard.blacklist.search") }}',
             method: 'POST',
-            data: { search: search },
+            data: {
+                search: search,
+                _token: '{{ csrf_token() }}'
+            },
             success: function(response) {
                 if (response.success && response.data.length > 0) {
                     displayDashboardResults(response.data);

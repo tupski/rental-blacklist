@@ -164,15 +164,17 @@ class BlacklistController extends Controller
         }
 
         // Handle removed files
-        if ($request->has('removed_files')) {
-            $removedFiles = $request->removed_files;
-            foreach ($removedFiles as $removedFile) {
-                if (($key = array_search($removedFile, $buktiFiles)) !== false) {
-                    unset($buktiFiles[$key]);
-                    Storage::disk('public')->delete($removedFile);
+        if ($request->has('removed_files') && $request->removed_files) {
+            $removedFiles = json_decode($request->removed_files, true);
+            if (is_array($removedFiles)) {
+                foreach ($removedFiles as $removedFile) {
+                    if (($key = array_search($removedFile, $buktiFiles)) !== false) {
+                        unset($buktiFiles[$key]);
+                        Storage::disk('public')->delete($removedFile);
+                    }
                 }
+                $buktiFiles = array_values($buktiFiles);
             }
-            $buktiFiles = array_values($buktiFiles);
         }
 
         $blacklist->update([

@@ -21,6 +21,6 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('dashboard.index', compact('stats', 'recentReports'));
+        return view('dashboard', compact('stats', 'recentReports'));
     }
 }
