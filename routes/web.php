@@ -4,12 +4,26 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BlacklistController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\RentalController;
+use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
 Route::get('/', [PublicController::class, 'index'])->name('home');
 Route::post('/search', [PublicController::class, 'search'])->name('public.search');
 Route::get('/detail/{id}', [PublicController::class, 'detail'])->name('public.detail');
+
+// Guest report routes
+Route::get('/lapor', [ReportController::class, 'create'])->name('report.create');
+Route::post('/lapor', [ReportController::class, 'store'])->name('report.store');
+
+// Rental registration routes
+Route::get('/daftar-rental', [RentalController::class, 'create'])->name('rental.register');
+Route::post('/daftar-rental', [RentalController::class, 'store'])->name('rental.store');
+
+// API documentation
+Route::get('/api-docs', [ApiController::class, 'documentation'])->name('api.docs');
 
 // Dashboard routes (authenticated)
 Route::middleware(['auth', 'verified'])->group(function () {

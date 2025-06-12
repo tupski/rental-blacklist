@@ -35,6 +35,12 @@
         .bg-gradient-to-br {
             background: linear-gradient(135deg, #fef2f2 0%, #ffffff 50%, #fff7ed 100%);
         }
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, #e3f2fd 0%, #ffffff 50%, #f3e5f5 100%);
+        }
+        .bg-gradient-info {
+            background: linear-gradient(135deg, #e1f5fe 0%, #ffffff 50%, #e8f5e8 100%);
+        }
         .navbar-brand:hover {
             transform: scale(1.05);
             transition: transform 0.2s ease-in-out;
@@ -86,6 +92,24 @@
                         <a class="nav-link {{ request()->routeIs('home') ? 'active fw-bold' : '' }}" href="{{ route('home') }}">
                             <i class="fas fa-search me-1"></i>
                             Cari Blacklist
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('report.*') ? 'active fw-bold' : '' }}" href="{{ route('report.create') }}">
+                            <i class="fas fa-exclamation-triangle me-1"></i>
+                            Lapor
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('rental.*') ? 'active fw-bold' : '' }}" href="{{ route('rental.register') }}">
+                            <i class="fas fa-store me-1"></i>
+                            Daftar Rental
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('api.*') ? 'active fw-bold' : '' }}" href="{{ route('api.docs') }}">
+                            <i class="fas fa-code me-1"></i>
+                            API
                         </a>
                     </li>
                     @auth
