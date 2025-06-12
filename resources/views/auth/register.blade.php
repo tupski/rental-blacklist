@@ -3,200 +3,211 @@
 @section('title', 'Daftar Akun Baru')
 
 @section('content')
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
-        <!-- Header -->
-        <div class="text-center">
-            <div class="mx-auto h-16 w-16 bg-blue-600 rounded-full flex items-center justify-center mb-6">
-                <i class="fas fa-user-plus text-white text-2xl"></i>
-            </div>
-            <h2 class="text-3xl font-bold text-gray-900 mb-2">
-                Daftar Akun Baru
-            </h2>
-            <p class="text-gray-600">
-                Bergabung sebagai pengusaha rental
-            </p>
-        </div>
-
-        <!-- Register Form -->
-        <div class="bg-white rounded-xl shadow-lg p-8">
-            <form method="POST" action="{{ route('register') }}" class="space-y-6">
-                @csrf
-
-                <!-- Name -->
-                <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fas fa-user mr-2 text-gray-400"></i>
-                        Nama Lengkap
-                    </label>
-                    <input
-                        id="name"
-                        type="text"
-                        name="name"
-                        value="{{ old('name') }}"
-                        required
-                        autofocus
-                        autocomplete="name"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 @error('name') border-red-500 @enderror"
-                        placeholder="Masukkan nama lengkap"
-                    >
-                    @error('name')
-                        <p class="mt-2 text-sm text-red-600">
-                            <i class="fas fa-exclamation-circle mr-1"></i>
-                            {{ $message }}
-                        </p>
-                    @enderror
-                </div>
-
-                <!-- Email Address -->
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fas fa-envelope mr-2 text-gray-400"></i>
-                        Alamat Email
-                    </label>
-                    <input
-                        id="email"
-                        type="email"
-                        name="email"
-                        value="{{ old('email') }}"
-                        required
-                        autocomplete="username"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 @error('email') border-red-500 @enderror"
-                        placeholder="masukkan@email.com"
-                    >
-                    @error('email')
-                        <p class="mt-2 text-sm text-red-600">
-                            <i class="fas fa-exclamation-circle mr-1"></i>
-                            {{ $message }}
-                        </p>
-                    @enderror
-                </div>
-
-                <!-- Password -->
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fas fa-lock mr-2 text-gray-400"></i>
-                        Kata Sandi
-                    </label>
-                    <div class="relative">
-                        <input
-                            id="password"
-                            type="password"
-                            name="password"
-                            required
-                            autocomplete="new-password"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 @error('password') border-red-500 @enderror"
-                            placeholder="Minimal 8 karakter"
-                        >
-                        <button
-                            type="button"
-                            onclick="togglePassword('password')"
-                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                        >
-                            <i class="fas fa-eye" id="toggleIcon1"></i>
-                        </button>
+<div class="bg-gradient-to-br from-primary-subtle to-info-subtle min-vh-100 d-flex align-items-center py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+                <!-- Header -->
+                <div class="text-center mb-4">
+                    <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <i class="fas fa-user-plus text-white fs-2"></i>
                     </div>
-                    @error('password')
-                        <p class="mt-2 text-sm text-red-600">
-                            <i class="fas fa-exclamation-circle mr-1"></i>
-                            {{ $message }}
-                        </p>
-                    @enderror
+                    <h2 class="fw-bold text-dark mb-2">
+                        Daftar Akun Baru
+                    </h2>
+                    <p class="text-muted">
+                        Bergabung sebagai pengusaha rental
+                    </p>
                 </div>
 
-                <!-- Confirm Password -->
-                <div>
-                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fas fa-lock mr-2 text-gray-400"></i>
-                        Konfirmasi Kata Sandi
-                    </label>
-                    <div class="relative">
-                        <input
-                            id="password_confirmation"
-                            type="password"
-                            name="password_confirmation"
-                            required
-                            autocomplete="new-password"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 @error('password_confirmation') border-red-500 @enderror"
-                            placeholder="Ulangi kata sandi"
-                        >
-                        <button
-                            type="button"
-                            onclick="togglePassword('password_confirmation')"
-                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                        >
-                            <i class="fas fa-eye" id="toggleIcon2"></i>
-                        </button>
+                <!-- Register Form -->
+                <div class="card border-0 shadow-lg">
+                    <div class="card-body p-4">
+                        <form method="POST" action="{{ route('register') }}">
+                            @csrf
+
+                            <div class="row">
+                                <!-- Name -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="name" class="form-label fw-medium">
+                                        <i class="fas fa-user me-2 text-muted"></i>
+                                        Nama Lengkap
+                                    </label>
+                                    <input
+                                        id="name"
+                                        type="text"
+                                        name="name"
+                                        value="{{ old('name') }}"
+                                        required
+                                        autofocus
+                                        autocomplete="name"
+                                        class="form-control form-control-lg @error('name') is-invalid @enderror"
+                                        placeholder="Masukkan nama lengkap"
+                                    >
+                                    @error('name')
+                                        <div class="invalid-feedback">
+                                            <i class="fas fa-exclamation-circle me-1"></i>
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+
+                                <!-- Email Address -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label fw-medium">
+                                        <i class="fas fa-envelope me-2 text-muted"></i>
+                                        Alamat Email
+                                    </label>
+                                    <input
+                                        id="email"
+                                        type="email"
+                                        name="email"
+                                        value="{{ old('email') }}"
+                                        required
+                                        autocomplete="username"
+                                        class="form-control form-control-lg @error('email') is-invalid @enderror"
+                                        placeholder="masukkan@email.com"
+                                    >
+                                    @error('email')
+                                        <div class="invalid-feedback">
+                                            <i class="fas fa-exclamation-circle me-1"></i>
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <!-- Password -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="password" class="form-label fw-medium">
+                                        <i class="fas fa-lock me-2 text-muted"></i>
+                                        Kata Sandi
+                                    </label>
+                                    <div class="input-group">
+                                        <input
+                                            id="password"
+                                            type="password"
+                                            name="password"
+                                            required
+                                            autocomplete="new-password"
+                                            class="form-control form-control-lg @error('password') is-invalid @enderror"
+                                            placeholder="Minimal 8 karakter"
+                                        >
+                                        <button
+                                            type="button"
+                                            onclick="togglePassword('password')"
+                                            class="btn btn-outline-secondary"
+                                        >
+                                            <i class="fas fa-eye" id="toggleIcon1"></i>
+                                        </button>
+                                    </div>
+                                    @error('password')
+                                        <div class="invalid-feedback d-block">
+                                            <i class="fas fa-exclamation-circle me-1"></i>
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+
+                                <!-- Confirm Password -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="password_confirmation" class="form-label fw-medium">
+                                        <i class="fas fa-lock me-2 text-muted"></i>
+                                        Konfirmasi Kata Sandi
+                                    </label>
+                                    <div class="input-group">
+                                        <input
+                                            id="password_confirmation"
+                                            type="password"
+                                            name="password_confirmation"
+                                            required
+                                            autocomplete="new-password"
+                                            class="form-control form-control-lg @error('password_confirmation') is-invalid @enderror"
+                                            placeholder="Ulangi kata sandi"
+                                        >
+                                        <button
+                                            type="button"
+                                            onclick="togglePassword('password_confirmation')"
+                                            class="btn btn-outline-secondary"
+                                        >
+                                            <i class="fas fa-eye" id="toggleIcon2"></i>
+                                        </button>
+                                    </div>
+                                    @error('password_confirmation')
+                                        <div class="invalid-feedback d-block">
+                                            <i class="fas fa-exclamation-circle me-1"></i>
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <!-- Terms -->
+                            <div class="form-check mb-4">
+                                <input
+                                    id="terms"
+                                    type="checkbox"
+                                    required
+                                    class="form-check-input"
+                                >
+                                <label for="terms" class="form-check-label">
+                                    Saya setuju dengan
+                                    <a href="#" class="text-decoration-none text-primary">syarat dan ketentuan</a>
+                                    serta
+                                    <a href="#" class="text-decoration-none text-primary">kebijakan privasi</a>
+                                </label>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button
+                                type="submit"
+                                class="btn btn-primary btn-lg w-100 mb-3"
+                            >
+                                <i class="fas fa-user-plus me-2"></i>
+                                Daftar Sekarang
+                            </button>
+                        </form>
+
+                        <!-- Benefits -->
+                        <div class="alert alert-success">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-check-circle me-1"></i>
+                                Keuntungan Bergabung
+                            </h6>
+                            <ul class="mb-0 small">
+                                <li>Akses data blacklist tanpa sensor</li>
+                                <li>Tambah dan kelola laporan</li>
+                                <li>100% GRATIS untuk pengusaha rental</li>
+                                <li>Lindungi bisnis dari pelanggan bermasalah</li>
+                            </ul>
+                        </div>
+
+                        <!-- Login Link -->
+                        <div class="text-center mb-3">
+                            <p class="text-muted mb-0">
+                                Sudah punya akun?
+                                <a href="{{ route('login') }}" class="text-decoration-none text-primary fw-medium">
+                                    Masuk di sini
+                                </a>
+                            </p>
+                        </div>
+
+                        <!-- Back to Home -->
+                        <div class="text-center">
+                            <a href="{{ route('home') }}" class="text-decoration-none text-muted">
+                                <i class="fas fa-arrow-left me-1"></i>
+                                Kembali ke beranda
+                            </a>
+                        </div>
                     </div>
-                    @error('password_confirmation')
-                        <p class="mt-2 text-sm text-red-600">
-                            <i class="fas fa-exclamation-circle mr-1"></i>
-                            {{ $message }}
-                        </p>
-                    @enderror
                 </div>
-
-                <!-- Terms -->
-                <div class="flex items-start">
-                    <input
-                        id="terms"
-                        type="checkbox"
-                        required
-                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mt-1"
-                    >
-                    <label for="terms" class="ml-2 text-sm text-gray-600">
-                        Saya setuju dengan
-                        <a href="#" class="text-blue-600 hover:text-blue-500 font-medium">syarat dan ketentuan</a>
-                        serta
-                        <a href="#" class="text-blue-600 hover:text-blue-500 font-medium">kebijakan privasi</a>
-                    </label>
-                </div>
-
-                <!-- Submit Button -->
-                <button
-                    type="submit"
-                    class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 transform hover:scale-105"
-                >
-                    <i class="fas fa-user-plus mr-2"></i>
-                    Daftar Sekarang
-                </button>
-            </form>
-
-            <!-- Benefits -->
-            <div class="mt-6 p-4 bg-green-50 rounded-lg">
-                <h4 class="text-sm font-medium text-green-800 mb-2">
-                    <i class="fas fa-check-circle mr-1"></i>
-                    Keuntungan Bergabung
-                </h4>
-                <ul class="text-xs text-green-700 space-y-1">
-                    <li>• Akses data blacklist tanpa sensor</li>
-                    <li>• Tambah dan kelola laporan</li>
-                    <li>• 100% GRATIS untuk pengusaha rental</li>
-                    <li>• Lindungi bisnis dari pelanggan bermasalah</li>
-                </ul>
-            </div>
-
-            <!-- Login Link -->
-            <div class="mt-6 text-center">
-                <p class="text-gray-600">
-                    Sudah punya akun?
-                    <a href="{{ route('login') }}" class="text-blue-600 hover:text-blue-500 font-medium">
-                        Masuk di sini
-                    </a>
-                </p>
-            </div>
-
-            <!-- Back to Home -->
-            <div class="mt-4 text-center">
-                <a href="{{ route('home') }}" class="text-gray-500 hover:text-gray-700 text-sm">
-                    <i class="fas fa-arrow-left mr-1"></i>
-                    Kembali ke beranda
-                </a>
             </div>
         </div>
     </div>
 </div>
 
+@push('scripts')
 <script>
 function togglePassword(fieldId) {
     const passwordInput = document.getElementById(fieldId);
@@ -213,4 +224,5 @@ function togglePassword(fieldId) {
     }
 }
 </script>
+@endpush
 @endsection

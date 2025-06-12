@@ -3,152 +3,161 @@
 @section('title', 'Masuk ke Akun')
 
 @section('content')
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-orange-50 py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
-        <!-- Header -->
-        <div class="text-center">
-            <div class="mx-auto h-16 w-16 bg-red-600 rounded-full flex items-center justify-center mb-6">
-                <i class="fas fa-shield-alt text-white text-2xl"></i>
-            </div>
-            <h2 class="text-3xl font-bold text-gray-900 mb-2">
-                Masuk ke Akun Anda
-            </h2>
-            <p class="text-gray-600">
-                Akses dashboard pengusaha rental
-            </p>
-        </div>
-
-        <!-- Session Status -->
-        @if (session('status'))
-            <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
-                {{ session('status') }}
-            </div>
-        @endif
-
-        <!-- Login Form -->
-        <div class="bg-white rounded-xl shadow-lg p-8">
-            <form method="POST" action="{{ route('login') }}" class="space-y-6">
-                @csrf
-
-                <!-- Email Address -->
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fas fa-envelope mr-2 text-gray-400"></i>
-                        Alamat Email
-                    </label>
-                    <input
-                        id="email"
-                        type="email"
-                        name="email"
-                        value="{{ old('email') }}"
-                        required
-                        autofocus
-                        autocomplete="username"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-200 @error('email') border-red-500 @enderror"
-                        placeholder="masukkan@email.com"
-                    >
-                    @error('email')
-                        <p class="mt-2 text-sm text-red-600">
-                            <i class="fas fa-exclamation-circle mr-1"></i>
-                            {{ $message }}
-                        </p>
-                    @enderror
-                </div>
-
-                <!-- Password -->
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fas fa-lock mr-2 text-gray-400"></i>
-                        Kata Sandi
-                    </label>
-                    <div class="relative">
-                        <input
-                            id="password"
-                            type="password"
-                            name="password"
-                            required
-                            autocomplete="current-password"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-200 @error('password') border-red-500 @enderror"
-                            placeholder="Masukkan kata sandi"
-                        >
-                        <button
-                            type="button"
-                            onclick="togglePassword()"
-                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                        >
-                            <i class="fas fa-eye" id="toggleIcon"></i>
-                        </button>
+<div class="bg-gradient-to-br from-danger-subtle to-warning-subtle min-vh-100 d-flex align-items-center py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7">
+                <!-- Header -->
+                <div class="text-center mb-4">
+                    <div class="bg-danger rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <i class="fas fa-shield-alt text-white fs-2"></i>
                     </div>
-                    @error('password')
-                        <p class="mt-2 text-sm text-red-600">
-                            <i class="fas fa-exclamation-circle mr-1"></i>
-                            {{ $message }}
-                        </p>
-                    @enderror
+                    <h2 class="fw-bold text-dark mb-2">
+                        Masuk ke Akun Anda
+                    </h2>
+                    <p class="text-muted">
+                        Akses dashboard pengusaha rental
+                    </p>
                 </div>
 
-                <!-- Remember Me -->
-                <div class="flex items-center justify-between">
-                    <label for="remember_me" class="flex items-center">
-                        <input
-                            id="remember_me"
-                            type="checkbox"
-                            name="remember"
-                            class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-                        >
-                        <span class="ml-2 text-sm text-gray-600">Ingat saya</span>
-                    </label>
+                <!-- Session Status -->
+                @if (session('status'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ session('status') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
 
-                    @if (Route::has('password.request'))
-                        <a href="{{ route('password.request') }}" class="text-sm text-red-600 hover:text-red-500 font-medium">
-                            Lupa kata sandi?
-                        </a>
-                    @endif
+                <!-- Login Form -->
+                <div class="card border-0 shadow-lg">
+                    <div class="card-body p-4">
+                        <form method="POST" action="{{ route('login') }}">
+                            @csrf
+
+                            <!-- Email Address -->
+                            <div class="mb-3">
+                                <label for="email" class="form-label fw-medium">
+                                    <i class="fas fa-envelope me-2 text-muted"></i>
+                                    Alamat Email
+                                </label>
+                                <input
+                                    id="email"
+                                    type="email"
+                                    name="email"
+                                    value="{{ old('email') }}"
+                                    required
+                                    autofocus
+                                    autocomplete="username"
+                                    class="form-control form-control-lg @error('email') is-invalid @enderror"
+                                    placeholder="masukkan@email.com"
+                                >
+                                @error('email')
+                                    <div class="invalid-feedback">
+                                        <i class="fas fa-exclamation-circle me-1"></i>
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+
+                            <!-- Password -->
+                            <div class="mb-3">
+                                <label for="password" class="form-label fw-medium">
+                                    <i class="fas fa-lock me-2 text-muted"></i>
+                                    Kata Sandi
+                                </label>
+                                <div class="input-group">
+                                    <input
+                                        id="password"
+                                        type="password"
+                                        name="password"
+                                        required
+                                        autocomplete="current-password"
+                                        class="form-control form-control-lg @error('password') is-invalid @enderror"
+                                        placeholder="Masukkan kata sandi"
+                                    >
+                                    <button
+                                        type="button"
+                                        onclick="togglePassword()"
+                                        class="btn btn-outline-secondary"
+                                    >
+                                        <i class="fas fa-eye" id="toggleIcon"></i>
+                                    </button>
+                                </div>
+                                @error('password')
+                                    <div class="invalid-feedback d-block">
+                                        <i class="fas fa-exclamation-circle me-1"></i>
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+
+                            <!-- Remember Me -->
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="form-check">
+                                    <input
+                                        id="remember_me"
+                                        type="checkbox"
+                                        name="remember"
+                                        class="form-check-input"
+                                    >
+                                    <label for="remember_me" class="form-check-label">Ingat saya</label>
+                                </div>
+
+                                @if (Route::has('password.request'))
+                                    <a href="{{ route('password.request') }}" class="text-decoration-none text-danger">
+                                        Lupa kata sandi?
+                                    </a>
+                                @endif
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button
+                                type="submit"
+                                class="btn btn-danger btn-lg w-100 mb-3"
+                            >
+                                <i class="fas fa-sign-in-alt me-2"></i>
+                                Masuk ke Dashboard
+                            </button>
+                        </form>
+
+                        <!-- Demo Accounts -->
+                        <div class="alert alert-info">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Akun Demo untuk Testing
+                            </h6>
+                            <div class="small">
+                                <p class="mb-1"><strong>Admin:</strong> admin@rentalguard.id | <strong>Password:</strong> admin123</p>
+                                <p class="mb-1"><strong>Rental:</strong> rental@example.com | <strong>Password:</strong> rental123</p>
+                                <p class="mb-0"><strong>User:</strong> user@example.com | <strong>Password:</strong> user123</p>
+                            </div>
+                        </div>
+
+                        <!-- Register Link -->
+                        <div class="text-center mb-3">
+                            <p class="text-muted mb-0">
+                                Belum punya akun?
+                                <a href="{{ route('register') }}" class="text-decoration-none text-danger fw-medium">
+                                    Daftar sekarang
+                                </a>
+                            </p>
+                        </div>
+
+                        <!-- Back to Home -->
+                        <div class="text-center">
+                            <a href="{{ route('home') }}" class="text-decoration-none text-muted">
+                                <i class="fas fa-arrow-left me-1"></i>
+                                Kembali ke beranda
+                            </a>
+                        </div>
+                    </div>
                 </div>
-
-                <!-- Submit Button -->
-                <button
-                    type="submit"
-                    class="w-full bg-red-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-200 transform hover:scale-105"
-                >
-                    <i class="fas fa-sign-in-alt mr-2"></i>
-                    Masuk ke Dashboard
-                </button>
-            </form>
-
-            <!-- Demo Accounts -->
-            <div class="mt-6 p-4 bg-blue-50 rounded-lg">
-                <h4 class="text-sm font-medium text-blue-800 mb-2">
-                    <i class="fas fa-info-circle mr-1"></i>
-                    Akun Demo
-                </h4>
-                <div class="text-xs text-blue-700 space-y-1">
-                    <p><strong>Email:</strong> budi@rental.com | <strong>Password:</strong> password</p>
-                    <p><strong>Email:</strong> siti@rental.com | <strong>Password:</strong> password</p>
-                </div>
-            </div>
-
-            <!-- Register Link -->
-            <div class="mt-6 text-center">
-                <p class="text-gray-600">
-                    Belum punya akun?
-                    <a href="{{ route('register') }}" class="text-red-600 hover:text-red-500 font-medium">
-                        Daftar sekarang
-                    </a>
-                </p>
-            </div>
-
-            <!-- Back to Home -->
-            <div class="mt-4 text-center">
-                <a href="{{ route('home') }}" class="text-gray-500 hover:text-gray-700 text-sm">
-                    <i class="fas fa-arrow-left mr-1"></i>
-                    Kembali ke beranda
-                </a>
             </div>
         </div>
     </div>
 </div>
 
+@push('scripts')
 <script>
 function togglePassword() {
     const passwordInput = document.getElementById('password');
@@ -165,4 +174,5 @@ function togglePassword() {
     }
 }
 </script>
+@endpush
 @endsection
