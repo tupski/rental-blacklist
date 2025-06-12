@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Search</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+    <h1>Test Search Functionality</h1>
+    
+    <form id="testForm">
+        <input type="text" id="searchInput" placeholder="Enter search term" value="Angga">
+        <button type="submit">Search</button>
+    </form>
+    
+    <div id="results"></div>
+    
+    <script>
+        $('#testForm').on('submit', function(e) {
+            e.preventDefault();
+            
+            // First get CSRF token
+            $.get('http://127.0.0.1:8000', function(data) {
+                const csrfToken = $(data).find('meta[name="csrf-token"]').attr('content');
+                
+                // Now perform search
+                $.ajax({
+                    url: 'http://127.0.0.1:8000/search',
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json'
+                    },
+                    data: JSON.stringify({
+                        search: $('#searchInput').val()
+                    }),
+                    success: function(response) {
+                        $('#results').html('<pre>' + JSON.stringify(response, null, 2) + '</pre>');
+                    },
+                    error: function(xhr) {
+                        $('#results').html('Error: ' + xhr.status + ' - ' + xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
