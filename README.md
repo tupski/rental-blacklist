@@ -1,124 +1,94 @@
-# 🛡️ Sistem Blacklist Rental Indonesia
+# RentalGuard - Sistem Blacklist Rental Indonesia
 
-Sistem web Laravel untuk mengelola blacklist pelanggan rental umum (mobil, motor, kamera, dll) dengan fitur pencarian publik dan manajemen laporan untuk pengusaha rental.
+Sistem blacklist rental terpercaya di Indonesia untuk melindungi bisnis rental dari pelanggan bermasalah.
 
-![Laravel](https://img.shields.io/badge/Laravel-12-red.svg)
-![PHP](https://img.shields.io/badge/PHP-8.2+-blue.svg)
-![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.0-blue.svg)
-![jQuery](https://img.shields.io/badge/jQuery-3.7-yellow.svg)
+## Fitur Utama
 
-## 🚀 Fitur Utama
+- **Pencarian Blacklist**: Cek data pelanggan bermasalah dengan NIK atau nama
+- **Dashboard Admin**: Kelola laporan blacklist dengan mudah
+- **Data Tersensor**: Data publik ditampilkan dengan sensor untuk privasi
+- **Validasi Otomatis**: Laporan tervalidasi otomatis jika ada 2+ pelapor berbeda
+- **Responsive Design**: Tampilan modern dan mobile-friendly
 
-### 👥 Untuk Publik (Tanpa Login)
-- 🔍 **Pencarian Real-time** - Cari berdasarkan NIK atau nama dengan AJAX
-- 🔒 **Data Privasi** - Informasi sensitif disensor otomatis
-- 📱 **Mobile Friendly** - Responsive design untuk semua perangkat
-- 🔗 **URL Dinamis** - History browser terintegrasi
+## Teknologi
 
-### 🏢 Untuk Pengusaha Rental (Login)
-- 📊 **Dashboard Lengkap** - Statistik dan overview laporan
-- 📝 **Manajemen Laporan** - CRUD laporan blacklist
-- 📎 **Upload Bukti** - Gambar, video, dan dokumen
-- ✅ **Validasi Otomatis** - Sistem verifikasi laporan
-- 🔓 **Akses Penuh** - Data tanpa sensor
-
-## 🛠️ Teknologi
-
-- **Backend**: Laravel 12 + Laravel Breeze
+- **Backend**: Laravel 11
 - **Frontend**: Blade Templates + TailwindCSS
-- **JavaScript**: jQuery AJAX
-- **Database**: SQLite (default)
-- **Storage**: Laravel File Storage
+- **Database**: MySQL
+- **JavaScript**: jQuery + AJAX
+- **Authentication**: Laravel Breeze
 
-## 📦 Instalasi Cepat
+## Instalasi
 
+1. Clone repository
 ```bash
-# Clone repository
-git clone https://github.com/tupski/rental-blacklist.git
+git clone <repository-url>
 cd rental-blacklist
+```
 
-# Install dependencies
+2. Install dependencies
+```bash
 composer install
-npm install && npm run build
+npm install
+```
 
-# Setup environment
+3. Setup environment
+```bash
 cp .env.example .env
 php artisan key:generate
+```
 
-# Setup database
-php artisan migrate:fresh --seed
-php artisan storage:link
+4. Konfigurasi database di `.env`
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=rental_blacklist
+DB_USERNAME=root
+DB_PASSWORD=mysql
+```
 
-# Jalankan server
+5. Jalankan migrasi
+```bash
+php artisan migrate
+```
+
+6. Build assets
+```bash
+npm run build
+```
+
+7. Jalankan server
+```bash
 php artisan serve
 ```
 
-## 🌐 Demo
+## Penggunaan
 
-**URL**: `http://127.0.0.1:8000`
+### Untuk Pengguna Umum
+- Akses halaman utama untuk mencari data blacklist
+- Data ditampilkan dengan sensor untuk melindungi privasi
+- Beli kredit untuk melihat data lengkap
 
-**Akun Testing**:
-- Email: `budi@rental.com` | Password: `password`
-- Email: `siti@rental.com` | Password: `password`
+### Untuk Pengusaha Rental
+- Daftar gratis untuk akses penuh
+- Tambah laporan pelanggan bermasalah
+- Kelola data laporan Anda
+- Lihat data lengkap tanpa sensor
 
-## 📱 Screenshot
+## Kontribusi
 
-### Halaman Pencarian Publik
-- Interface modern dan responsive
-- Pencarian real-time dengan AJAX
-- Data disensor untuk privasi
-
-### Dashboard Pengusaha Rental
-- Statistik laporan lengkap
-- Manajemen laporan mudah
-- Upload bukti terintegrasi
-
-## 🔒 Keamanan
-
-- ✅ CSRF Protection
-- ✅ File Upload Validation
-- ✅ Input Sanitization
-- ✅ Authorization Control
-- ✅ Data Censoring
-
-## 📚 Dokumentasi
-
-Dokumentasi lengkap tersedia di folder `docs/`:
-- [Dokumentasi Lengkap](docs/DOKUMENTASI.md)
-- [Summary Implementasi](docs/SUMMARY.md)
-
-## 🧪 Testing
-
-```bash
-# Test dengan data seeder
-# Cari: "Angga" atau "3674012345670001"
-# Login dan test CRUD laporan
-```
-
-## 🤝 Kontribusi
-
-1. Fork repository ini
-2. Buat feature branch (`git checkout -b feature/AmazingFeature`)
+1. Fork repository
+2. Buat branch fitur (`git checkout -b feature/AmazingFeature`)
 3. Commit perubahan (`git commit -m 'Add some AmazingFeature'`)
 4. Push ke branch (`git push origin feature/AmazingFeature`)
 5. Buat Pull Request
 
-## 📄 Lisensi
+## Lisensi
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
-## 📞 Kontak
+## Kontak
 
-**Developer**: Tupski  
-**Repository**: [https://github.com/tupski/rental-blacklist](https://github.com/tupski/rental-blacklist)
-
-## 🙏 Acknowledgments
-
-- [Laravel](https://laravel.com)
-- [TailwindCSS](https://tailwindcss.com)
-- [Font Awesome](https://fontawesome.com)
-- [jQuery](https://jquery.com)
-
----
-
-⭐ **Jangan lupa beri star jika project ini membantu!**
+Email: support@rentalguard.id
+Website: https://rentalguard.id

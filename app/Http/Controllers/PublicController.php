@@ -9,7 +9,18 @@ class PublicController extends Controller
 {
     public function index()
     {
-        return view('public.search');
+        // Statistik untuk halaman utama
+        $stats = [
+            'total_laporan' => RentalBlacklist::where('status_validitas', 'Valid')->count(),
+            'total_pelanggan_bermasalah' => RentalBlacklist::where('status_validitas', 'Valid')->distinct('nik')->count(),
+            'rental_terdaftar' => RentalBlacklist::distinct('user_id')->count(),
+            'laporan_bulan_ini' => RentalBlacklist::where('status_validitas', 'Valid')
+                ->whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)
+                ->count(),
+        ];
+
+        return view('home', compact('stats'));
     }
 
     public function search(Request $request)
