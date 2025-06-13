@@ -562,15 +562,14 @@ $(document).ready(function() {
     }
 
     function getPriceByRental(rental) {
-        switch(rental) {
-            case 'Rental Mobil':
-            case 'Rental Motor':
-                return 1500;
-            case 'Rental Kamera':
-                return 1000;
-            default:
-                return 800;
-        }
+        const priceMap = {
+            'Rental Mobil': 1500,
+            'Rental Motor': 1500,
+            'Rental Kamera': 1000,
+            'Rental Alat Musik': 800,
+            'Rental Elektronik': 800
+        };
+        return priceMap[rental] || 800;
     }
 });
 </script>

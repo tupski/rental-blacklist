@@ -115,6 +115,16 @@ class TopupController extends Controller
 
     public function store(Request $request)
     {
+        // Determine amount from package or custom
+        $amount = 0;
+        if ($request->package === 'custom') {
+            $amount = $request->custom_amount;
+        } else {
+            $amount = $request->package;
+        }
+
+        $request->merge(['amount' => $amount]);
+
         $request->validate([
             'amount' => 'required|numeric|min:10000',
             'payment_method' => 'required|in:manual,midtrans,xendit',
@@ -123,6 +133,11 @@ class TopupController extends Controller
         ]);
 
         $user = Auth::user();
+
+        // Ensure user has balance record
+        if (!$user->balance) {
+            $user->balance()->create(['balance' => 0]);
+        }
 
         // Create topup request
         $topupRequest = TopupRequest::create([
@@ -141,7 +156,11 @@ class TopupController extends Controller
         ]);
 
         // Send notification
-        $topupRequest->user->notify(new TopupRequestNotification($topupRequest, 'created'));
+        try {
+            $topupRequest->user->notify(new TopupRequestNotification($topupRequest, 'created'));
+        } catch (\Exception $e) {
+            \Log::warning('Failed to send topup notification: ' . $e->getMessage());
+        }
 
         // Always redirect to confirm page regardless of payment method
         return redirect()->route('topup.confirm', $topupRequest->invoice_number);

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\RentalBlacklist;
 use App\Models\UserUnlock;
-use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -84,84 +83,105 @@ class UserDashboardController extends Controller
 
     public function unlock(Request $request, $id)
     {
-        $user = Auth::user();
-        $blacklist = RentalBlacklist::findOrFail($id);
+        try {
+            $user = Auth::user();
+            $blacklist = RentalBlacklist::findOrFail($id);
 
-        // Check if already unlocked
-        $existingUnlock = UserUnlock::where('user_id', $user->id)
-                                   ->where('blacklist_id', $id)
-                                   ->first();
+            // Ensure user has balance record
+            if (!$user->balance) {
+                $user->balance()->create(['balance' => 0]);
+                $user->refresh();
+            }
 
-        if ($existingUnlock) {
+            // Check if already unlocked
+            $existingUnlock = UserUnlock::where('user_id', $user->id)
+                                       ->where('blacklist_id', $id)
+                                       ->first();
+
+            if ($existingUnlock) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data sudah pernah dibuka sebelumnya'
+                ]);
+            }
+
+            $price = $this->getDetailPrice($blacklist->jenis_rental);
+
+            // Check balance
+            if ($user->balance->balance < $price) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Saldo tidak mencukupi. Silakan topup terlebih dahulu.',
+                    'required_balance' => $price,
+                    'current_balance' => $user->balance->balance
+                ]);
+            }
+
+            DB::transaction(function () use ($user, $blacklist, $price, $id) {
+                // Deduct balance
+                $user->balance->decrement('balance', $price);
+
+                // Record unlock
+                UserUnlock::create([
+                    'user_id' => $user->id,
+                    'blacklist_id' => $id,
+                    'amount_paid' => $price,
+                    'unlocked_at' => now()
+                ]);
+
+                // Record balance transaction
+                $user->balanceTransactions()->create([
+                    'type' => 'usage',
+                    'amount' => $price,
+                    'description' => "Membuka detail blacklist: {$blacklist->nama_lengkap}",
+                    'reference_type' => 'blacklist_unlock',
+                    'reference_id' => $id
+                ]);
+            });
+
+            // Refresh user balance
+            $user->refresh();
+
+            return response()->json([
+                'success' => true,
+                'message' => "Berhasil membuka detail. Saldo terpotong Rp " . number_format($price, 0, ',', '.'),
+                'data' => [
+                    'id' => $blacklist->id,
+                    'nama_lengkap' => $blacklist->nama_lengkap,
+                    'nik' => $blacklist->nik,
+                    'no_hp' => $blacklist->no_hp,
+                    'alamat' => $blacklist->alamat,
+                    'jenis_rental' => $blacklist->jenis_rental,
+                    'jenis_laporan' => $blacklist->jenis_laporan,
+                    'status_validitas' => $blacklist->status_validitas,
+                    'tanggal_kejadian' => $blacklist->tanggal_kejadian->format('d/m/Y'),
+                    'kronologi' => $blacklist->kronologi,
+                    'jumlah_laporan' => RentalBlacklist::countReportsByNik($blacklist->nik),
+                    'pelapor' => $blacklist->user->name
+                ],
+                'remaining_balance' => $user->balance->balance
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Unlock error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Data sudah pernah dibuka sebelumnya'
+                'message' => 'Terjadi kesalahan sistem. Silakan coba lagi.'
             ]);
         }
-
-        $price = $this->getDetailPrice($blacklist->jenis_rental);
-
-        // Check balance
-        if ($user->balance->balance < $price) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Saldo tidak mencukupi. Silakan topup terlebih dahulu.',
-                'required_balance' => $price,
-                'current_balance' => $user->balance->balance
-            ]);
-        }
-
-        DB::transaction(function () use ($user, $blacklist, $price, $id) {
-            // Deduct balance
-            $user->balance->decrement('balance', $price);
-
-            // Record unlock
-            UserUnlock::create([
-                'user_id' => $user->id,
-                'blacklist_id' => $id,
-                'amount_paid' => $price,
-                'unlocked_at' => now()
-            ]);
-
-            // Record balance transaction
-            $user->balanceTransactions()->create([
-                'type' => 'usage',
-                'amount' => $price,
-                'description' => "Membuka detail blacklist: {$blacklist->nama_lengkap}",
-                'reference_type' => 'blacklist_unlock',
-                'reference_id' => $id
-            ]);
-        });
-
-        return response()->json([
-            'success' => true,
-            'message' => "Berhasil membuka detail. Saldo terpotong Rp " . number_format($price, 0, ',', '.'),
-            'data' => [
-                'id' => $blacklist->id,
-                'nama_lengkap' => $blacklist->nama_lengkap,
-                'nik' => $blacklist->nik,
-                'no_hp' => $blacklist->no_hp,
-                'alamat' => $blacklist->alamat,
-                'jenis_rental' => $blacklist->jenis_rental,
-                'jenis_laporan' => $blacklist->jenis_laporan,
-                'status_validitas' => $blacklist->status_validitas,
-                'tanggal_kejadian' => $blacklist->tanggal_kejadian->format('d/m/Y'),
-                'kronologi' => $blacklist->kronologi,
-                'jumlah_laporan' => RentalBlacklist::countReportsByNik($blacklist->nik),
-                'pelapor' => $blacklist->user->name
-            ],
-            'remaining_balance' => $user->balance->balance
-        ]);
     }
 
     private function getDetailPrice($jenisRental)
     {
-        $priceKey = match($jenisRental) {
-            'Rental Mobil', 'Rental Motor' => 'price_rental_mobil_motor',
-            'Rental Kamera' => 'price_kamera',
-            default => 'price_lainnya'
-        };
+        // Map jenis rental to price
+        $priceMap = [
+            'Rental Mobil' => 1500,
+            'Rental Motor' => 1500,
+            'Rental Kamera' => 1000,
+            'Rental Alat Musik' => 800,
+            'Rental Elektronik' => 800,
+        ];
 
-        return (int) Setting::get($priceKey, 1500);
+        // Return specific price or default
+        return $priceMap[$jenisRental] ?? 800;
     }
 }

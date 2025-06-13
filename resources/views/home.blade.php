@@ -512,14 +512,71 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                <button type="button" class="btn btn-success" onclick="showFullAccess()">
-                    <i class="fas fa-unlock me-2"></i>
-                    Akses Penuh
+                @auth
+                    @if(Auth::user()->role === 'user')
+                        <button type="button" class="btn btn-warning" id="unlockDetailBtn" onclick="confirmUnlockDetail()">
+                            <i class="fas fa-unlock me-2"></i>
+                            Buka Detail Lengkap
+                        </button>
+                    @else
+                        <button type="button" class="btn btn-success" onclick="showFullAccess()">
+                            <i class="fas fa-unlock me-2"></i>
+                            Akses Penuh
+                        </button>
+                    @endif
+                @else
+                    <button type="button" class="btn btn-success" onclick="showFullAccess()">
+                        <i class="fas fa-unlock me-2"></i>
+                        Akses Penuh
+                    </button>
+                @endauth
+            </div>
+        </div>
+    </div>
+</div>
+
+@auth
+@if(Auth::user()->role === 'user')
+<!-- Unlock Confirmation Modal -->
+<div class="modal fade" id="unlockConfirmModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-unlock text-warning me-2"></i>
+                    Konfirmasi Buka Detail
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Perhatian!</strong> Tindakan ini akan memotong saldo Anda.
+                </div>
+                <p>Anda akan membuka detail lengkap untuk:</p>
+                <ul>
+                    <li><strong>Nama:</strong> <span id="confirm-name"></span></li>
+                    <li><strong>Jenis Rental:</strong> <span id="confirm-rental"></span></li>
+                    <li><strong>Biaya:</strong> <span id="confirm-price" class="text-danger fw-bold"></span></li>
+                </ul>
+                <p class="text-muted small">
+                    Setelah membuka detail, Anda akan melihat data lengkap termasuk alamat dan kronologi kejadian.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Batal
+                </button>
+                <button type="button" class="btn btn-warning" id="confirmUnlockBtn">
+                    <i class="fas fa-unlock me-2"></i>Ya, Buka Detail
                 </button>
             </div>
         </div>
     </div>
 </div>
+@endif
+@endauth
+
 @endsection
 
 @push('styles')
@@ -547,6 +604,8 @@
 <script>
 $(document).ready(function() {
     let currentSearch = '';
+    let currentDetailId = null;
+    let currentDetailData = null;
 
     // Handle form submission
     $('#searchForm').on('submit', function(e) {
@@ -656,10 +715,24 @@ $(document).ready(function() {
                                     <i class="fas fa-calendar me-1"></i>
                                     ${item.tanggal_kejadian}
                                 </small>
-                                <button onclick="viewDetail(${item.id})" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-eye me-1"></i>
-                                    Detail
-                                </button>
+                                @auth
+                                    @if(Auth::user()->role === 'user')
+                                        <button onclick="viewDetailWithUnlock(${item.id}, '${item.jenis_rental}')" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-eye me-1"></i>
+                                            Detail
+                                        </button>
+                                    @else
+                                        <button onclick="viewDetail(${item.id})" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-eye me-1"></i>
+                                            Detail
+                                        </button>
+                                    @endif
+                                @else
+                                    <button onclick="viewDetail(${item.id})" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-eye me-1"></i>
+                                        Detail
+                                    </button>
+                                @endauth
                             </div>
                         </div>
                     </div>
@@ -771,6 +844,244 @@ $(document).ready(function() {
     window.showFullAccess = function() {
         alert('Untuk akses penuh:\n\n1. Daftar sebagai rental (GRATIS)\n2. Beli kredit untuk akses sekali pakai\n\nKlik "Daftar Rental" di menu untuk mendaftar gratis!');
     };
+
+    @auth
+    @if(Auth::user()->role === 'user')
+    // View detail with unlock option for regular users
+    window.viewDetailWithUnlock = function(id, jenisRental) {
+        currentDetailId = id;
+
+        $.ajax({
+            url: `/detail/${id}`,
+            method: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    currentDetailData = response.data;
+                    const data = response.data;
+                    let jenisLaporanHtml = '';
+                    if (Array.isArray(data.jenis_laporan)) {
+                        data.jenis_laporan.forEach(function(jenis) {
+                            jenisLaporanHtml += `<span class="badge bg-warning text-dark me-2 mb-2">${jenis}</span>`;
+                        });
+                    } else {
+                        jenisLaporanHtml = `<span class="badge bg-warning text-dark">${data.jenis_laporan}</span>`;
+                    }
+
+                    $('#detailContent').html(`
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-primary">Nama Lengkap</label>
+                                <p class="mb-0">${data.nama_lengkap}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-primary">NIK</label>
+                                <p class="mb-0">${data.nik}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-primary">No HP</label>
+                                <p class="mb-0">${data.no_hp}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-primary">Jenis Rental</label>
+                                <p class="mb-0">${data.jenis_rental}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-primary">Jumlah Laporan</label>
+                                <p class="mb-0"><span class="badge bg-danger">${data.jumlah_laporan} Laporan</span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-primary">Tanggal Kejadian</label>
+                                <p class="mb-0">${data.tanggal_kejadian}</p>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-medium text-primary">Jenis Laporan</label>
+                                <div>${jenisLaporanHtml}</div>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-medium text-primary">Pelapor</label>
+                                <p class="mb-0">
+                                    ${data.pelapor}
+                                    ${data.is_verified ? '<i class="fas fa-check-circle text-primary ms-2" title="Rental Terverifikasi"></i>' : ''}
+                                </p>
+                            </div>
+                            <div class="col-12">
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-eye-slash me-2"></i>
+                                    <strong>Data Sensor:</strong> Alamat dan kronologi disembunyikan.
+                                    Klik "Buka Detail Lengkap" untuk melihat data lengkap.
+                                </div>
+                            </div>
+                        </div>
+                    `);
+
+                    const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+                    modal.show();
+                } else {
+                    alert(response.message || 'Data tidak ditemukan');
+                }
+            },
+            error: function(xhr) {
+                console.error('Detail error:', xhr);
+                alert('Terjadi kesalahan saat mengambil detail');
+            }
+        });
+    };
+
+    // Confirm unlock detail
+    window.confirmUnlockDetail = function() {
+        if (!currentDetailData) return;
+
+        const price = getPriceByRental(currentDetailData.jenis_rental);
+
+        $('#confirm-name').text(currentDetailData.nama_lengkap);
+        $('#confirm-rental').text(currentDetailData.jenis_rental);
+        $('#confirm-price').text('Rp ' + price.toLocaleString('id-ID'));
+
+        $('#detailModal').modal('hide');
+        const confirmModal = new bootstrap.Modal(document.getElementById('unlockConfirmModal'));
+        confirmModal.show();
+    };
+
+    // Handle confirm unlock
+    $('#confirmUnlockBtn').on('click', function() {
+        if (!currentDetailId) return;
+
+        const btn = $(this);
+        const originalText = btn.html();
+
+        btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Memproses...');
+
+        $.ajax({
+            url: `/user/unlock/${currentDetailId}`,
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                $('#unlockConfirmModal').modal('hide');
+
+                if (response.success) {
+                    // Show success message
+                    showAlert('success', response.message);
+
+                    // Show full detail
+                    showFullDetail(response.data);
+                } else {
+                    showAlert('danger', response.message);
+                }
+            },
+            error: function(xhr) {
+                $('#unlockConfirmModal').modal('hide');
+                showAlert('danger', 'Terjadi kesalahan saat membuka detail');
+            },
+            complete: function() {
+                btn.prop('disabled', false).html(originalText);
+            }
+        });
+    });
+
+    function showFullDetail(data) {
+        let jenisLaporanHtml = '';
+        if (Array.isArray(data.jenis_laporan)) {
+            data.jenis_laporan.forEach(function(jenis) {
+                jenisLaporanHtml += `<span class="badge bg-warning text-dark me-2 mb-2">${jenis}</span>`;
+            });
+        } else {
+            jenisLaporanHtml = `<span class="badge bg-warning text-dark">${data.jenis_laporan}</span>`;
+        }
+
+        $('#detailContent').html(`
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-medium text-primary">Nama Lengkap</label>
+                    <p class="mb-0">${data.nama_lengkap}</p>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-medium text-primary">NIK</label>
+                    <p class="mb-0">${data.nik}</p>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-medium text-primary">No HP</label>
+                    <p class="mb-0">${data.no_hp}</p>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-medium text-primary">Jenis Rental</label>
+                    <p class="mb-0">${data.jenis_rental}</p>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-medium text-primary">Jumlah Laporan</label>
+                    <p class="mb-0"><span class="badge bg-danger">${data.jumlah_laporan} Laporan</span></p>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-medium text-primary">Tanggal Kejadian</label>
+                    <p class="mb-0">${data.tanggal_kejadian}</p>
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-medium text-primary">Alamat Lengkap</label>
+                    <p class="mb-0">${data.alamat}</p>
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-medium text-primary">Jenis Laporan</label>
+                    <div>${jenisLaporanHtml}</div>
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-medium text-primary">Kronologi Kejadian</label>
+                    <div class="alert alert-warning">
+                        ${data.kronologi}
+                    </div>
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-medium text-primary">Pelapor</label>
+                    <p class="mb-0">
+                        ${data.pelapor}
+                        ${data.is_verified ? '<i class="fas fa-check-circle text-primary ms-2" title="Rental Terverifikasi"></i>' : ''}
+                    </p>
+                </div>
+                <div class="col-12">
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong>Data Lengkap:</strong> Anda telah membuka akses penuh ke data ini.
+                    </div>
+                </div>
+            </div>
+        `);
+
+        // Hide unlock button in modal footer
+        $('#unlockDetailBtn').hide();
+
+        const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+        modal.show();
+    }
+
+    function showAlert(type, message) {
+        const alertHtml = `
+            <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+
+        // Insert at top of container
+        $('.container').first().prepend(alertHtml);
+
+        // Auto dismiss after 5 seconds
+        setTimeout(function() {
+            $('.alert').alert('close');
+        }, 5000);
+    }
+
+    function getPriceByRental(rental) {
+        const priceMap = {
+            'Rental Mobil': 1500,
+            'Rental Motor': 1500,
+            'Rental Kamera': 1000,
+            'Rental Alat Musik': 800,
+            'Rental Elektronik': 800
+        };
+        return priceMap[rental] || 800;
+    }
+    @endif
+    @endauth
 });
 </script>
 @endpush
