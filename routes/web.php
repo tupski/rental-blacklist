@@ -115,7 +115,9 @@ Route::middleware(['auth', 'verified', 'role:pengusaha_rental'])->group(function
 Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
 
     // Dashboard for regular users
-    Route::get('/user/dashboard', [DashboardController::class, 'index'])->name('user.dashboard');
+    Route::get('/user/dashboard', [App\Http\Controllers\UserDashboardController::class, 'index'])->name('user.dashboard');
+    Route::post('/user/search', [App\Http\Controllers\UserDashboardController::class, 'search'])->name('user.search');
+    Route::post('/user/unlock/{id}', [App\Http\Controllers\UserDashboardController::class, 'unlock'])->name('user.unlock');
 
     // Topup & Balance routes (only for regular users)
     Route::get('/topup', [TopupController::class, 'index'])->name('topup.index');

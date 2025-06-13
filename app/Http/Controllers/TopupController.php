@@ -143,12 +143,8 @@ class TopupController extends Controller
         // Send notification
         $topupRequest->user->notify(new TopupRequestNotification($topupRequest, 'created'));
 
-        if ($request->payment_method === 'manual') {
-            return redirect()->route('topup.confirm', $topupRequest->invoice_number);
-        }
-
-        // TODO: Implement Midtrans/Xendit integration
-        return redirect()->route('topup.index')->with('success', 'Request topup berhasil dibuat');
+        // Always redirect to confirm page regardless of payment method
+        return redirect()->route('topup.confirm', $topupRequest->invoice_number);
     }
 
     public function confirm($invoice)
