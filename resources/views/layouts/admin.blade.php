@@ -213,22 +213,11 @@
                     </li>
 
                     <!-- Laporan Guest -->
-                    <li class="nav-item {{ request()->routeIs('admin.guest-reports*') ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ request()->routeIs('admin.guest-reports*') ? 'active' : '' }}">
+                    <li class="nav-item">
+                        <a href="{{ route('admin.guest-reports.index') }}" class="nav-link {{ request()->routeIs('admin.guest-reports*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-flag"></i>
-                            <p>
-                                Laporan Guest
-                                <i class="right fas fa-angle-left"></i>
-                            </p>
+                            <p>Laporan Guest</p>
                         </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{{ route('admin.guest-reports.index') }}" class="nav-link {{ request()->routeIs('admin.guest-reports.index') ? 'active' : '' }}">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Daftar Laporan</p>
-                                </a>
-                            </li>
-                        </ul>
                     </li>
 
                     <!-- Manajemen Sponsor -->
@@ -312,121 +301,6 @@
                                 </a>
                             </li>
                         </ul>
-                    </li>
-
-                    <!-- Blacklist Management -->
-                    <li class="nav-item {{ request()->routeIs('admin.blacklist*') ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ request()->routeIs('admin.blacklist*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-list"></i>
-                            <p>
-                                Blacklist Management
-                                <i class="right fas fa-angle-left"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{{ route('admin.blacklist.index') }}" class="nav-link {{ request()->routeIs('admin.blacklist.index') ? 'active' : '' }}">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>All Blacklist</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('admin.blacklist.create') }}" class="nav-link {{ request()->routeIs('admin.blacklist.create') ? 'active' : '' }}">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Add New</p>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <!-- User Management -->
-                    <li class="nav-item {{ request()->routeIs('admin.users*') ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ request()->routeIs('admin.users*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-users"></i>
-                            <p>
-                                User Management
-                                <i class="right fas fa-angle-left"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->routeIs('admin.users.index') ? 'active' : '' }}">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>All Users</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('admin.users.create') }}" class="nav-link {{ request()->routeIs('admin.users.create') ? 'active' : '' }}">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Add User</p>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <!-- Guest Reports -->
-                    <li class="nav-item">
-                        <a href="{{ route('admin.guest-reports.index') }}" class="nav-link {{ request()->routeIs('admin.guest-reports*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-flag"></i>
-                            <p>Guest Reports</p>
-                        </a>
-                    </li>
-
-                    <!-- Topup Management -->
-                    <li class="nav-item">
-                        <a href="{{ route('admin.topup.index') }}" class="nav-link {{ request()->routeIs('admin.topup*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-credit-card"></i>
-                            <p>Topup Management</p>
-                        </a>
-                    </li>
-
-                    <!-- Sponsors -->
-                    <li class="nav-item">
-                        <a href="{{ route('admin.sponsors.index') }}" class="nav-link {{ request()->routeIs('admin.sponsors*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-handshake"></i>
-                            <p>Sponsors</p>
-                        </a>
-                    </li>
-
-                    <!-- Reports & Analytics -->
-                    <li class="nav-item {{ request()->routeIs('admin.reports*') || request()->routeIs('admin.analytics*') ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ request()->routeIs('admin.reports*') || request()->routeIs('admin.analytics*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-chart-bar"></i>
-                            <p>
-                                Reports & Analytics
-                                <i class="right fas fa-angle-left"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{{ route('admin.reports') }}" class="nav-link {{ request()->routeIs('admin.reports') ? 'active' : '' }}">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Reports</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('admin.analytics') }}" class="nav-link {{ request()->routeIs('admin.analytics') ? 'active' : '' }}">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Analytics</p>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <!-- Settings -->
-                    <li class="nav-item">
-                        <a href="{{ route('admin.settings.index') }}" class="nav-link {{ request()->routeIs('admin.settings*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-cog"></i>
-                            <p>Settings</p>
-                        </a>
-                    </li>
-
-                    <!-- Maintenance -->
-                    <li class="nav-item">
-                        <a href="{{ route('admin.maintenance') }}" class="nav-link {{ request()->routeIs('admin.maintenance*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-tools"></i>
-                            <p>Maintenance</p>
-                        </a>
                     </li>
 
                 </ul>

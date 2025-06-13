@@ -55,18 +55,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('topup/{topup}/reject', [AdminTopupController::class, 'reject'])->name('topup.reject');
     Route::delete('topup/{topup}', [AdminTopupController::class, 'destroy'])->name('topup.destroy');
 
-    // Topup Management
-    Route::resource('topup', AdminTopupController::class)->only(['index', 'show', 'edit', 'update']);
-    Route::post('topup/{topup}/confirm', [AdminTopupController::class, 'confirm'])->name('topup.confirm');
-    Route::post('topup/{topup}/reject', [AdminTopupController::class, 'reject'])->name('topup.reject');
-
     // Settings
     Route::get('settings', [AdminSettingController::class, 'index'])->name('settings.index');
-    Route::post('settings', [AdminSettingController::class, 'update'])->name('settings.update');
-
-    // Reports & Analytics
-    Route::get('reports', [AdminDashboardController::class, 'reports'])->name('reports');
-    Route::get('analytics', [AdminDashboardController::class, 'analytics'])->name('analytics');
+    Route::put('settings', [AdminSettingController::class, 'update'])->name('settings.update');
 
     // System Maintenance
     Route::get('maintenance', [AdminDashboardController::class, 'maintenance'])->name('maintenance');
