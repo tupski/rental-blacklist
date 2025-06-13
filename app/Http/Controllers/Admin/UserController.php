@@ -70,11 +70,28 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'role' => 'required|in:user,pengusaha_rental',
+            'nik' => 'nullable|string|max:16',
+            'no_hp' => 'nullable|string|max:15',
+            'alamat' => 'nullable|string',
         ]);
 
-        $user->update($request->only(['name', 'email', 'role']));
+        $updateData = $request->only(['name', 'email', 'role', 'nik', 'no_hp', 'alamat']);
 
-        return redirect()->route('admin.users.index')
+        // Handle email verification status
+        if ($request->has('email_verified')) {
+            $updateData['email_verified_at'] = now();
+        } else {
+            $updateData['email_verified_at'] = null;
+        }
+
+        // Handle password reset
+        if ($request->has('reset_password')) {
+            $updateData['password'] = Hash::make('password123');
+        }
+
+        $user->update($updateData);
+
+        return redirect()->route('admin.users.show', $user->id)
             ->with('success', 'Data user berhasil diperbarui.');
     }
 
