@@ -144,6 +144,7 @@
                                             <th>Jumlah</th>
                                             <th>Saldo Sebelum</th>
                                             <th>Saldo Sesudah</th>
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -178,6 +179,20 @@
                                             <td>
                                                 <span class="fw-bold">Rp {{ number_format($transaction->balance_after, 0, ',', '.') }}</span>
                                             </td>
+                                            <td>
+                                                @if($transaction->reference_type === 'App\Models\TopupRequest' && $transaction->reference_id)
+                                                    <div class="btn-group btn-group-sm">
+                                                        <button type="button" class="btn btn-outline-primary" onclick="viewInvoice({{ $transaction->reference_id }})">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                        <a href="{{ route('invoice.download', $transaction->reference_id) }}" class="btn btn-outline-success" target="_blank">
+                                                            <i class="fas fa-download"></i>
+                                                        </a>
+                                                    </div>
+                                                @else
+                                                    <span class="text-muted">-</span>
+                                                @endif
+                                            </td>
                                         </tr>
                                         @endforeach
                                     </tbody>
@@ -209,4 +224,160 @@
         </div>
     </div>
 </div>
+
+<!-- Invoice Modal -->
+<div class="modal fade" id="invoiceModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-file-invoice text-primary me-2"></i>
+                    Invoice Topup
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="invoiceContent">
+                    <!-- Invoice content will be loaded here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-success" id="downloadInvoiceBtn">
+                    <i class="fas fa-download me-2"></i>
+                    Unduh PDF
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
+
+@push('scripts')
+<script>
+function viewInvoice(topupId) {
+    // Show loading
+    $('#invoiceContent').html(`
+        <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="mt-2">Memuat invoice...</div>
+        </div>
+    `);
+
+    // Show modal
+    $('#invoiceModal').modal('show');
+
+    // Load invoice data
+    $.ajax({
+        url: `/invoice/${topupId}`,
+        method: 'GET',
+        success: function(response) {
+            if (response.success) {
+                displayInvoice(response.data);
+                $('#downloadInvoiceBtn').attr('onclick', `window.open('/invoice/${topupId}/download', '_blank')`);
+            } else {
+                $('#invoiceContent').html(`
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        ${response.message || 'Gagal memuat invoice'}
+                    </div>
+                `);
+            }
+        },
+        error: function(xhr) {
+            console.error('Invoice error:', xhr);
+            $('#invoiceContent').html(`
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    Terjadi kesalahan saat memuat invoice
+                </div>
+            `);
+        }
+    });
+}
+
+function displayInvoice(data) {
+    const html = `
+        <div class="invoice">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h4 class="text-primary">INVOICE</h4>
+                    <p class="mb-1"><strong>No. Invoice:</strong> ${data.invoice_number}</p>
+                    <p class="mb-1"><strong>Tanggal:</strong> ${data.created_at}</p>
+                    <p class="mb-1"><strong>Status:</strong>
+                        <span class="badge bg-${data.status_color}">${data.status_text}</span>
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <h5>Rental Blacklist Indonesia</h5>
+                    <p class="mb-1">Sistem Blacklist Rental</p>
+                    <p class="mb-1">Indonesia</p>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h6>Tagihan Kepada:</h6>
+                    <p class="mb-1"><strong>${data.user_name}</strong></p>
+                    <p class="mb-1">${data.user_email}</p>
+                </div>
+                <div class="col-md-6">
+                    <h6>Detail Pembayaran:</h6>
+                    <p class="mb-1"><strong>Metode:</strong> ${data.payment_method}</p>
+                    <p class="mb-1"><strong>Channel:</strong> ${data.payment_channel || '-'}</p>
+                    ${data.expires_at ? `<p class="mb-1"><strong>Batas Bayar:</strong> ${data.expires_at}</p>` : ''}
+                </div>
+            </div>
+
+            <div class="table-responsive mb-4">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Deskripsi</th>
+                            <th class="text-end">Jumlah</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Topup Saldo - ${data.payment_method}</td>
+                            <td class="text-end">${data.formatted_amount}</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-primary">
+                            <th>Total</th>
+                            <th class="text-end">${data.formatted_amount}</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            ${data.notes ? `
+                <div class="mb-3">
+                    <h6>Catatan:</h6>
+                    <p>${data.notes}</p>
+                </div>
+            ` : ''}
+
+            ${data.admin_notes ? `
+                <div class="mb-3">
+                    <h6>Catatan Admin:</h6>
+                    <p>${data.admin_notes}</p>
+                </div>
+            ` : ''}
+
+            <div class="text-center mt-4 pt-4 border-top">
+                <small class="text-muted">
+                    Invoice ini dibuat secara otomatis oleh sistem.<br>
+                    Untuk pertanyaan, silakan hubungi customer service kami.
+                </small>
+            </div>
+        </div>
+    `;
+
+    $('#invoiceContent').html(html);
+}
+</script>
+@endpush

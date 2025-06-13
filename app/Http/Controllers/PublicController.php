@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\RentalBlacklist;
 use App\Models\Setting;
 use App\Models\Sponsor;
+use App\Models\UserUnlock;
 use App\Helpers\PhoneHelper;
 
 class PublicController extends Controller
@@ -61,6 +62,7 @@ class PublicController extends Controller
             ->map(function ($item) use ($search) {
                 // Cek apakah user sudah login (rental terverifikasi)
                 $isAuthenticated = auth()->check();
+                $user = auth()->user();
 
                 // Normalisasi search untuk nomor HP
                 $normalizedSearch = PhoneHelper::normalize($search);
@@ -70,8 +72,11 @@ class PublicController extends Controller
                 $isSearchingName = stripos($item->nama_lengkap, $search) !== false;
                 $isSearchingPhone = $item->no_hp === $search || $item->no_hp === $normalizedSearch;
 
-                // Jika user sudah login (rental terverifikasi), tampilkan data lengkap
-                if ($isAuthenticated) {
+                // Cek apakah user sudah unlock data ini
+                $isUnlocked = $isAuthenticated && $user->hasUnlockedData($item->id);
+
+                // Jika user sudah login (rental terverifikasi) atau sudah unlock data, tampilkan data lengkap
+                if ($isAuthenticated && ($user->role === 'pengusaha_rental' || $isUnlocked)) {
                     return [
                         'id' => $item->id,
                         'nama_lengkap' => $item->nama_lengkap,
@@ -82,7 +87,7 @@ class PublicController extends Controller
                         'tanggal_kejadian' => $item->tanggal_kejadian->format('d/m/Y'),
                         'jumlah_laporan' => RentalBlacklist::countReportsByNik($item->nik),
                         'pelapor' => $item->user->name,
-                        'is_verified' => true // Menandakan rental terverifikasi
+                        'is_verified' => true // Menandakan data sudah terverifikasi/unlocked
                     ];
                 }
 
@@ -236,5 +241,58 @@ class PublicController extends Controller
             return $start . $middle . $end;
         }
         return $fullPhone;
+    }
+
+    /**
+     * Unlock blacklist data for authenticated user
+     */
+    public function unlockData($id)
+    {
+        $user = auth()->user();
+        $blacklist = RentalBlacklist::findOrFail($id);
+
+        // Check if user is pengusaha_rental (they get free access)
+        if ($user->role === 'pengusaha_rental') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pengusaha rental mendapat akses gratis ke semua data'
+            ]);
+        }
+
+        // Check if already unlocked
+        if ($user->hasUnlockedData($id)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data sudah dibuka sebelumnya'
+            ]);
+        }
+
+        // Determine price based on rental type
+        $detailPrices = [
+            'Rental Mobil' => 1500,
+            'Rental Motor' => 1500,
+            'Rental Kamera' => 1000,
+            'Rental Lainnya' => 800,
+        ];
+
+        $price = $detailPrices[$blacklist->jenis_rental] ?? 800;
+
+        try {
+            $unlock = $user->unlockData($id, $price, "Unlock data blacklist: {$blacklist->nama_lengkap}");
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data berhasil dibuka!',
+                'data' => [
+                    'amount_paid' => $price,
+                    'remaining_balance' => $user->getCurrentBalance()
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 400);
+        }
     }
 }

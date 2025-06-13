@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\UserBalance;
 use App\Models\BalanceTransaction;
 use App\Models\TopupRequest;
+use App\Models\UserUnlock;
 
 class User extends Authenticatable
 {
@@ -92,6 +93,12 @@ class User extends Authenticatable
         return $this->hasMany(TopupRequest::class);
     }
 
+    // Relasi user unlocks
+    public function userUnlocks(): HasMany
+    {
+        return $this->hasMany(UserUnlock::class);
+    }
+
     // Get current balance
     public function getCurrentBalance()
     {
@@ -161,5 +168,43 @@ class User extends Authenticatable
         ]);
 
         return $balanceAfter;
+    }
+
+    // Check if user has unlocked specific blacklist data
+    public function hasUnlockedData($blacklistId)
+    {
+        return UserUnlock::hasUnlocked($this->id, $blacklistId);
+    }
+
+    // Get all unlocked blacklist IDs for this user
+    public function getUnlockedDataIds()
+    {
+        return UserUnlock::getUnlockedIds($this->id);
+    }
+
+    // Unlock blacklist data
+    public function unlockData($blacklistId, $amount, $description = 'Unlock data blacklist')
+    {
+        // Check if already unlocked
+        if ($this->hasUnlockedData($blacklistId)) {
+            throw new \Exception('Data sudah dibuka sebelumnya');
+        }
+
+        // Check balance
+        if (!$this->hasEnoughBalance($amount)) {
+            throw new \Exception('Saldo tidak mencukupi');
+        }
+
+        // Deduct balance
+        $this->deductBalance($amount, $description, UserUnlock::class, $blacklistId);
+
+        // Create unlock record
+        $unlock = $this->userUnlocks()->create([
+            'blacklist_id' => $blacklistId,
+            'amount_paid' => $amount,
+            'unlocked_at' => now()
+        ]);
+
+        return $unlock;
     }
 }

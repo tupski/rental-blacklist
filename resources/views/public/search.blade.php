@@ -3,144 +3,172 @@
 @section('title', 'Cari Data Blacklist Rental')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <!-- Hero Section -->
-    <div class="text-center py-12">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">
-            <i class="fas fa-shield-alt text-red-600 mr-3"></i>
-            Sistem Blacklist Rental Indonesia
-        </h1>
-        <p class="text-xl text-gray-600 mb-8">
-            Cek data blacklist pelanggan rental sebelum menyewakan barang Anda
-        </p>
-        
-        <!-- Search Form -->
-        <div class="max-w-2xl mx-auto">
-            <form id="searchForm" class="flex flex-col sm:flex-row gap-4">
-                <div class="flex-1">
-                    <input 
-                        type="text" 
-                        id="searchInput" 
-                        name="search" 
-                        placeholder="Masukkan NIK atau Nama Lengkap (min. 3 karakter)"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-lg"
-                        required
-                        minlength="3"
-                    >
-                </div>
-                <button 
-                    type="submit" 
-                    class="px-8 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-200"
-                    id="searchBtn"
-                >
-                    <i class="fas fa-search mr-2"></i>
-                    Cari
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Loading -->
-    <div id="loading" class="text-center py-8 hidden">
-        <div class="inline-flex items-center px-4 py-2 font-semibold leading-6 text-sm shadow rounded-md text-white bg-red-500 transition ease-in-out duration-150">
-            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            Mencari data...
-        </div>
-    </div>
-
-    <!-- Results -->
-    <div id="results" class="hidden">
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-            <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-900">
-                    <i class="fas fa-list mr-2"></i>
-                    Hasil Pencarian
-                </h3>
-                <p class="text-sm text-gray-600 mt-1" id="resultCount"></p>
-            </div>
-            
-            <div id="resultsList" class="divide-y divide-gray-200">
-                <!-- Results will be populated here -->
-            </div>
-        </div>
-    </div>
-
-    <!-- No Results -->
-    <div id="noResults" class="text-center py-12 hidden">
-        <div class="bg-green-50 border border-green-200 rounded-lg p-8">
-            <i class="fas fa-check-circle text-green-500 text-4xl mb-4"></i>
-            <h3 class="text-lg font-semibold text-green-800 mb-2">Data Tidak Ditemukan</h3>
-            <p class="text-green-700">
-                Tidak ada data blacklist yang ditemukan untuk pencarian Anda. 
-                Ini adalah kabar baik!
+<div class="bg-light min-vh-100">
+    <div class="container py-4">
+        <!-- Hero Section -->
+        <div class="text-center py-5">
+            <h1 class="display-4 fw-bold text-dark mb-4">
+                <i class="fas fa-shield-alt text-danger me-3"></i>
+                Sistem Blacklist Rental Indonesia
+            </h1>
+            <p class="lead text-muted mb-5">
+                Cek data blacklist pelanggan rental sebelum menyewakan barang Anda
             </p>
-        </div>
-    </div>
 
-    <!-- Info Section -->
-    <div class="mt-16 grid md:grid-cols-2 gap-8">
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">
-                <i class="fas fa-info-circle text-blue-500 mr-2"></i>
-                Untuk Pengusaha Rental
-            </h3>
-            <ul class="space-y-2 text-gray-600">
-                <li class="flex items-start">
-                    <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
-                    <span>Akses data lengkap tanpa sensor</span>
-                </li>
-                <li class="flex items-start">
-                    <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
-                    <span>Tambah laporan blacklist baru</span>
-                </li>
-                <li class="flex items-start">
-                    <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
-                    <span>Kelola laporan Anda sendiri</span>
-                </li>
-                <li class="flex items-start">
-                    <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
-                    <span>100% GRATIS untuk pengusaha rental</span>
-                </li>
-            </ul>
-            <div class="mt-6">
-                <a href="{{ route('register') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-200">
-                    <i class="fas fa-user-plus mr-2"></i>
-                    Daftar Sekarang
-                </a>
+            <!-- Search Form -->
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <form id="searchForm">
+                                <div class="row g-3">
+                                    <div class="col-md-8">
+                                        <input
+                                            type="text"
+                                            id="searchInput"
+                                            name="search"
+                                            placeholder="Masukkan NIK, Nama Lengkap, atau Nomor HP (min. 3 karakter)"
+                                            class="form-control form-control-lg"
+                                            required
+                                            minlength="3"
+                                        >
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button
+                                            type="submit"
+                                            class="btn btn-danger btn-lg w-100"
+                                            id="searchBtn"
+                                        >
+                                            <i class="fas fa-search me-2"></i>
+                                            Cari
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">
-                <i class="fas fa-eye text-purple-500 mr-2"></i>
-                Untuk Pengguna Umum
-            </h3>
-            <ul class="space-y-2 text-gray-600">
-                <li class="flex items-start">
-                    <i class="fas fa-search text-blue-500 mr-2 mt-1"></i>
-                    <span>Cari data dengan NIK atau nama</span>
-                </li>
-                <li class="flex items-start">
-                    <i class="fas fa-eye-slash text-orange-500 mr-2 mt-1"></i>
-                    <span>Data ditampilkan dengan sensor</span>
-                </li>
-                <li class="flex items-start">
-                    <i class="fas fa-credit-card text-green-500 mr-2 mt-1"></i>
-                    <span>Beli kredit untuk lihat data lengkap</span>
-                </li>
-                <li class="flex items-start">
-                    <i class="fas fa-shield-alt text-red-500 mr-2 mt-1"></i>
-                    <span>Data terverifikasi dan terpercaya</span>
-                </li>
-            </ul>
-            <div class="mt-6">
-                <button class="inline-flex items-center px-4 py-2 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition duration-200" onclick="alert('Fitur pembayaran akan segera hadir!')">
-                    <i class="fas fa-coins mr-2"></i>
-                    Beli Kredit
-                </button>
+        <!-- Loading -->
+        <div id="loading" class="text-center py-4 d-none">
+            <div class="d-inline-flex align-items-center px-4 py-2 bg-danger text-white rounded shadow">
+                <div class="spinner-border spinner-border-sm me-3" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                Mencari data...
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div id="results" class="d-none">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-list text-primary me-2"></i>
+                        Hasil Pencarian
+                    </h3>
+                    <p class="text-muted small mb-0 mt-1" id="resultCount"></p>
+                </div>
+
+                <div id="resultsList" class="card-body p-0">
+                    <!-- Results will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- No Results -->
+        <div id="noResults" class="text-center py-5 d-none">
+            <div class="card border-success">
+                <div class="card-body p-5">
+                    <i class="fas fa-check-circle text-success display-1 mb-4"></i>
+                    <h3 class="text-success mb-3">Data Tidak Ditemukan</h3>
+                    <p class="text-muted">
+                        Tidak ada data blacklist yang ditemukan untuk pencarian Anda.
+                        Ini adalah kabar baik!
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Section -->
+        <div class="row g-4 mt-5">
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <h3 class="h5 fw-bold text-dark mb-4">
+                            <i class="fas fa-info-circle text-primary me-2"></i>
+                            Untuk Pengusaha Rental
+                        </h3>
+                        <ul class="list-unstyled">
+                            <li class="d-flex align-items-start mb-3">
+                                <i class="fas fa-check text-success me-3 mt-1"></i>
+                                <span>Akses data lengkap tanpa sensor</span>
+                            </li>
+                            <li class="d-flex align-items-start mb-3">
+                                <i class="fas fa-check text-success me-3 mt-1"></i>
+                                <span>Tambah laporan blacklist baru</span>
+                            </li>
+                            <li class="d-flex align-items-start mb-3">
+                                <i class="fas fa-check text-success me-3 mt-1"></i>
+                                <span>Kelola laporan Anda sendiri</span>
+                            </li>
+                            <li class="d-flex align-items-start mb-3">
+                                <i class="fas fa-check text-success me-3 mt-1"></i>
+                                <span>100% GRATIS untuk pengusaha rental</span>
+                            </li>
+                        </ul>
+                        <div class="mt-4">
+                            <a href="{{ route('register') }}" class="btn btn-primary">
+                                <i class="fas fa-user-plus me-2"></i>
+                                Daftar Sekarang
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <h3 class="h5 fw-bold text-dark mb-4">
+                            <i class="fas fa-eye text-info me-2"></i>
+                            Untuk Pengguna Umum
+                        </h3>
+                        <ul class="list-unstyled">
+                            <li class="d-flex align-items-start mb-3">
+                                <i class="fas fa-search text-primary me-3 mt-1"></i>
+                                <span>Cari data dengan NIK, nama, atau HP</span>
+                            </li>
+                            <li class="d-flex align-items-start mb-3">
+                                <i class="fas fa-eye-slash text-warning me-3 mt-1"></i>
+                                <span>Data ditampilkan dengan sensor</span>
+                            </li>
+                            <li class="d-flex align-items-start mb-3">
+                                <i class="fas fa-credit-card text-success me-3 mt-1"></i>
+                                <span>Beli kredit untuk lihat data lengkap</span>
+                            </li>
+                            <li class="d-flex align-items-start mb-3">
+                                <i class="fas fa-shield-alt text-danger me-3 mt-1"></i>
+                                <span>Data terverifikasi dan terpercaya</span>
+                            </li>
+                        </ul>
+                        <div class="mt-4">
+                            @auth
+                                <a href="{{ route('topup.index') }}" class="btn btn-success">
+                                    <i class="fas fa-coins me-2"></i>
+                                    Beli Kredit
+                                </a>
+                            @else
+                                <button class="btn btn-success" onclick="alert('Silakan login terlebih dahulu untuk membeli kredit')">
+                                    <i class="fas fa-coins me-2"></i>
+                                    Beli Kredit
+                                </button>
+                            @endauth
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -176,7 +204,7 @@ $(document).ready(function() {
 
     function performSearch() {
         const search = $('#searchInput').val().trim();
-        
+
         if (search.length < 3) {
             alert('Pencarian minimal 3 karakter');
             return;
@@ -186,21 +214,36 @@ $(document).ready(function() {
         updateURL(search);
 
         // Show loading
-        $('#loading').removeClass('hidden');
-        $('#results').addClass('hidden');
-        $('#noResults').addClass('hidden');
-        $('#searchBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-2"></i>Mencari...');
+        $('#loading').removeClass('d-none');
+        $('#results').addClass('d-none');
+        $('#noResults').addClass('d-none');
+        $('#searchBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Mencari...');
 
         // Perform AJAX search
         $.ajax({
             url: '{{ route("public.search") }}',
             method: 'POST',
-            data: { search: search },
+            data: {
+                search: search,
+                _token: '{{ csrf_token() }}'
+            },
             success: function(response) {
                 if (response.success && response.data.length > 0) {
                     displayResults(response.data, response.total);
+                    // Auto scroll to results
+                    setTimeout(function() {
+                        $('html, body').animate({
+                            scrollTop: $('#results').offset().top - 100
+                        }, 800);
+                    }, 100);
                 } else {
                     showNoResults();
+                    // Auto scroll to no results
+                    setTimeout(function() {
+                        $('html, body').animate({
+                            scrollTop: $('#noResults').offset().top - 100
+                        }, 800);
+                    }, 100);
                 }
             },
             error: function(xhr) {
@@ -208,76 +251,91 @@ $(document).ready(function() {
                 alert('Terjadi kesalahan saat mencari data');
             },
             complete: function() {
-                $('#loading').addClass('hidden');
-                $('#searchBtn').prop('disabled', false).html('<i class="fas fa-search mr-2"></i>Cari');
+                $('#loading').addClass('d-none');
+                $('#searchBtn').prop('disabled', false).html('<i class="fas fa-search me-2"></i>Cari');
             }
         });
     }
 
     function displayResults(data, total) {
         $('#resultCount').text(`Ditemukan ${total} data blacklist`);
-        
+
         let html = '';
-        data.forEach(function(item) {
+        data.forEach(function(item, index) {
+            const isUnlocked = item.is_verified || false; // Check if user has unlocked this data
+            const lockIcon = isUnlocked ? '' : '<i class="fas fa-lock text-warning ms-2" title="Data disensor - beli kredit untuk melihat lengkap"></i>';
+
             html += `
-                <div class="p-6 hover:bg-gray-50 transition duration-200">
-                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-                        <div class="flex-1">
-                            <div class="flex items-center mb-2">
-                                <h4 class="text-lg font-semibold text-gray-900">${item.nama_lengkap}</h4>
-                                <span class="ml-3 px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-full">
+                <div class="border-bottom p-4 ${index === 0 ? 'border-top' : ''}">
+                    <div class="row">
+                        <div class="col-lg-9">
+                            <div class="d-flex align-items-center mb-3">
+                                <h5 class="mb-0 me-3">${item.nama_lengkap}${lockIcon}</h5>
+                                <span class="badge bg-danger">
                                     ${item.jumlah_laporan} Laporan
                                 </span>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
-                                <div>
-                                    <i class="fas fa-id-card mr-2"></i>
-                                    <strong>NIK:</strong> ${item.nik}
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <small class="text-muted">
+                                        <i class="fas fa-id-card me-2"></i>
+                                        <strong>NIK:</strong> ${item.nik}
+                                    </small>
                                 </div>
-                                <div>
-                                    <i class="fas fa-phone mr-2"></i>
-                                    <strong>No HP:</strong> ${item.no_hp}
+                                <div class="col-md-6">
+                                    <small class="text-muted">
+                                        <i class="fas fa-phone me-2"></i>
+                                        <strong>No HP:</strong> ${item.no_hp}
+                                    </small>
                                 </div>
-                                <div>
-                                    <i class="fas fa-car mr-2"></i>
-                                    <strong>Jenis Rental:</strong> ${item.jenis_rental}
+                                <div class="col-md-6">
+                                    <small class="text-muted">
+                                        <i class="fas fa-car me-2"></i>
+                                        <strong>Jenis Rental:</strong> ${item.jenis_rental}
+                                    </small>
                                 </div>
-                                <div>
-                                    <i class="fas fa-calendar mr-2"></i>
-                                    <strong>Tanggal:</strong> ${item.tanggal_kejadian}
+                                <div class="col-md-6">
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-2"></i>
+                                        <strong>Tanggal:</strong> ${item.tanggal_kejadian}
+                                    </small>
                                 </div>
                             </div>
-                            <div class="mt-3">
-                                <div class="flex flex-wrap gap-2">
-                                    ${item.jenis_laporan.map(laporan => `
-                                        <span class="px-2 py-1 text-xs font-medium bg-orange-100 text-orange-800 rounded-full">
-                                            ${formatJenisLaporan(laporan)}
-                                        </span>
-                                    `).join('')}
-                                </div>
+                            <div class="mb-2">
+                                ${item.jenis_laporan.map(laporan => `
+                                    <span class="badge bg-warning text-dark me-1 mb-1">
+                                        ${formatJenisLaporan(laporan)}
+                                    </span>
+                                `).join('')}
                             </div>
-                            <div class="mt-2 text-xs text-gray-500">
-                                <i class="fas fa-user mr-1"></i>
+                            <div class="text-muted small">
+                                <i class="fas fa-user me-1"></i>
                                 Dilaporkan oleh: ${item.pelapor}
                             </div>
                         </div>
-                        <div class="mt-4 lg:mt-0 lg:ml-6">
-                            <button onclick="showDetail(${item.id})" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition duration-200">
-                                <i class="fas fa-eye mr-2"></i>
+                        <div class="col-lg-3 text-lg-end mt-3 mt-lg-0">
+                            <button onclick="showDetail(${item.id})" class="btn btn-primary btn-sm">
+                                <i class="fas fa-eye me-2"></i>
                                 Lihat Detail
                             </button>
+                            ${!isUnlocked ? `
+                                <button onclick="unlockData(${item.id})" class="btn btn-success btn-sm mt-2 w-100">
+                                    <i class="fas fa-unlock me-2"></i>
+                                    Buka Sensor
+                                </button>
+                            ` : ''}
                         </div>
                     </div>
                 </div>
             `;
         });
-        
+
         $('#resultsList').html(html);
-        $('#results').removeClass('hidden');
+        $('#results').removeClass('d-none');
     }
 
     function showNoResults() {
-        $('#noResults').removeClass('hidden');
+        $('#noResults').removeClass('d-none');
     }
 
     function updateURL(search) {
@@ -305,7 +363,8 @@ $(document).ready(function() {
             method: 'GET',
             success: function(response) {
                 if (response.success) {
-                    alert(response.message);
+                    // Show detail in modal or alert
+                    showDetailModal(response.data, response.message);
                 }
             },
             error: function(xhr) {
@@ -314,6 +373,125 @@ $(document).ready(function() {
             }
         });
     };
+
+    // Global function for unlocking data
+    window.unlockData = function(id) {
+        @auth
+            if (confirm('Apakah Anda ingin membuka sensor data ini? Biaya akan dipotong dari saldo Anda.')) {
+                $.ajax({
+                    url: `/unlock-data/${id}`,
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            alert('Data berhasil dibuka!');
+                            // Refresh search results
+                            performSearch();
+                        } else {
+                            alert(response.message || 'Gagal membuka data');
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Unlock error:', xhr);
+                        const response = xhr.responseJSON;
+                        alert(response?.message || 'Terjadi kesalahan saat membuka data');
+                    }
+                });
+            }
+        @else
+            alert('Silakan login terlebih dahulu untuk membuka sensor data');
+        @endauth
+    };
+
+    function showDetailModal(data, message) {
+        let modalHtml = `
+            <div class="modal fade" id="detailModal" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                <i class="fas fa-info-circle text-primary me-2"></i>
+                                Detail Blacklist
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                ${message}
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <strong>Nama Lengkap:</strong><br>
+                                    ${data.nama_lengkap}
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>NIK:</strong><br>
+                                    ${data.nik}
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>No HP:</strong><br>
+                                    ${data.no_hp}
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Jenis Rental:</strong><br>
+                                    ${data.jenis_rental}
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Tanggal Kejadian:</strong><br>
+                                    ${data.tanggal_kejadian}
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Jumlah Laporan:</strong><br>
+                                    ${data.jumlah_laporan}
+                                </div>
+                                <div class="col-12">
+                                    <strong>Jenis Laporan:</strong><br>
+                                    ${data.jenis_laporan.map(laporan => `
+                                        <span class="badge bg-warning text-dark me-1">
+                                            ${formatJenisLaporan(laporan)}
+                                        </span>
+                                    `).join('')}
+                                </div>
+                                <div class="col-12">
+                                    <strong>Dilaporkan oleh:</strong><br>
+                                    ${data.pelapor}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                            @auth
+                                <a href="{{ route('topup.index') }}" class="btn btn-success">
+                                    <i class="fas fa-unlock me-2"></i>
+                                    Beli Kredit
+                                </a>
+                            @else
+                                <a href="{{ route('register') }}" class="btn btn-primary">
+                                    <i class="fas fa-user-plus me-2"></i>
+                                    Daftar Gratis
+                                </a>
+                            @endauth
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Remove existing modal if any
+        $('#detailModal').remove();
+
+        // Add modal to body and show
+        $('body').append(modalHtml);
+        $('#detailModal').modal('show');
+
+        // Remove modal from DOM when hidden
+        $('#detailModal').on('hidden.bs.modal', function() {
+            $(this).remove();
+        });
+    }
 });
 </script>
 @endpush

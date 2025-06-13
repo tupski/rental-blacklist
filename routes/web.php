@@ -12,12 +12,16 @@ use App\Http\Controllers\TopupController;
 use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\Admin\SponsorController as AdminSponsorController;
 use App\Http\Controllers\Admin\TopupController as AdminTopupController;
+use App\Http\Controllers\InvoiceController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
 Route::get('/', [PublicController::class, 'index'])->name('home');
 Route::post('/search', [PublicController::class, 'search'])->name('public.search');
 Route::get('/detail/{id}', [PublicController::class, 'detail'])->name('public.detail');
+
+// Unlock data route (requires authentication)
+Route::middleware('auth')->post('/unlock-data/{id}', [PublicController::class, 'unlockData'])->name('public.unlock');
 
 // Sponsor routes
 Route::get('/sponsor', [SponsorController::class, 'index'])->name('sponsors.index');
@@ -67,6 +71,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/topup', [TopupController::class, 'store'])->name('topup.store');
     Route::get('/topup/confirm/{invoice}', [TopupController::class, 'confirm'])->name('topup.confirm');
     Route::get('/balance/history', [BalanceController::class, 'history'])->name('balance.history');
+
+    // Invoice routes
+    Route::get('/invoice/{id}', [InvoiceController::class, 'show'])->name('invoice.show');
+    Route::get('/invoice/{id}/download', [InvoiceController::class, 'download'])->name('invoice.download');
 
     // Admin Sponsors
     Route::prefix('admin/sponsors')->name('admin.sponsors.')->group(function () {

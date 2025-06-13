@@ -78,6 +78,8 @@ class TopupController extends Controller
 
     public function create()
     {
+        $user = Auth::user();
+        $currentBalance = $user->getCurrentBalance();
         $packages = $this->topupPackages;
         $detailPrices = $this->detailPrices;
 
@@ -107,7 +109,7 @@ class TopupController extends Controller
             ]
         ];
 
-        return view('topup.create', compact('packages', 'detailPrices', 'paymentMethods'));
+        return view('topup.create', compact('currentBalance', 'packages', 'detailPrices', 'paymentMethods'));
     }
 
     public function store(Request $request)
