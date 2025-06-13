@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\RentalBlacklist;
 use App\Models\Setting;
+use App\Models\Sponsor;
+use App\Helpers\PhoneHelper;
 
 class PublicController extends Controller
 {
@@ -37,7 +39,11 @@ class PublicController extends Controller
             'whatsapp_number' => Setting::get('whatsapp_number', ''),
         ];
 
-        return view('home', compact('stats', 'settings'));
+        // Get sponsors
+        $homeTopSponsors = Sponsor::active()->position('home_top')->orderBy('sort_order')->get();
+        $homeBottomSponsors = Sponsor::active()->position('home_bottom')->orderBy('sort_order')->get();
+
+        return view('home', compact('stats', 'settings', 'homeTopSponsors', 'homeBottomSponsors'));
     }
 
     public function search(Request $request)
@@ -53,20 +59,64 @@ class PublicController extends Controller
             ->with('user')
             ->get()
             ->map(function ($item) use ($search) {
-                // Jangan sensor value yang dicari
+                // Cek apakah user sudah login (rental terverifikasi)
+                $isAuthenticated = auth()->check();
+
+                // Normalisasi search untuk nomor HP
+                $normalizedSearch = PhoneHelper::normalize($search);
+
+                // Cek apakah search cocok dengan data
                 $isSearchingNik = $item->nik === $search;
                 $isSearchingName = stripos($item->nama_lengkap, $search) !== false;
+                $isSearchingPhone = $item->no_hp === $search || $item->no_hp === $normalizedSearch;
+
+                // Jika user sudah login (rental terverifikasi), tampilkan data lengkap
+                if ($isAuthenticated) {
+                    return [
+                        'id' => $item->id,
+                        'nama_lengkap' => $item->nama_lengkap,
+                        'nik' => $item->nik,
+                        'no_hp' => $item->no_hp,
+                        'jenis_rental' => $item->jenis_rental,
+                        'jenis_laporan' => $item->jenis_laporan,
+                        'tanggal_kejadian' => $item->tanggal_kejadian->format('d/m/Y'),
+                        'jumlah_laporan' => RentalBlacklist::countReportsByNik($item->nik),
+                        'pelapor' => $item->user->name,
+                        'is_verified' => true // Menandakan rental terverifikasi
+                    ];
+                }
+
+                // Untuk user tidak login, gunakan logika sensor dengan highlighting
+                $displayNama = $item->sensored_nama;
+                $displayNik = $item->sensored_nik;
+                $displayPhone = $item->sensored_no_hp;
+
+                // Jika search cocok dengan nama, tampilkan bagian yang cocok
+                if ($isSearchingName) {
+                    $displayNama = $this->highlightSearchInName($item->nama_lengkap, $search);
+                }
+
+                // Jika search cocok dengan NIK, tampilkan bagian yang cocok
+                if ($isSearchingNik) {
+                    $displayNik = $this->highlightSearchInNik($item->nik, $search);
+                }
+
+                // Jika search cocok dengan nomor HP, tampilkan bagian yang cocok
+                if ($isSearchingPhone) {
+                    $displayPhone = $this->highlightSearchInPhone($item->no_hp, $search, $normalizedSearch);
+                }
 
                 return [
                     'id' => $item->id,
-                    'nama_lengkap' => $isSearchingName ? $item->nama_lengkap : $item->sensored_nama,
-                    'nik' => $isSearchingNik ? $item->nik : $item->sensored_nik,
-                    'no_hp' => $item->sensored_no_hp,
+                    'nama_lengkap' => $displayNama,
+                    'nik' => $displayNik,
+                    'no_hp' => $displayPhone,
                     'jenis_rental' => $item->jenis_rental,
                     'jenis_laporan' => $item->jenis_laporan,
                     'tanggal_kejadian' => $item->tanggal_kejadian->format('d/m/Y'),
                     'jumlah_laporan' => RentalBlacklist::countReportsByNik($item->nik),
-                    'pelapor' => $item->user->name
+                    'pelapor' => $item->user->name,
+                    'is_verified' => false
                 ];
             });
 
@@ -95,5 +145,96 @@ class PublicController extends Controller
                 'pelapor' => $blacklist->user->name
             ]
         ]);
+    }
+
+    /**
+     * Highlight search term in name while keeping other parts censored
+     */
+    private function highlightSearchInName($fullName, $search)
+    {
+        $words = explode(' ', $fullName);
+        $result = [];
+
+        foreach ($words as $word) {
+            if (stripos($word, $search) !== false) {
+                // Jika kata mengandung search term, tampilkan utuh
+                $result[] = $word;
+            } else {
+                // Sensor kata yang tidak mengandung search term
+                if (strlen($word) <= 2) {
+                    $result[] = $word;
+                } else {
+                    $first = substr($word, 0, 1);
+                    $last = substr($word, -1);
+                    $middle = str_repeat('*', strlen($word) - 2);
+                    $result[] = $first . $middle . $last;
+                }
+            }
+        }
+
+        return implode(' ', $result);
+    }
+
+    /**
+     * Highlight search term in NIK while keeping other parts censored
+     */
+    private function highlightSearchInNik($fullNik, $search)
+    {
+        $searchPos = strpos($fullNik, $search);
+        if ($searchPos !== false) {
+            $before = substr($fullNik, 0, $searchPos);
+            $after = substr($fullNik, $searchPos + strlen($search));
+
+            // Sensor bagian sebelum dan sesudah search
+            $sensoredBefore = str_repeat('*', strlen($before));
+            $sensoredAfter = str_repeat('*', strlen($after));
+
+            return $sensoredBefore . $search . $sensoredAfter;
+        }
+
+        // Fallback ke sensor biasa
+        if (strlen($fullNik) >= 8) {
+            $start = substr($fullNik, 0, 4);
+            $end = substr($fullNik, -4);
+            $middle = str_repeat('*', strlen($fullNik) - 8);
+            return $start . $middle . $end;
+        }
+        return $fullNik;
+    }
+
+    /**
+     * Highlight search term in phone while keeping other parts censored
+     */
+    private function highlightSearchInPhone($fullPhone, $originalSearch, $normalizedSearch)
+    {
+        // Cari posisi search term
+        $searchTerm = $originalSearch;
+        $searchPos = strpos($fullPhone, $searchTerm);
+
+        // Jika tidak ditemukan dengan original search, coba dengan normalized
+        if ($searchPos === false && $normalizedSearch !== $originalSearch) {
+            $searchTerm = $normalizedSearch;
+            $searchPos = strpos($fullPhone, $searchTerm);
+        }
+
+        if ($searchPos !== false) {
+            $before = substr($fullPhone, 0, $searchPos);
+            $after = substr($fullPhone, $searchPos + strlen($searchTerm));
+
+            // Sensor bagian sebelum dan sesudah search
+            $sensoredBefore = str_repeat('*', strlen($before));
+            $sensoredAfter = str_repeat('*', strlen($after));
+
+            return $sensoredBefore . $searchTerm . $sensoredAfter;
+        }
+
+        // Fallback ke sensor biasa
+        if (strlen($fullPhone) >= 6) {
+            $start = substr($fullPhone, 0, 4);
+            $end = substr($fullPhone, -2);
+            $middle = str_repeat('*', strlen($fullPhone) - 6);
+            return $start . $middle . $end;
+        }
+        return $fullPhone;
     }
 }

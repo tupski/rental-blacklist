@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\RentalBlacklist;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use App\Helpers\PhoneHelper;
 
 class BlacklistApiController extends Controller
 {
@@ -28,15 +29,39 @@ class BlacklistApiController extends Controller
             ->limit($limit)
             ->get()
             ->map(function ($item) use ($search) {
-                // Don't censor the searched value
+                // Normalisasi search untuk nomor HP
+                $normalizedSearch = PhoneHelper::normalize($search);
+
+                // Cek apakah search cocok dengan data
                 $isSearchingNik = $item->nik === $search;
                 $isSearchingName = stripos($item->nama_lengkap, $search) !== false;
+                $isSearchingPhone = $item->no_hp === $search || $item->no_hp === $normalizedSearch;
+
+                // Logika sensor: tampilkan query yang dicari, sensor yang lain
+                $displayNama = $item->sensored_nama;
+                $displayNik = $item->sensored_nik;
+                $displayPhone = $item->sensored_no_hp;
+
+                // Jika search cocok dengan nama, tampilkan bagian yang cocok
+                if ($isSearchingName) {
+                    $displayNama = $this->highlightSearchInName($item->nama_lengkap, $search);
+                }
+
+                // Jika search cocok dengan NIK, tampilkan bagian yang cocok
+                if ($isSearchingNik) {
+                    $displayNik = $this->highlightSearchInNik($item->nik, $search);
+                }
+
+                // Jika search cocok dengan nomor HP, tampilkan bagian yang cocok
+                if ($isSearchingPhone) {
+                    $displayPhone = $this->highlightSearchInPhone($item->no_hp, $search, $normalizedSearch);
+                }
 
                 return [
                     'id' => $item->id,
-                    'nama_lengkap' => $isSearchingName ? $item->nama_lengkap : $item->sensored_nama,
-                    'nik' => $isSearchingNik ? $item->nik : $item->sensored_nik,
-                    'no_hp' => $item->sensored_no_hp,
+                    'nama_lengkap' => $displayNama,
+                    'nik' => $displayNik,
+                    'no_hp' => $displayPhone,
                     'jenis_rental' => $item->jenis_rental,
                     'jenis_laporan' => $item->jenis_laporan,
                     'tanggal_kejadian' => $item->tanggal_kejadian->format('Y-m-d'),
@@ -241,5 +266,96 @@ class BlacklistApiController extends Controller
             'success' => true,
             'message' => 'Blacklist data deleted successfully'
         ]);
+    }
+
+    /**
+     * Highlight search term in name while keeping other parts censored
+     */
+    private function highlightSearchInName($fullName, $search)
+    {
+        $words = explode(' ', $fullName);
+        $result = [];
+
+        foreach ($words as $word) {
+            if (stripos($word, $search) !== false) {
+                // Jika kata mengandung search term, tampilkan utuh
+                $result[] = $word;
+            } else {
+                // Sensor kata yang tidak mengandung search term
+                if (strlen($word) <= 2) {
+                    $result[] = $word;
+                } else {
+                    $first = substr($word, 0, 1);
+                    $last = substr($word, -1);
+                    $middle = str_repeat('*', strlen($word) - 2);
+                    $result[] = $first . $middle . $last;
+                }
+            }
+        }
+
+        return implode(' ', $result);
+    }
+
+    /**
+     * Highlight search term in NIK while keeping other parts censored
+     */
+    private function highlightSearchInNik($fullNik, $search)
+    {
+        $searchPos = strpos($fullNik, $search);
+        if ($searchPos !== false) {
+            $before = substr($fullNik, 0, $searchPos);
+            $after = substr($fullNik, $searchPos + strlen($search));
+
+            // Sensor bagian sebelum dan sesudah search
+            $sensoredBefore = str_repeat('*', strlen($before));
+            $sensoredAfter = str_repeat('*', strlen($after));
+
+            return $sensoredBefore . $search . $sensoredAfter;
+        }
+
+        // Fallback ke sensor biasa
+        if (strlen($fullNik) >= 8) {
+            $start = substr($fullNik, 0, 4);
+            $end = substr($fullNik, -4);
+            $middle = str_repeat('*', strlen($fullNik) - 8);
+            return $start . $middle . $end;
+        }
+        return $fullNik;
+    }
+
+    /**
+     * Highlight search term in phone while keeping other parts censored
+     */
+    private function highlightSearchInPhone($fullPhone, $originalSearch, $normalizedSearch)
+    {
+        // Cari posisi search term
+        $searchTerm = $originalSearch;
+        $searchPos = strpos($fullPhone, $searchTerm);
+
+        // Jika tidak ditemukan dengan original search, coba dengan normalized
+        if ($searchPos === false && $normalizedSearch !== $originalSearch) {
+            $searchTerm = $normalizedSearch;
+            $searchPos = strpos($fullPhone, $searchTerm);
+        }
+
+        if ($searchPos !== false) {
+            $before = substr($fullPhone, 0, $searchPos);
+            $after = substr($fullPhone, $searchPos + strlen($searchTerm));
+
+            // Sensor bagian sebelum dan sesudah search
+            $sensoredBefore = str_repeat('*', strlen($before));
+            $sensoredAfter = str_repeat('*', strlen($after));
+
+            return $sensoredBefore . $searchTerm . $sensoredAfter;
+        }
+
+        // Fallback ke sensor biasa
+        if (strlen($fullPhone) >= 6) {
+            $start = substr($fullPhone, 0, 4);
+            $end = substr($fullPhone, -2);
+            $middle = str_repeat('*', strlen($fullPhone) - 6);
+            return $start . $middle . $end;
+        }
+        return $fullPhone;
     }
 }

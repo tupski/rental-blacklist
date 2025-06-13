@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Helpers\PhoneHelper;
 
 class RentalBlacklist extends Model
 {
@@ -35,12 +36,25 @@ class RentalBlacklist extends Model
         return $this->belongsTo(User::class);
     }
 
+    // Mutator untuk normalisasi nomor HP
+    public function setNoHpAttribute($value)
+    {
+        $this->attributes['no_hp'] = PhoneHelper::normalize($value);
+    }
+
     // Scope untuk pencarian
     public function scopeSearch($query, $search)
     {
         return $query->where(function ($q) use ($search) {
             $q->where('nik', 'like', "%{$search}%")
-              ->orWhere('nama_lengkap', 'like', "%{$search}%");
+              ->orWhere('nama_lengkap', 'like', "%{$search}%")
+              ->orWhere('no_hp', 'like', "%{$search}%");
+
+            // Jika search berupa nomor HP, coba normalisasi
+            $normalizedPhone = PhoneHelper::normalize($search);
+            if ($normalizedPhone !== $search && strlen($normalizedPhone) >= 8) {
+                $q->orWhere('no_hp', 'like', "%{$normalizedPhone}%");
+            }
         });
     }
 

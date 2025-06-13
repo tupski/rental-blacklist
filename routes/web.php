@@ -7,12 +7,21 @@ use App\Http\Controllers\BlacklistController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RentalController;
 use App\Http\Controllers\ApiController;
+use App\Http\Controllers\SponsorController;
+use App\Http\Controllers\TopupController;
+use App\Http\Controllers\BalanceController;
+use App\Http\Controllers\Admin\SponsorController as AdminSponsorController;
+use App\Http\Controllers\Admin\TopupController as AdminTopupController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
 Route::get('/', [PublicController::class, 'index'])->name('home');
 Route::post('/search', [PublicController::class, 'search'])->name('public.search');
 Route::get('/detail/{id}', [PublicController::class, 'detail'])->name('public.detail');
+
+// Sponsor routes
+Route::get('/sponsor', [SponsorController::class, 'index'])->name('sponsors.index');
+Route::get('/sponsorship', [SponsorController::class, 'sponsorship'])->name('sponsors.sponsorship');
 
 // Guest report routes
 Route::get('/lapor', [ReportController::class, 'create'])->name('report.create');
@@ -51,6 +60,32 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Admin Settings
     Route::get('/admin/settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('admin.settings.index');
     Route::put('/admin/settings', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('admin.settings.update');
+
+    // Topup & Balance routes
+    Route::get('/topup', [TopupController::class, 'index'])->name('topup.index');
+    Route::get('/topup/create', [TopupController::class, 'create'])->name('topup.create');
+    Route::post('/topup', [TopupController::class, 'store'])->name('topup.store');
+    Route::get('/topup/confirm/{invoice}', [TopupController::class, 'confirm'])->name('topup.confirm');
+    Route::get('/balance/history', [BalanceController::class, 'history'])->name('balance.history');
+
+    // Admin Sponsors
+    Route::prefix('admin/sponsors')->name('admin.sponsors.')->group(function () {
+        Route::get('/', [AdminSponsorController::class, 'index'])->name('index');
+        Route::get('/create', [AdminSponsorController::class, 'create'])->name('create');
+        Route::post('/', [AdminSponsorController::class, 'store'])->name('store');
+        Route::get('/{sponsor}', [AdminSponsorController::class, 'show'])->name('show');
+        Route::get('/{sponsor}/edit', [AdminSponsorController::class, 'edit'])->name('edit');
+        Route::put('/{sponsor}', [AdminSponsorController::class, 'update'])->name('update');
+        Route::delete('/{sponsor}', [AdminSponsorController::class, 'destroy'])->name('destroy');
+    });
+
+    // Admin Topup
+    Route::prefix('admin/topup')->name('admin.topup.')->group(function () {
+        Route::get('/', [AdminTopupController::class, 'index'])->name('index');
+        Route::get('/{topup}', [AdminTopupController::class, 'show'])->name('show');
+        Route::put('/{topup}/confirm', [AdminTopupController::class, 'confirm'])->name('confirm');
+        Route::put('/{topup}/reject', [AdminTopupController::class, 'reject'])->name('reject');
+    });
 });
 
 Route::middleware('auth')->group(function () {

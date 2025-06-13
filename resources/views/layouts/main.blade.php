@@ -112,6 +112,12 @@
                             API
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('sponsors.*') ? 'active fw-bold' : '' }}" href="{{ route('sponsors.index') }}">
+                            <i class="fas fa-handshake me-1"></i>
+                            Sponsor
+                        </a>
+                    </li>
                     @auth
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('dashboard*') ? 'active fw-bold' : '' }}" href="{{ route('dashboard') }}">
@@ -129,11 +135,30 @@
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
                                 <i class="fas fa-user me-1"></i>
                                 {{ Auth::user()->name }}
+                                <span class="badge bg-success ms-2">{{ Auth::user()->getFormattedBalance() }}</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li><a class="dropdown-item" href="{{ route('profile.edit') }}">
                                     <i class="fas fa-user-edit me-2"></i>Profile
                                 </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><h6 class="dropdown-header">Saldo & Kredit</h6></li>
+                                <li><a class="dropdown-item" href="{{ route('topup.index') }}">
+                                    <i class="fas fa-plus-circle me-2"></i>Topup Saldo
+                                </a></li>
+                                <li><a class="dropdown-item" href="{{ route('balance.history') }}">
+                                    <i class="fas fa-history me-2"></i>Riwayat Saldo
+                                </a></li>
+                                @if(Auth::user()->email === 'admin@example.com') {{-- Ganti dengan logic admin yang sesuai --}}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><h6 class="dropdown-header">Admin</h6></li>
+                                <li><a class="dropdown-item" href="{{ route('admin.sponsors.index') }}">
+                                    <i class="fas fa-handshake me-2"></i>Kelola Sponsor
+                                </a></li>
+                                <li><a class="dropdown-item" href="{{ route('admin.topup.index') }}">
+                                    <i class="fas fa-credit-card me-2"></i>Kelola Topup
+                                </a></li>
+                                @endif
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <form method="POST" action="{{ route('logout') }}">
@@ -166,6 +191,36 @@
     <main>
         @yield('content')
     </main>
+
+    <!-- Footer with Sponsors -->
+    @if(isset($footerSponsors) && $footerSponsors->count() > 0)
+    <footer class="bg-white border-top mt-5">
+        <div class="container py-4">
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <h6 class="text-muted mb-0">Didukung oleh:</h6>
+                </div>
+                <div class="col-md-8">
+                    <div class="d-flex flex-wrap align-items-center justify-content-md-end gap-3">
+                        @foreach($footerSponsors as $sponsor)
+                            <a href="{{ $sponsor->website_url }}" target="_blank" class="text-decoration-none">
+                                <img src="{{ $sponsor->logo_url }}"
+                                     alt="{{ $sponsor->name }}"
+                                     class="img-fluid"
+                                     style="max-height: 40px; max-width: 120px;"
+                                     title="{{ $sponsor->name }}">
+                            </a>
+                        @endforeach
+                        <a href="{{ route('sponsors.sponsorship') }}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-plus me-1"></i>
+                            Jadi Sponsor
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    @endif
 
     <!-- Scripts -->
     <script>

@@ -12,7 +12,8 @@ class BlacklistController extends Controller
 
     public function index(Request $request)
     {
-        $query = RentalBlacklist::with('user');
+        // Filter hanya laporan dari user yang sedang login
+        $query = RentalBlacklist::with('user')->where('user_id', Auth::id());
 
         if ($request->has('search') && $request->search) {
             $query->search($request->search);

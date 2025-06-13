@@ -23,12 +23,34 @@
                         100% GRATIS
                     </span>
                 </div>
-                <h1 class="display-3 fw-bold text-dark mb-4">
+                <h1 class="display-3 fw-bold text-dark mb-4 d-none d-md-block">
                     {{ $settings['hero_title'] }}
                 </h1>
-                <p class="lead fs-4 text-muted mb-5">
+                <p class="lead fs-4 text-muted mb-5 d-none d-md-block">
                     {{ $settings['hero_subtitle'] }}
                 </p>
+
+                <!-- Top Sponsors -->
+                @if(isset($homeTopSponsors) && $homeTopSponsors->count() > 0)
+                <div class="row justify-content-center mb-4 d-none d-md-block">
+                    <div class="col-lg-8">
+                        <div class="text-center">
+                            <small class="text-muted d-block mb-3">Didukung oleh:</small>
+                            <div class="d-flex flex-wrap justify-content-center align-items-center gap-4">
+                                @foreach($homeTopSponsors as $sponsor)
+                                    <a href="{{ $sponsor->website_url }}" target="_blank" class="text-decoration-none">
+                                        <img src="{{ $sponsor->logo_url }}"
+                                             alt="{{ $sponsor->name }}"
+                                             class="img-fluid"
+                                             style="max-height: 50px; max-width: 150px;"
+                                             title="{{ $sponsor->name }}">
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
 
                 <!-- Search Form -->
                 <div class="row justify-content-center mb-5">
@@ -42,7 +64,7 @@
                                             id="searchInput"
                                             name="search"
                                             class="form-control border-0 shadow-none"
-                                            placeholder="Masukkan NIK atau Nama Lengkap (min. 3 karakter)"
+                                            placeholder="Masukkan NIK, Nama Lengkap, atau Nomor HP (min. 3 karakter)"
                                             required
                                             minlength="3"
                                         >
@@ -51,8 +73,8 @@
                                             class="btn btn-danger px-4"
                                             id="searchBtn"
                                         >
-                                            <i class="fas fa-search me-2"></i>
-                                            Cari Sekarang
+                                            <i class="fas fa-search"></i>
+                                            <span class="d-none d-md-inline ms-2">Cari Sekarang</span>
                                         </button>
                                     </div>
                                 </form>
@@ -60,6 +82,27 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Bottom Sponsors -->
+                @if(isset($homeBottomSponsors) && $homeBottomSponsors->count() > 0)
+                <div class="row justify-content-center d-none d-md-block">
+                    <div class="col-lg-8">
+                        <div class="text-center">
+                            <div class="d-flex flex-wrap justify-content-center align-items-center gap-4">
+                                @foreach($homeBottomSponsors as $sponsor)
+                                    <a href="{{ $sponsor->website_url }}" target="_blank" class="text-decoration-none">
+                                        <img src="{{ $sponsor->logo_url }}"
+                                             alt="{{ $sponsor->name }}"
+                                             class="img-fluid"
+                                             style="max-height: 40px; max-width: 120px;"
+                                             title="{{ $sponsor->name }}">
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
     </div>
@@ -506,7 +549,10 @@ $(document).ready(function() {
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-3">
-                                <h6 class="fw-bold text-dark mb-0">${item.nama_lengkap}</h6>
+                                <div class="d-flex align-items-center">
+                                    <h6 class="fw-bold text-dark mb-0 me-2">${item.nama_lengkap}</h6>
+                                    ${item.is_verified ? '<i class="fas fa-check-circle text-primary" title="Rental Terverifikasi"></i>' : ''}
+                                </div>
                                 <span class="badge bg-danger">
                                     ${item.jumlah_laporan} Laporan
                                 </span>
@@ -618,7 +664,10 @@ $(document).ready(function() {
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-medium text-primary">Pelapor</label>
-                                <p class="mb-0">${data.pelapor}</p>
+                                <p class="mb-0">
+                                    ${data.pelapor}
+                                    ${data.is_verified ? '<i class="fas fa-check-circle text-primary ms-2" title="Rental Terverifikasi"></i>' : ''}
+                                </p>
                             </div>
                             <div class="col-12">
                                 <div class="alert alert-info">

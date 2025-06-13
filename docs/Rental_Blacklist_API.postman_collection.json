@@ -1,0 +1,303 @@
+{
+	"info": {
+		"_postman_id": "12345678-1234-1234-1234-123456789012",
+		"name": "Rental Blacklist API",
+		"description": "API Collection untuk sistem blacklist rental kendaraan",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Public API",
+			"item": [
+				{
+					"name": "Search Blacklist",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/search?q=John&limit=5",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "John",
+									"description": "Query pencarian (minimal 3 karakter)"
+								},
+								{
+									"key": "limit",
+									"value": "5",
+									"description": "Jumlah hasil maksimal (1-100)"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Blacklist Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/blacklist/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"blacklist",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Statistics",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/stats",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"stats"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Authenticated API",
+			"item": [
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Blacklist",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/blacklist?page=1&limit=10&search=motor",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"blacklist"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Halaman (default: 1)"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Jumlah data per halaman (1-100, default: 15)"
+								},
+								{
+									"key": "search",
+									"value": "motor",
+									"description": "Query pencarian (minimal 3 karakter)"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create New Blacklist",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nik\": \"3201234567891234\",\n    \"nama_lengkap\": \"Jane Smith\",\n    \"jenis_kelamin\": \"Perempuan\",\n    \"no_hp\": \"081987654321\",\n    \"alamat\": \"Jl. Sudirman No. 456, Bandung\",\n    \"jenis_rental\": \"Mobil\",\n    \"jenis_laporan\": [\"Tidak Mengembalikan\", \"Hilang Kontak\"],\n    \"kronologi\": \"Pelanggan menyewa mobil Avanza selama 1 minggu untuk keperluan mudik. Setelah masa sewa berakhir, pelanggan tidak mengembalikan kendaraan dan tidak dapat dihubungi melalui nomor yang terdaftar.\",\n    \"tanggal_kejadian\": \"2024-01-20\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/blacklist",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"blacklist"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Blacklist",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"kronologi\": \"Update: Pelanggan akhirnya mengembalikan kendaraan setelah 2 minggu terlambat dengan kondisi rusak pada bagian bemper depan.\",\n    \"jenis_laporan\": [\"Tidak Mengembalikan\", \"Merusak Kendaraan\", \"Terlambat Mengembalikan\"]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/blacklist/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"blacklist",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Blacklist",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/v1/blacklist/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"blacklist",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000/api",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "Bearer your_token_here",
+			"type": "string"
+		}
+	]
+}

@@ -214,14 +214,19 @@ $(document).ready(function() {
             method: 'GET',
             data: formData,
             success: function(response) {
+                console.log('Response received:', response);
                 if (response.success) {
                     updateTable(response.data);
                     updatePagination(response.pagination);
+                } else {
+                    // Jika tidak ada response.html, reload halaman
+                    location.reload();
                 }
             },
             error: function(xhr) {
                 console.error('Load error:', xhr);
-                alert('Terjadi kesalahan saat memuat data');
+                // Reload halaman jika ada error
+                location.reload();
             },
             complete: function() {
                 $('#loading').addClass('d-none');
