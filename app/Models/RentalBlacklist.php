@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use App\Helpers\PhoneHelper;
 
 class RentalBlacklist extends Model
@@ -34,6 +35,11 @@ class RentalBlacklist extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function fileWatermarks(): MorphMany
+    {
+        return $this->morphMany(FileWatermark::class, 'watermarkable');
     }
 
     // Mutator untuk normalisasi nomor HP
@@ -113,5 +119,40 @@ class RentalBlacklist extends Model
     public static function countUniqueUserReportsByNik($nik)
     {
         return self::where('nik', $nik)->distinct('user_id')->count('user_id');
+    }
+
+    // Get bukti files with watermark consideration
+    public function getBuktiFilesForUser($user = null)
+    {
+        if (!$this->bukti || !is_array($this->bukti)) {
+            return [];
+        }
+
+        $files = [];
+        foreach ($this->bukti as $filePath) {
+            // Check if watermarked version exists
+            $watermark = $this->fileWatermarks()->where('original_path', $filePath)->first();
+
+            if ($watermark) {
+                $files[] = [
+                    'path' => $watermark->getDisplayPath($user),
+                    'original_path' => $watermark->original_path,
+                    'is_watermarked' => $user && $user->role !== 'admin',
+                    'type' => $watermark->file_type,
+                    'size' => $watermark->formatted_file_size
+                ];
+            } else {
+                // Fallback to original file if no watermark record
+                $files[] = [
+                    'path' => $filePath,
+                    'original_path' => $filePath,
+                    'is_watermarked' => false,
+                    'type' => pathinfo($filePath, PATHINFO_EXTENSION),
+                    'size' => null
+                ];
+            }
+        }
+
+        return $files;
     }
 }

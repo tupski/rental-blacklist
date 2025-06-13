@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\TopupRequest;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\TopupRequestNotification;
 
 class TopupController extends Controller
 {
@@ -138,6 +139,9 @@ class TopupController extends Controller
             'notes' => $request->notes,
             'expires_at' => now()->addHours(24), // 24 jam untuk pembayaran
         ]);
+
+        // Send notification
+        $topupRequest->user->notify(new TopupRequestNotification($topupRequest, 'created'));
 
         if ($request->payment_method === 'manual') {
             return redirect()->route('topup.confirm', $topupRequest->invoice_number);

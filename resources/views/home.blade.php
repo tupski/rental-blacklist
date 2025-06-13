@@ -85,19 +85,72 @@
 
                 <!-- Bottom Sponsors -->
                 @if(isset($homeBottomSponsors) && $homeBottomSponsors->count() > 0)
-                <div class="row justify-content-center d-none d-md-block">
+                <div class="row justify-content-center">
                     <div class="col-lg-8">
-                        <div class="text-center">
-                            <div class="d-flex flex-wrap justify-content-center align-items-center gap-4">
-                                @foreach($homeBottomSponsors as $sponsor)
-                                    <a href="{{ $sponsor->website_url }}" target="_blank" class="text-decoration-none">
-                                        <img src="{{ $sponsor->logo_url }}"
-                                             alt="{{ $sponsor->name }}"
-                                             class="img-fluid"
-                                             style="max-height: 40px; max-width: 120px;"
-                                             title="{{ $sponsor->name }}">
-                                    </a>
-                                @endforeach
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-light text-center">
+                                <h6 class="mb-0 text-muted">
+                                    <i class="fas fa-handshake me-2"></i>
+                                    Sponsor Kami
+                                </h6>
+                            </div>
+                            <div class="card-body p-3">
+                                <!-- Desktop View -->
+                                <div class="d-none d-md-block">
+                                    <div class="d-flex flex-wrap justify-content-center align-items-center gap-4">
+                                        @foreach($homeBottomSponsors as $sponsor)
+                                            <a href="{{ $sponsor->website_url }}" target="_blank" class="text-decoration-none">
+                                                <div class="sponsor-item p-2 rounded border text-center" style="min-width: 120px;">
+                                                    <img src="{{ $sponsor->logo_url }}"
+                                                         alt="{{ $sponsor->name }}"
+                                                         class="img-fluid mb-2"
+                                                         style="max-height: 40px; max-width: 100px;"
+                                                         title="{{ $sponsor->name }}">
+                                                    <div class="small text-muted">{{ $sponsor->name }}</div>
+                                                </div>
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                </div>
+
+                                <!-- Mobile Slider -->
+                                <div class="d-md-none">
+                                    <div id="sponsorCarousel" class="carousel slide" data-bs-ride="carousel">
+                                        <div class="carousel-inner">
+                                            @foreach($homeBottomSponsors->chunk(2) as $index => $sponsorChunk)
+                                            <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+                                                <div class="row g-2 justify-content-center">
+                                                    @foreach($sponsorChunk as $sponsor)
+                                                    <div class="col-6">
+                                                        <a href="{{ $sponsor->website_url }}" target="_blank" class="text-decoration-none">
+                                                            <div class="sponsor-item p-2 rounded border text-center">
+                                                                <img src="{{ $sponsor->logo_url }}"
+                                                                     alt="{{ $sponsor->name }}"
+                                                                     class="img-fluid mb-2"
+                                                                     style="max-height: 30px; max-width: 80px;"
+                                                                     title="{{ $sponsor->name }}">
+                                                                <div class="small text-muted">{{ $sponsor->name }}</div>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                            @endforeach
+                                        </div>
+
+                                        @if($homeBottomSponsors->count() > 2)
+                                        <button class="carousel-control-prev" type="button" data-bs-target="#sponsorCarousel" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Previous</span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button" data-bs-target="#sponsorCarousel" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Next</span>
+                                        </button>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -468,6 +521,27 @@
     </div>
 </div>
 @endsection
+
+@push('styles')
+<style>
+.sponsor-item {
+    transition: all 0.3s ease;
+}
+
+.sponsor-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: rgba(0,0,0,0.5);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+}
+</style>
+@endpush
 
 @push('scripts')
 <script>

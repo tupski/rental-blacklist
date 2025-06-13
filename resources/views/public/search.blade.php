@@ -51,6 +51,84 @@
             </div>
         </div>
 
+        <!-- Sponsors Section -->
+        @if($sponsors && $sponsors->count() > 0)
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-light text-center">
+                        <h6 class="mb-0 text-muted">
+                            <i class="fas fa-handshake me-2"></i>
+                            Sponsor Kami
+                        </h6>
+                    </div>
+                    <div class="card-body p-3">
+                        <!-- Desktop View -->
+                        <div class="d-none d-md-block">
+                            <div class="row g-3 align-items-center justify-content-center">
+                                @foreach($sponsors as $sponsor)
+                                <div class="col-auto">
+                                    <a href="{{ $sponsor->url }}" target="_blank" class="text-decoration-none">
+                                        <div class="sponsor-item p-2 rounded border text-center" style="min-width: 120px;">
+                                            @if($sponsor->logo)
+                                                <img src="{{ Storage::url($sponsor->logo) }}"
+                                                     alt="{{ $sponsor->name }}"
+                                                     class="img-fluid mb-2"
+                                                     style="max-height: 40px; max-width: 100px;">
+                                            @endif
+                                            <div class="small text-muted">{{ $sponsor->name }}</div>
+                                        </div>
+                                    </a>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <!-- Mobile Slider -->
+                        <div class="d-md-none">
+                            <div id="sponsorCarousel" class="carousel slide" data-bs-ride="carousel">
+                                <div class="carousel-inner">
+                                    @foreach($sponsors->chunk(2) as $index => $sponsorChunk)
+                                    <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+                                        <div class="row g-2 justify-content-center">
+                                            @foreach($sponsorChunk as $sponsor)
+                                            <div class="col-6">
+                                                <a href="{{ $sponsor->url }}" target="_blank" class="text-decoration-none">
+                                                    <div class="sponsor-item p-2 rounded border text-center">
+                                                        @if($sponsor->logo)
+                                                            <img src="{{ Storage::url($sponsor->logo) }}"
+                                                                 alt="{{ $sponsor->name }}"
+                                                                 class="img-fluid mb-2"
+                                                                 style="max-height: 30px; max-width: 80px;">
+                                                        @endif
+                                                        <div class="small text-muted">{{ $sponsor->name }}</div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                </div>
+
+                                @if($sponsors->count() > 2)
+                                <button class="carousel-control-prev" type="button" data-bs-target="#sponsorCarousel" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#sponsorCarousel" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
         <!-- Loading -->
         <div id="loading" class="text-center py-4 d-none">
             <div class="d-inline-flex align-items-center px-4 py-2 bg-danger text-white rounded shadow">

@@ -18,6 +18,7 @@ class UserSeeder extends Seeder
             'email' => 'admin@rentalguard.id',
             'password' => bcrypt('admin123'),
             'email_verified_at' => now(),
+            'role' => 'admin',
         ]);
 
         // Pengusaha Rental Account
@@ -34,6 +35,7 @@ class UserSeeder extends Seeder
             'email' => 'user@example.com',
             'password' => bcrypt('user123'),
             'email_verified_at' => now(),
+            'role' => 'user',
         ]);
 
         // Demo Accounts untuk testing

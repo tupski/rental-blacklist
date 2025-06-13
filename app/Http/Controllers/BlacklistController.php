@@ -6,9 +6,11 @@ use Illuminate\Http\Request;
 use App\Models\RentalBlacklist;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use App\Traits\HandlesFileWatermark;
 
 class BlacklistController extends Controller
 {
+    use HandlesFileWatermark;
 
     public function index(Request $request)
     {
@@ -87,6 +89,11 @@ class BlacklistController extends Controller
             'user_id' => Auth::id()
         ]);
 
+        // Process files for watermarking
+        if (!empty($buktiFiles)) {
+            $this->processUploadedFiles($buktiFiles, $blacklist);
+        }
+
         // Check if should be validated
         $this->checkValidation($blacklist);
 
@@ -152,11 +159,14 @@ class BlacklistController extends Controller
 
         $buktiFiles = $blacklist->bukti ?? [];
 
+        $newFiles = [];
+
         // Handle new files
         if ($request->hasFile('bukti')) {
             foreach ($request->file('bukti') as $file) {
                 $path = $file->store('bukti', 'public');
                 $buktiFiles[] = $path;
+                $newFiles[] = $path;
             }
         }
 
@@ -164,10 +174,12 @@ class BlacklistController extends Controller
         if ($request->has('removed_files') && $request->removed_files) {
             $removedFiles = json_decode($request->removed_files, true);
             if (is_array($removedFiles)) {
+                // Remove files with watermark cleanup
+                $this->removeFilesWithWatermark($removedFiles, $blacklist);
+
                 foreach ($removedFiles as $removedFile) {
                     if (($key = array_search($removedFile, $buktiFiles)) !== false) {
                         unset($buktiFiles[$key]);
-                        Storage::disk('public')->delete($removedFile);
                     }
                 }
                 $buktiFiles = array_values($buktiFiles);
@@ -186,6 +198,11 @@ class BlacklistController extends Controller
             'tanggal_kejadian' => $request->tanggal_kejadian,
             'bukti' => $buktiFiles
         ]);
+
+        // Process new files for watermarking
+        if (!empty($newFiles)) {
+            $this->processUploadedFiles($newFiles, $blacklist);
+        }
 
         // Check if should be validated
         $this->checkValidation($blacklist);
@@ -210,11 +227,9 @@ class BlacklistController extends Controller
             abort(403, 'Anda hanya dapat menghapus laporan Anda sendiri');
         }
 
-        // Delete associated files
+        // Delete associated files with watermark cleanup
         if ($blacklist->bukti) {
-            foreach ($blacklist->bukti as $file) {
-                Storage::disk('public')->delete($file);
-            }
+            $this->removeFilesWithWatermark($blacklist->bukti, $blacklist);
         }
 
         $blacklist->delete();

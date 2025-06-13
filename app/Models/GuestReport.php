@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class GuestReport extends Model
 {
@@ -64,5 +65,10 @@ class GuestReport extends Model
             default:
                 return 'secondary';
         }
+    }
+
+    public function fileWatermarks(): MorphMany
+    {
+        return $this->morphMany(FileWatermark::class, 'watermarkable');
     }
 }

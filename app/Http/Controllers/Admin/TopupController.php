@@ -3,63 +3,62 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\TopupRequest;
 use Illuminate\Http\Request;
 
 class TopupController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $topups = TopupRequest::with('user')
+            ->latest()
+            ->paginate(20);
+
+        return view('admin.topup.index', compact('topups'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function show(TopupRequest $topup)
     {
-        //
+        return view('admin.topup.show', compact('topup'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function approve(TopupRequest $topup)
     {
-        //
+        $topup->update([
+            'status' => 'approved',
+            'approved_at' => now(),
+            'approved_by' => auth()->id(),
+        ]);
+
+        // Add balance to user
+        $topup->user->increment('balance', $topup->amount);
+
+        return redirect()->back()
+            ->with('success', 'Topup berhasil disetujui dan saldo user telah ditambahkan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function reject(Request $request, TopupRequest $topup)
     {
-        //
+        $request->validate([
+            'rejection_reason' => 'required|string|max:500',
+        ]);
+
+        $topup->update([
+            'status' => 'rejected',
+            'rejected_at' => now(),
+            'rejected_by' => auth()->id(),
+            'rejection_reason' => $request->rejection_reason,
+        ]);
+
+        return redirect()->back()
+            ->with('success', 'Topup berhasil ditolak.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function destroy(TopupRequest $topup)
     {
-        //
-    }
+        $topup->delete();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return redirect()->route('admin.topup.index')
+            ->with('success', 'Data topup berhasil dihapus.');
     }
 }
