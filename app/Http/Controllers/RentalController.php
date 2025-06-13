@@ -3,11 +3,42 @@
 namespace App\Http\Controllers;
 
 use App\Models\RentalRegistration;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class RentalController extends Controller
 {
+    public function index(Request $request)
+    {
+        $query = User::where('role', 'pengusaha_rental')
+                    ->where('is_verified', true);
+
+        // Apply filters
+        if ($request->filled('search')) {
+            $search = $request->get('search');
+            $query->where(function($q) use ($search) {
+                $q->where('company_name', 'like', "%{$search}%")
+                  ->orWhere('name', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('location')) {
+            $location = $request->get('location');
+            $query->where('company_address', 'like', "%{$location}%");
+        }
+
+        if ($request->filled('entity_type')) {
+            $query->where('entity_type', $request->get('entity_type'));
+        }
+
+        $rentals = $query->orderBy('company_name')
+                        ->paginate(9)
+                        ->appends($request->query());
+
+        return view('rentals.index', compact('rentals'));
+    }
+
     public function create()
     {
         return view('rental.register');

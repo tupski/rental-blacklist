@@ -33,7 +33,8 @@ Route::get('/api-docs', [ApiController::class, 'documentation'])->name('api.docs
 Route::get('/lapor', [ReportController::class, 'create'])->name('report.create');
 Route::post('/lapor', [ReportController::class, 'store'])->name('report.store');
 
-// Rental registration
+// Rental pages
+Route::get('/rentals', [RentalController::class, 'index'])->name('rentals.index');
 Route::get('/daftar-rental', [RentalController::class, 'create'])->name('rental.register');
 Route::post('/daftar-rental', [RentalController::class, 'store'])->name('rental.store');
 
