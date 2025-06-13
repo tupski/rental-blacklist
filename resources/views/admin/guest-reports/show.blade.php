@@ -28,19 +28,19 @@
                         <table class="table table-borderless">
                             <tr>
                                 <td><strong>Nama:</strong></td>
-                                <td>{{ $report->reporter_name }}</td>
+                                <td>{{ $guestReport->nama_pelapor }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Email:</strong></td>
-                                <td>{{ $report->reporter_email }}</td>
+                                <td>{{ $guestReport->email_pelapor }}</td>
                             </tr>
                             <tr>
                                 <td><strong>No. HP:</strong></td>
-                                <td>{{ $report->reporter_phone ?? '-' }}</td>
+                                <td>{{ $guestReport->no_hp_pelapor ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Tanggal Laporan:</strong></td>
-                                <td>{{ $report->created_at->format('d/m/Y H:i:s') }}</td>
+                                <td>{{ $guestReport->created_at->format('d/m/Y H:i:s') }}</td>
                             </tr>
                         </table>
                     </div>
@@ -49,19 +49,23 @@
                         <table class="table table-borderless">
                             <tr>
                                 <td><strong>Nama:</strong></td>
-                                <td>{{ $report->reported_name }}</td>
+                                <td>{{ $guestReport->nama_lengkap }}</td>
                             </tr>
                             <tr>
                                 <td><strong>NIK:</strong></td>
-                                <td>{{ $report->reported_nik }}</td>
+                                <td>{{ $guestReport->nik }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Jenis Kelamin:</strong></td>
+                                <td>{{ $guestReport->jenis_kelamin }}</td>
                             </tr>
                             <tr>
                                 <td><strong>No. HP:</strong></td>
-                                <td>{{ $report->reported_phone ?? '-' }}</td>
+                                <td>{{ $guestReport->no_hp ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Alamat:</strong></td>
-                                <td>{{ $report->reported_address ?? '-' }}</td>
+                                <td>{{ $guestReport->alamat ?? '-' }}</td>
                             </tr>
                         </table>
                     </div>
@@ -73,25 +77,41 @@
                         <table class="table table-borderless">
                             <tr>
                                 <td width="150"><strong>Jenis Rental:</strong></td>
-                                <td><span class="badge badge-info">{{ $report->rental_type }}</span></td>
+                                <td><span class="badge badge-info">{{ $guestReport->jenis_rental }}</span></td>
                             </tr>
                             <tr>
-                                <td><strong>Nama Rental:</strong></td>
-                                <td>{{ $report->rental_name ?? '-' }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Tanggal Rental:</strong></td>
+                                <td><strong>Jenis Laporan:</strong></td>
                                 <td>
-                                    @if($report->rental_date)
-                                        {{ \Carbon\Carbon::parse($report->rental_date)->format('d/m/Y') }}
+                                    @if(is_array($guestReport->jenis_laporan))
+                                        @foreach($guestReport->jenis_laporan as $type)
+                                            <span class="badge badge-secondary mr-1">{{ $type }}</span>
+                                        @endforeach
+                                    @else
+                                        <span class="badge badge-secondary">{{ $guestReport->jenis_laporan }}</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Tanggal Kejadian:</strong></td>
+                                <td>
+                                    @if($guestReport->tanggal_kejadian)
+                                        {{ $guestReport->tanggal_kejadian->format('d/m/Y') }}
                                     @else
                                         -
                                     @endif
                                 </td>
                             </tr>
                             <tr>
-                                <td><strong>Durasi:</strong></td>
-                                <td>{{ $report->rental_duration ?? '-' }}</td>
+                                <td><strong>Status:</strong></td>
+                                <td>
+                                    @if($guestReport->status === 'pending')
+                                        <span class="badge badge-warning">Pending</span>
+                                    @elseif($guestReport->status === 'approved')
+                                        <span class="badge badge-success">Approved</span>
+                                    @else
+                                        <span class="badge badge-danger">Rejected</span>
+                                    @endif
+                                </td>
                             </tr>
                         </table>
                     </div>
@@ -99,32 +119,32 @@
 
                 <div class="row mt-4">
                     <div class="col-12">
-                        <h5>Deskripsi Masalah</h5>
+                        <h5>Kronologi Kejadian</h5>
                         <div class="alert alert-warning">
-                            {{ $report->description }}
+                            {{ $guestReport->kronologi }}
                         </div>
                     </div>
                 </div>
 
-                @if($report->evidence_files)
+                @if($guestReport->bukti)
                 <div class="row mt-4">
                     <div class="col-12">
                         <h5>Bukti Pendukung</h5>
                         <div class="row">
-                            @if(is_array($report->evidence_files))
-                                @foreach($report->evidence_files as $file)
+                            @if(is_array($guestReport->bukti))
+                                @foreach($guestReport->bukti as $file)
                                 <div class="col-md-3 mb-3">
                                     @if(in_array(pathinfo($file, PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png']))
-                                        <img src="{{ asset('storage/guest-reports/' . $file) }}" 
-                                             class="img-fluid img-thumbnail" 
+                                        <img src="{{ asset('storage/' . $file) }}"
+                                             class="img-fluid img-thumbnail"
                                              style="max-height: 200px; cursor: pointer;"
-                                             onclick="showImageModal('{{ asset('storage/guest-reports/' . $file) }}')">
+                                             onclick="showImageModal('{{ asset('storage/' . $file) }}')">
                                     @else
                                         <div class="card">
                                             <div class="card-body text-center">
                                                 <i class="fas fa-file fa-3x text-muted"></i>
-                                                <p class="mt-2">{{ $file }}</p>
-                                                <a href="{{ asset('storage/guest-reports/' . $file) }}" 
+                                                <p class="mt-2">{{ basename($file) }}</p>
+                                                <a href="{{ asset('storage/' . $file) }}"
                                                    class="btn btn-sm btn-primary" target="_blank">
                                                     <i class="fas fa-download"></i> Download
                                                 </a>
@@ -135,10 +155,10 @@
                                 @endforeach
                             @else
                                 <div class="col-md-3 mb-3">
-                                    <img src="{{ asset('storage/guest-reports/' . $report->evidence_files) }}" 
-                                         class="img-fluid img-thumbnail" 
+                                    <img src="{{ asset('storage/' . $guestReport->bukti) }}"
+                                         class="img-fluid img-thumbnail"
                                          style="max-height: 200px; cursor: pointer;"
-                                         onclick="showImageModal('{{ asset('storage/guest-reports/' . $report->evidence_files) }}')">
+                                         onclick="showImageModal('{{ asset('storage/' . $guestReport->bukti) }}')">
                                 </div>
                             @endif
                         </div>
@@ -146,12 +166,12 @@
                 </div>
                 @endif
 
-                @if($report->admin_notes)
+                @if($guestReport->catatan_admin)
                 <div class="row mt-4">
                     <div class="col-12">
                         <h5>Catatan Admin</h5>
                         <div class="alert alert-info">
-                            {{ $report->admin_notes }}
+                            {{ $guestReport->catatan_admin }}
                         </div>
                     </div>
                 </div>
@@ -169,41 +189,41 @@
                 <div class="form-group">
                     <label>Status Saat Ini:</label>
                     <div>
-                        @if($report->status === 'pending')
+                        @if($guestReport->status === 'pending')
                             <span class="badge badge-warning badge-lg">Pending Review</span>
-                        @elseif($report->status === 'approved')
+                        @elseif($guestReport->status === 'approved')
                             <span class="badge badge-success badge-lg">Approved</span>
-                        @elseif($report->status === 'rejected')
+                        @elseif($guestReport->status === 'rejected')
                             <span class="badge badge-danger badge-lg">Rejected</span>
                         @else
-                            <span class="badge badge-secondary badge-lg">{{ ucfirst($report->status) }}</span>
+                            <span class="badge badge-secondary badge-lg">{{ ucfirst($guestReport->status) }}</span>
                         @endif
                     </div>
                 </div>
 
-                @if($report->status === 'pending')
-                <form action="{{ route('admin.guest-reports.approve', $report->id) }}" method="POST" class="mb-2">
+                @if($guestReport->status === 'pending')
+                <form action="{{ route('admin.guest-reports.approve', $guestReport->id) }}" method="POST" class="mb-2">
                     @csrf
-                    <button type="submit" class="btn btn-success btn-block" 
+                    <button type="submit" class="btn btn-success btn-block"
                             onclick="return confirm('Approve laporan ini? Data akan ditambahkan ke blacklist.')">
                         <i class="fas fa-check"></i> Approve Laporan
                     </button>
                 </form>
-                <button type="button" class="btn btn-danger btn-block" 
+                <button type="button" class="btn btn-danger btn-block"
                         onclick="showRejectModal()">
                     <i class="fas fa-times"></i> Reject Laporan
                 </button>
                 @endif
-                
-                <a href="{{ route('admin.guest-reports.edit', $report->id) }}" 
+
+                <a href="{{ route('admin.guest-reports.edit', $guestReport->id) }}"
                    class="btn btn-warning btn-block">
                     <i class="fas fa-edit"></i> Edit Laporan
                 </a>
-                
-                <form action="{{ route('admin.guest-reports.destroy', $report->id) }}" method="POST" class="mt-2">
+
+                <form action="{{ route('admin.guest-reports.destroy', $guestReport->id) }}" method="POST" class="mt-2">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-danger btn-block" 
+                    <button type="submit" class="btn btn-danger btn-block"
                             onclick="return confirm('Hapus laporan ini? Tindakan ini tidak dapat dibatalkan!')">
                         <i class="fas fa-trash"></i> Hapus Laporan
                     </button>
@@ -218,27 +238,27 @@
             <div class="card-body">
                 <div class="timeline">
                     <div class="time-label">
-                        <span class="bg-primary">{{ $report->created_at->format('d M Y') }}</span>
+                        <span class="bg-primary">{{ $guestReport->created_at->format('d M Y') }}</span>
                     </div>
                     <div>
                         <i class="fas fa-flag bg-blue"></i>
                         <div class="timeline-item">
-                            <span class="time"><i class="fas fa-clock"></i> {{ $report->created_at->format('H:i') }}</span>
+                            <span class="time"><i class="fas fa-clock"></i> {{ $guestReport->created_at->format('H:i') }}</span>
                             <h3 class="timeline-header">Laporan Dibuat</h3>
                             <div class="timeline-body">
-                                Laporan dibuat oleh {{ $report->reporter_name }}
+                                Laporan dibuat oleh {{ $guestReport->nama_pelapor }}
                             </div>
                         </div>
                     </div>
-                    
-                    @if($report->approved_at)
+
+                    @if($guestReport->status === 'approved')
                     <div class="time-label">
-                        <span class="bg-success">{{ $report->approved_at->format('d M Y') }}</span>
+                        <span class="bg-success">{{ $guestReport->updated_at->format('d M Y') }}</span>
                     </div>
                     <div>
                         <i class="fas fa-check bg-green"></i>
                         <div class="timeline-item">
-                            <span class="time"><i class="fas fa-clock"></i> {{ $report->approved_at->format('H:i') }}</span>
+                            <span class="time"><i class="fas fa-clock"></i> {{ $guestReport->updated_at->format('H:i') }}</span>
                             <h3 class="timeline-header">Laporan Disetujui</h3>
                             <div class="timeline-body">
                                 Laporan disetujui dan ditambahkan ke blacklist
@@ -246,23 +266,23 @@
                         </div>
                     </div>
                     @endif
-                    
-                    @if($report->rejected_at)
+
+                    @if($guestReport->status === 'rejected')
                     <div class="time-label">
-                        <span class="bg-danger">{{ $report->rejected_at->format('d M Y') }}</span>
+                        <span class="bg-danger">{{ $guestReport->updated_at->format('d M Y') }}</span>
                     </div>
                     <div>
                         <i class="fas fa-times bg-red"></i>
                         <div class="timeline-item">
-                            <span class="time"><i class="fas fa-clock"></i> {{ $report->rejected_at->format('H:i') }}</span>
+                            <span class="time"><i class="fas fa-clock"></i> {{ $guestReport->updated_at->format('H:i') }}</span>
                             <h3 class="timeline-header">Laporan Ditolak</h3>
                             <div class="timeline-body">
-                                {{ $report->admin_notes ?? 'Laporan ditolak oleh admin' }}
+                                {{ $guestReport->catatan_admin ?? 'Laporan ditolak oleh admin' }}
                             </div>
                         </div>
                     </div>
                     @endif
-                    
+
                     <div>
                         <i class="fas fa-clock bg-gray"></i>
                     </div>
@@ -282,12 +302,12 @@
                     <span>&times;</span>
                 </button>
             </div>
-            <form action="{{ route('admin.guest-reports.reject', $report->id) }}" method="POST">
+            <form action="{{ route('admin.guest-reports.reject', $guestReport->id) }}" method="POST">
                 @csrf
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="admin_notes">Alasan Penolakan <span class="text-danger">*</span></label>
-                        <textarea class="form-control" id="admin_notes" name="admin_notes" 
+                        <label for="catatan_admin">Alasan Penolakan <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="catatan_admin" name="catatan_admin"
                                   rows="3" required placeholder="Masukkan alasan penolakan..."></textarea>
                     </div>
                 </div>

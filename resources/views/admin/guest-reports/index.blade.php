@@ -48,12 +48,12 @@
                             @forelse($reports as $report)
                             <tr>
                                 <td>{{ $report->id }}</td>
-                                <td>{{ $report->reporter_name }}</td>
-                                <td>{{ $report->reporter_email }}</td>
-                                <td>{{ $report->reported_name }}</td>
-                                <td>{{ $report->reported_nik }}</td>
+                                <td>{{ $report->nama_pelapor }}</td>
+                                <td>{{ $report->email_pelapor }}</td>
+                                <td>{{ $report->nama_lengkap }}</td>
+                                <td>{{ $report->nik }}</td>
                                 <td>
-                                    <span class="badge badge-info">{{ $report->rental_type }}</span>
+                                    <span class="badge badge-info">{{ $report->jenis_rental }}</span>
                                 </td>
                                 <td>
                                     @if($report->status === 'pending')
@@ -69,32 +69,32 @@
                                 <td>{{ $report->created_at->format('d/m/Y H:i') }}</td>
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <a href="{{ route('admin.guest-reports.show', $report->id) }}" 
+                                        <a href="{{ route('admin.guest-reports.show', $report->id) }}"
                                            class="btn btn-info btn-sm" title="Lihat Detail">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        
+
                                         @if($report->status === 'pending')
-                                            <button type="button" class="btn btn-success btn-sm" 
+                                            <button type="button" class="btn btn-success btn-sm"
                                                     onclick="approveReport({{ $report->id }})" title="Approve">
                                                 <i class="fas fa-check"></i>
                                             </button>
-                                            <button type="button" class="btn btn-danger btn-sm" 
+                                            <button type="button" class="btn btn-danger btn-sm"
                                                     onclick="rejectReport({{ $report->id }})" title="Reject">
                                                 <i class="fas fa-times"></i>
                                             </button>
                                         @endif
-                                        
-                                        <a href="{{ route('admin.guest-reports.edit', $report->id) }}" 
+
+                                        <a href="{{ route('admin.guest-reports.edit', $report->id) }}"
                                            class="btn btn-warning btn-sm" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        
-                                        <form action="{{ route('admin.guest-reports.destroy', $report->id) }}" 
+
+                                        <form action="{{ route('admin.guest-reports.destroy', $report->id) }}"
                                               method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm" 
+                                            <button type="submit" class="btn btn-danger btn-sm"
                                                     title="Hapus" onclick="return confirm('Hapus laporan ini?')">
                                                 <i class="fas fa-trash"></i>
                                             </button>
@@ -208,7 +208,7 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="admin_notes">Alasan Penolakan <span class="text-danger">*</span></label>
-                        <textarea class="form-control" id="admin_notes" name="admin_notes" 
+                        <textarea class="form-control" id="admin_notes" name="admin_notes"
                                   rows="3" required placeholder="Masukkan alasan penolakan..."></textarea>
                     </div>
                 </div>
