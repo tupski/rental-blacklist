@@ -113,8 +113,8 @@
                             @foreach($blacklist->bukti as $bukti)
                             <div class="col-md-3 mb-3">
                                 @if(in_array(pathinfo($bukti, PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png']))
-                                    <img src="{{ asset('storage/bukti/' . $bukti) }}" 
-                                         class="img-fluid img-thumbnail" 
+                                    <img src="{{ asset('storage/bukti/' . $bukti) }}"
+                                         class="img-fluid img-thumbnail"
                                          style="max-height: 200px; cursor: pointer;"
                                          onclick="showImageModal('{{ asset('storage/bukti/' . $bukti) }}')">
                                 @else
@@ -122,7 +122,7 @@
                                         <div class="card-body text-center">
                                             <i class="fas fa-file fa-3x text-muted"></i>
                                             <p class="mt-2">{{ $bukti }}</p>
-                                            <a href="{{ asset('storage/bukti/' . $bukti) }}" 
+                                            <a href="{{ asset('storage/bukti/' . $bukti) }}"
                                                class="btn btn-sm btn-primary" target="_blank">
                                                 <i class="fas fa-download"></i> Download
                                             </a>
@@ -137,6 +137,101 @@
                 @endif
             </div>
         </div>
+
+        <!-- Related Reports Section -->
+        @if($relatedReports->count() > 0 || $guestReports->count() > 0)
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Laporan Terkait NIK: {{ $blacklist->nik }}</h3>
+            </div>
+            <div class="card-body">
+                @if($relatedReports->count() > 0)
+                    <h5 class="text-primary">Laporan dari User Terdaftar ({{ $relatedReports->count() }})</h5>
+                    <div class="timeline">
+                        @foreach($relatedReports as $report)
+                        <div class="time-label">
+                            <span class="bg-primary">{{ $report->created_at->format('d M Y') }}</span>
+                        </div>
+                        <div>
+                            <i class="fas fa-flag bg-{{ $report->status_validitas === 'Valid' ? 'success' : ($report->status_validitas === 'Invalid' ? 'danger' : 'warning') }}"></i>
+                            <div class="timeline-item">
+                                <span class="time">
+                                    <i class="fas fa-clock"></i> {{ $report->created_at->format('H:i') }}
+                                </span>
+                                <h3 class="timeline-header">
+                                    <span class="badge badge-info">{{ $report->jenis_rental }}</span>
+                                    @if($report->status_validitas === 'Valid')
+                                        <span class="badge badge-success">Valid</span>
+                                    @elseif($report->status_validitas === 'Invalid')
+                                        <span class="badge badge-danger">Invalid</span>
+                                    @else
+                                        <span class="badge badge-warning">Pending</span>
+                                    @endif
+                                </h3>
+                                <div class="timeline-body">
+                                    <strong>Pelapor:</strong> {{ $report->user->name ?? 'N/A' }}<br>
+                                    <strong>Masalah:</strong> {{ Str::limit($report->deskripsi_masalah, 150) }}
+                                    @if($report->alamat)
+                                        <br><strong>Alamat:</strong> {{ $report->alamat }}
+                                    @endif
+                                </div>
+                                <div class="timeline-footer">
+                                    <a href="{{ route('admin.blacklist.show', $report->id) }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-eye"></i> Lihat Detail
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                @endif
+
+                @if($guestReports->count() > 0)
+                    <h5 class="text-success mt-4">Laporan dari Guest ({{ $guestReports->count() }})</h5>
+                    <div class="timeline">
+                        @foreach($guestReports as $guestReport)
+                        <div class="time-label">
+                            <span class="bg-success">{{ $guestReport->created_at->format('d M Y') }}</span>
+                        </div>
+                        <div>
+                            <i class="fas fa-user bg-{{ $guestReport->status === 'approved' ? 'success' : ($guestReport->status === 'rejected' ? 'danger' : 'warning') }}"></i>
+                            <div class="timeline-item">
+                                <span class="time">
+                                    <i class="fas fa-clock"></i> {{ $guestReport->created_at->format('H:i') }}
+                                </span>
+                                <h3 class="timeline-header">
+                                    <span class="badge badge-info">{{ $guestReport->rental_type }}</span>
+                                    @if($guestReport->status === 'approved')
+                                        <span class="badge badge-success">Approved</span>
+                                    @elseif($guestReport->status === 'rejected')
+                                        <span class="badge badge-danger">Rejected</span>
+                                    @else
+                                        <span class="badge badge-warning">Pending</span>
+                                    @endif
+                                </h3>
+                                <div class="timeline-body">
+                                    <strong>Pelapor:</strong> {{ $guestReport->reporter_name }} ({{ $guestReport->reporter_email }})<br>
+                                    <strong>Masalah:</strong> {{ Str::limit($guestReport->description, 150) }}
+                                    @if($guestReport->rental_name)
+                                        <br><strong>Nama Rental:</strong> {{ $guestReport->rental_name }}
+                                    @endif
+                                </div>
+                                <div class="timeline-footer">
+                                    <a href="{{ route('admin.guest-reports.show', $guestReport->id) }}" class="btn btn-sm btn-success">
+                                        <i class="fas fa-eye"></i> Lihat Detail
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                        <div>
+                            <i class="fas fa-clock bg-gray"></i>
+                        </div>
+                    </div>
+                @endif
+            </div>
+        </div>
+        @endif
     </div>
 
     <div class="col-md-4">
@@ -148,28 +243,28 @@
                 @if($blacklist->status_validitas === 'Pending')
                 <form action="{{ route('admin.blacklist.validate', $blacklist->id) }}" method="POST" class="mb-2">
                     @csrf
-                    <button type="submit" class="btn btn-success btn-block" 
+                    <button type="submit" class="btn btn-success btn-block"
                             onclick="return confirm('Validasi data blacklist ini?')">
                         <i class="fas fa-check"></i> Validasi
                     </button>
                 </form>
                 <form action="{{ route('admin.blacklist.invalidate', $blacklist->id) }}" method="POST" class="mb-2">
                     @csrf
-                    <button type="submit" class="btn btn-danger btn-block" 
+                    <button type="submit" class="btn btn-danger btn-block"
                             onclick="return confirm('Tolak data blacklist ini?')">
                         <i class="fas fa-times"></i> Tolak
                     </button>
                 </form>
                 @endif
-                
+
                 <a href="{{ route('admin.blacklist.edit', $blacklist->id) }}" class="btn btn-warning btn-block">
                     <i class="fas fa-edit"></i> Edit Data
                 </a>
-                
+
                 <form action="{{ route('admin.blacklist.destroy', $blacklist->id) }}" method="POST" class="mt-2">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-danger btn-block" 
+                    <button type="submit" class="btn btn-danger btn-block"
                             onclick="return confirm('Hapus data blacklist ini? Tindakan ini tidak dapat dibatalkan!')">
                         <i class="fas fa-trash"></i> Hapus Data
                     </button>

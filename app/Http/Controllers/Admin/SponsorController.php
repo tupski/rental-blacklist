@@ -13,7 +13,7 @@ class SponsorController extends Controller
     {
         $sponsors = Sponsor::orderBy('sort_order')
                           ->orderBy('name')
-                          ->get();
+                          ->paginate(10);
 
         return view('admin.sponsors.index', compact('sponsors'));
     }

@@ -4,17 +4,44 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\RentalBlacklist;
+use App\Models\GuestReport;
 use Illuminate\Http\Request;
 
 class BlacklistController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $blacklists = RentalBlacklist::with('user')
-            ->latest()
-            ->paginate(20);
+        $query = RentalBlacklist::with('user');
 
-        return view('admin.blacklist.index', compact('blacklists'));
+        // Apply filters
+        if ($request->filled('search')) {
+            $search = $request->get('search');
+            $query->where(function($q) use ($search) {
+                $q->where('nama_lengkap', 'like', "%{$search}%")
+                  ->orWhere('nik', 'like', "%{$search}%")
+                  ->orWhere('no_hp', 'like', "%{$search}%")
+                  ->orWhere('alamat', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('jenis_rental')) {
+            $query->where('jenis_rental', $request->get('jenis_rental'));
+        }
+
+        if ($request->filled('status_validitas')) {
+            $query->where('status_validitas', $request->get('status_validitas'));
+        }
+
+        $blacklists = $query->latest()->paginate(20)->appends($request->query());
+
+        // Get report counts for each blacklist
+        $blacklistIds = $blacklists->pluck('id');
+        $reportCounts = GuestReport::whereIn('reported_nik', $blacklists->pluck('nik'))
+                                  ->selectRaw('reported_nik, COUNT(*) as total_reports')
+                                  ->groupBy('reported_nik')
+                                  ->pluck('total_reports', 'reported_nik');
+
+        return view('admin.blacklist.index', compact('blacklists', 'reportCounts'));
     }
 
     public function create()
@@ -58,7 +85,19 @@ class BlacklistController extends Controller
 
     public function show(RentalBlacklist $blacklist)
     {
-        return view('admin.blacklist.show', compact('blacklist'));
+        // Get all reports for this NIK from different rental types
+        $relatedReports = RentalBlacklist::where('nik', $blacklist->nik)
+                                       ->where('id', '!=', $blacklist->id)
+                                       ->with('user')
+                                       ->orderBy('created_at', 'desc')
+                                       ->get();
+
+        // Get guest reports for this NIK
+        $guestReports = GuestReport::where('reported_nik', $blacklist->nik)
+                                  ->orderBy('created_at', 'desc')
+                                  ->get();
+
+        return view('admin.blacklist.show', compact('blacklist', 'relatedReports', 'guestReports'));
     }
 
     public function edit(RentalBlacklist $blacklist)
