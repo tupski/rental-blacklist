@@ -47,15 +47,7 @@
                             <tr>
                                 <td><strong>Status:</strong></td>
                                 <td>
-                                    @if($topup->status === 'pending')
-                                        <span class="badge badge-warning">Pending</span>
-                                    @elseif($topup->status === 'approved')
-                                        <span class="badge badge-success">Approved</span>
-                                    @elseif($topup->status === 'rejected')
-                                        <span class="badge badge-danger">Rejected</span>
-                                    @else
-                                        <span class="badge badge-secondary">{{ ucfirst($topup->status) }}</span>
-                                    @endif
+                                    <span class="badge badge-{{ $topup->status_color }}">{{ $topup->status_text }}</span>
                                 </td>
                             </tr>
                         </table>
@@ -66,28 +58,22 @@
                                 <td><strong>Tanggal Request:</strong></td>
                                 <td>{{ $topup->created_at->format('d/m/Y H:i:s') }}</td>
                             </tr>
-                            @if($topup->approved_at)
+                            @if($topup->confirmed_at)
                             <tr>
-                                <td><strong>Tanggal Approve:</strong></td>
-                                <td>{{ $topup->approved_at->format('d/m/Y H:i:s') }}</td>
+                                <td><strong>Tanggal Konfirmasi:</strong></td>
+                                <td>{{ $topup->confirmed_at->format('d/m/Y H:i:s') }}</td>
                             </tr>
                             @endif
-                            @if($topup->rejected_at)
+                            @if($topup->paid_at)
                             <tr>
-                                <td><strong>Tanggal Reject:</strong></td>
-                                <td>{{ $topup->rejected_at->format('d/m/Y H:i:s') }}</td>
+                                <td><strong>Tanggal Pembayaran:</strong></td>
+                                <td>{{ $topup->paid_at->format('d/m/Y H:i:s') }}</td>
                             </tr>
                             @endif
-                            @if($topup->approved_by)
+                            @if($topup->expires_at)
                             <tr>
-                                <td><strong>Disetujui oleh:</strong></td>
-                                <td>{{ \App\Models\User::find($topup->approved_by)->name ?? 'N/A' }}</td>
-                            </tr>
-                            @endif
-                            @if($topup->rejected_by)
-                            <tr>
-                                <td><strong>Ditolak oleh:</strong></td>
-                                <td>{{ \App\Models\User::find($topup->rejected_by)->name ?? 'N/A' }}</td>
+                                <td><strong>Kadaluarsa:</strong></td>
+                                <td>{{ $topup->expires_at->format('d/m/Y H:i:s') }}</td>
                             </tr>
                             @endif
                         </table>
@@ -105,12 +91,23 @@
                 </div>
                 @endif
 
-                @if($topup->rejection_reason)
+                @if($topup->admin_notes && $topup->status === 'rejected')
                 <div class="row mt-3">
                     <div class="col-12">
                         <h5>Alasan Penolakan:</h5>
                         <div class="alert alert-danger">
-                            {{ $topup->rejection_reason }}
+                            {{ $topup->admin_notes }}
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                @if($topup->admin_notes && $topup->status === 'confirmed')
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h5>Catatan Admin:</h5>
+                        <div class="alert alert-success">
+                            {{ $topup->admin_notes }}
                         </div>
                     </div>
                 </div>
@@ -125,16 +122,16 @@
                                 @foreach($topup->proof_of_payment as $proof)
                                 <div class="col-md-3 mb-3">
                                     @if(in_array(pathinfo($proof, PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png']))
-                                        <img src="{{ asset('storage/topup/' . $proof) }}" 
-                                             class="img-fluid img-thumbnail" 
+                                        <img src="{{ asset('storage/' . $proof) }}"
+                                             class="img-fluid img-thumbnail"
                                              style="max-height: 200px; cursor: pointer;"
-                                             onclick="showImageModal('{{ asset('storage/topup/' . $proof) }}')">
+                                             onclick="showImageModal('{{ asset('storage/' . $proof) }}')">
                                     @else
                                         <div class="card">
                                             <div class="card-body text-center">
                                                 <i class="fas fa-file fa-3x text-muted"></i>
                                                 <p class="mt-2">{{ $proof }}</p>
-                                                <a href="{{ asset('storage/topup/' . $proof) }}" 
+                                                <a href="{{ asset('storage/' . $proof) }}"
                                                    class="btn btn-sm btn-primary" target="_blank">
                                                     <i class="fas fa-download"></i> Download
                                                 </a>
@@ -145,10 +142,10 @@
                                 @endforeach
                             @else
                                 <div class="col-md-3 mb-3">
-                                    <img src="{{ asset('storage/topup/' . $topup->proof_of_payment) }}" 
-                                         class="img-fluid img-thumbnail" 
+                                    <img src="{{ asset('storage/' . $topup->proof_of_payment) }}"
+                                         class="img-fluid img-thumbnail"
                                          style="max-height: 200px; cursor: pointer;"
-                                         onclick="showImageModal('{{ asset('storage/topup/' . $topup->proof_of_payment) }}')">
+                                         onclick="showImageModal('{{ asset('storage/' . $topup->proof_of_payment) }}')">
                                 </div>
                             @endif
                         </div>
@@ -165,24 +162,24 @@
                 <h3 class="card-title">Aksi</h3>
             </div>
             <div class="card-body">
-                @if($topup->status === 'pending')
+                @if(in_array($topup->status, ['pending', 'pending_confirmation']))
                 <form action="{{ route('admin.topup.approve', $topup->id) }}" method="POST" class="mb-2">
                     @csrf
-                    <button type="submit" class="btn btn-success btn-block" 
+                    <button type="submit" class="btn btn-success btn-block"
                             onclick="return confirm('Approve permintaan topup ini? Saldo akan ditambahkan ke akun user.')">
                         <i class="fas fa-check"></i> Approve Topup
                     </button>
                 </form>
-                <button type="button" class="btn btn-danger btn-block" 
+                <button type="button" class="btn btn-danger btn-block"
                         onclick="showRejectModal()">
                     <i class="fas fa-times"></i> Reject Topup
                 </button>
                 @endif
-                
+
                 <form action="{{ route('admin.topup.destroy', $topup->id) }}" method="POST" class="mt-2">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-danger btn-block" 
+                    <button type="submit" class="btn btn-danger btn-block"
                             onclick="return confirm('Hapus data topup ini? Tindakan ini tidak dapat dibatalkan!')">
                         <i class="fas fa-trash"></i> Hapus Data
                     </button>
@@ -197,13 +194,13 @@
             <div class="card-body">
                 <p><strong>Nama:</strong> {{ $topup->user->name }}</p>
                 <p><strong>Email:</strong> {{ $topup->user->email }}</p>
-                <p><strong>Role:</strong> 
+                <p><strong>Role:</strong>
                     <span class="badge badge-info">{{ ucfirst($topup->user->role) }}</span>
                 </p>
-                <p><strong>Saldo Saat Ini:</strong> 
-                    <strong class="text-success">Rp {{ number_format($topup->user->balance ?? 0, 0, ',', '.') }}</strong>
+                <p><strong>Saldo Saat Ini:</strong>
+                    <strong class="text-success">Rp {{ number_format($topup->user->getCurrentBalance(), 0, ',', '.') }}</strong>
                 </p>
-                <p><strong>Total Topup:</strong> {{ \App\Models\TopupRequest::where('user_id', $topup->user_id)->where('status', 'approved')->count() }}</p>
+                <p><strong>Total Topup:</strong> {{ \App\Models\TopupRequest::where('user_id', $topup->user_id)->where('status', 'confirmed')->count() }}</p>
             </div>
         </div>
     </div>
@@ -223,8 +220,8 @@
                 @csrf
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="rejection_reason">Alasan Penolakan <span class="text-danger">*</span></label>
-                        <textarea class="form-control" id="rejection_reason" name="rejection_reason" 
+                        <label for="admin_notes">Alasan Penolakan <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="admin_notes" name="admin_notes"
                                   rows="3" required placeholder="Masukkan alasan penolakan..."></textarea>
                     </div>
                 </div>

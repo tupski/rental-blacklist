@@ -57,6 +57,7 @@ class TopupRequest extends Model
     {
         return match($this->status) {
             'pending' => 'warning',
+            'pending_confirmation' => 'info',
             'paid' => 'info',
             'confirmed' => 'success',
             'rejected' => 'danger',
@@ -69,6 +70,7 @@ class TopupRequest extends Model
     {
         return match($this->status) {
             'pending' => 'Menunggu Pembayaran',
+            'pending_confirmation' => 'Menunggu Konfirmasi',
             'paid' => 'Sudah Dibayar',
             'confirmed' => 'Dikonfirmasi',
             'rejected' => 'Ditolak',

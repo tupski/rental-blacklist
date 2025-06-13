@@ -109,6 +109,26 @@ class RentalBlacklist extends Model
         return $hp;
     }
 
+    public function getSensoredAlamatAttribute()
+    {
+        $alamat = $this->alamat;
+        $words = explode(' ', $alamat);
+        $sensoredWords = [];
+
+        foreach ($words as $word) {
+            if (strlen($word) <= 2) {
+                $sensoredWords[] = $word;
+            } else {
+                $first = substr($word, 0, 1);
+                $last = substr($word, -1);
+                $middle = str_repeat('*', strlen($word) - 2);
+                $sensoredWords[] = $first . $middle . $last;
+            }
+        }
+
+        return implode(' ', $sensoredWords);
+    }
+
     // Method untuk menghitung jumlah laporan per NIK
     public static function countReportsByNik($nik)
     {

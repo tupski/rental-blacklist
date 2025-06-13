@@ -8,11 +8,15 @@ use Illuminate\Http\Request;
 
 class TopupController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $topups = TopupRequest::with('user')
-            ->latest()
-            ->paginate(20);
+        $query = TopupRequest::with('user');
+
+        if ($request->has('status') && $request->status) {
+            $query->where('status', $request->status);
+        }
+
+        $topups = $query->latest()->paginate(20);
 
         return view('admin.topup.index', compact('topups'));
     }
@@ -25,13 +29,18 @@ class TopupController extends Controller
     public function approve(TopupRequest $topup)
     {
         $topup->update([
-            'status' => 'approved',
-            'approved_at' => now(),
-            'approved_by' => auth()->id(),
+            'status' => 'confirmed',
+            'confirmed_at' => now(),
+            'admin_notes' => 'Disetujui oleh admin',
         ]);
 
-        // Add balance to user
-        $topup->user->increment('balance', $topup->amount);
+        // Add balance to user using proper method
+        $topup->user->addBalance(
+            $topup->amount,
+            'Topup disetujui - Invoice: ' . $topup->invoice_number,
+            TopupRequest::class,
+            $topup->id
+        );
 
         return redirect()->back()
             ->with('success', 'Topup berhasil disetujui dan saldo user telah ditambahkan.');
@@ -40,14 +49,12 @@ class TopupController extends Controller
     public function reject(Request $request, TopupRequest $topup)
     {
         $request->validate([
-            'rejection_reason' => 'required|string|max:500',
+            'admin_notes' => 'required|string|max:500',
         ]);
 
         $topup->update([
             'status' => 'rejected',
-            'rejected_at' => now(),
-            'rejected_by' => auth()->id(),
-            'rejection_reason' => $request->rejection_reason,
+            'admin_notes' => $request->admin_notes,
         ]);
 
         return redirect()->back()

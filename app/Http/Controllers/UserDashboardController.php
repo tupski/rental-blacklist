@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\RentalBlacklist;
 use App\Models\UserUnlock;
+use App\Helpers\PhoneHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -55,7 +56,43 @@ class UserDashboardController extends Controller
             ->where('status_validitas', 'Valid')
             ->with('user')
             ->get()
-            ->map(function ($item) {
+            ->map(function ($item) use ($search) {
+                $user = Auth::user();
+
+                // Normalisasi search untuk nomor HP
+                $normalizedSearch = PhoneHelper::normalize($search);
+
+                // Cek apakah query lengkap cocok (exact match)
+                $isExactNameMatch = strcasecmp($item->nama_lengkap, $search) === 0;
+                $isExactNikMatch = $item->nik === $search;
+                $isExactPhoneMatch = $item->no_hp === $search || $item->no_hp === $normalizedSearch;
+                $isExactMatch = $isExactNameMatch || $isExactNikMatch || $isExactPhoneMatch;
+
+                // Cek apakah user sudah unlock data ini
+                $isUnlocked = UserUnlock::where('user_id', Auth::id())
+                                       ->where('blacklist_id', $item->id)
+                                       ->exists();
+
+                // Jika user adalah pengusaha rental, sudah unlock, atau query lengkap cocok, tampilkan data lengkap
+                if (($user->role === 'pengusaha_rental') || $isUnlocked || $isExactMatch) {
+                    return [
+                        'id' => $item->id,
+                        'nama_lengkap' => $item->nama_lengkap,
+                        'nik' => $item->nik,
+                        'no_hp' => $item->no_hp,
+                        'alamat' => $item->alamat,
+                        'jenis_rental' => $item->jenis_rental,
+                        'jenis_laporan' => $item->jenis_laporan,
+                        'status_validitas' => $item->status_validitas,
+                        'tanggal_kejadian' => $item->tanggal_kejadian->format('d/m/Y'),
+                        'jumlah_laporan' => RentalBlacklist::countReportsByNik($item->nik),
+                        'pelapor' => $item->user->name,
+                        'price' => $this->getDetailPrice($item->jenis_rental),
+                        'is_unlocked' => true
+                    ];
+                }
+
+                // Untuk query parsial, gunakan logika sensor
                 return [
                     'id' => $item->id,
                     'nama_lengkap' => $item->sensored_nama,
@@ -69,9 +106,7 @@ class UserDashboardController extends Controller
                     'jumlah_laporan' => RentalBlacklist::countReportsByNik($item->nik),
                     'pelapor' => $item->user->name,
                     'price' => $this->getDetailPrice($item->jenis_rental),
-                    'is_unlocked' => UserUnlock::where('user_id', Auth::id())
-                                              ->where('blacklist_id', $item->id)
-                                              ->exists()
+                    'is_unlocked' => $isUnlocked
                 ];
             });
 
@@ -81,7 +116,7 @@ class UserDashboardController extends Controller
         ]);
     }
 
-    public function unlock(Request $request, $id)
+    public function unlock($id)
     {
         try {
             $user = Auth::user();
@@ -118,6 +153,10 @@ class UserDashboardController extends Controller
             }
 
             DB::transaction(function () use ($user, $blacklist, $price, $id) {
+                // Get balance before transaction
+                $balanceBefore = $user->getCurrentBalance();
+                $balanceAfter = $balanceBefore - $price;
+
                 // Deduct balance
                 $user->balance->decrement('balance', $price);
 
@@ -133,6 +172,8 @@ class UserDashboardController extends Controller
                 $user->balanceTransactions()->create([
                     'type' => 'usage',
                     'amount' => $price,
+                    'balance_before' => $balanceBefore,
+                    'balance_after' => $balanceAfter,
                     'description' => "Membuka detail blacklist: {$blacklist->nama_lengkap}",
                     'reference_type' => 'blacklist_unlock',
                     'reference_id' => $id

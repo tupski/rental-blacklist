@@ -355,6 +355,15 @@
 
 @endsection
 
+@push('styles')
+<style>
+.bg-light-success {
+    background-color: rgba(25, 135, 84, 0.1) !important;
+    border-left: 4px solid #198754 !important;
+}
+</style>
+@endpush
+
 @push('scripts')
 <script>
 $(document).ready(function() {
@@ -406,7 +415,12 @@ $(document).ready(function() {
         data.forEach(function(item) {
             const priceFormatted = 'Rp ' + item.price.toLocaleString('id-ID');
             const unlockStatus = item.is_unlocked ?
-                '<span class="badge bg-success"><i class="fas fa-check me-1"></i>Sudah Dibuka</span>' :
+                `<div class="d-grid gap-1">
+                    <button onclick="showUserDetail(${item.id})" class="btn btn-sm btn-primary">
+                        <i class="fas fa-eye me-1"></i>Lihat Detail
+                    </button>
+                    <span class="badge bg-success"><i class="fas fa-check me-1"></i>Sudah Dibuka</span>
+                </div>` :
                 `<button class="btn btn-sm btn-outline-primary unlock-btn"
                          data-id="${item.id}"
                          data-name="${item.nama_lengkap}"
@@ -415,8 +429,10 @@ $(document).ready(function() {
                     <i class="fas fa-eye me-1"></i>Lihat Detail (${priceFormatted})
                  </button>`;
 
+            const cardClass = item.is_unlocked ? 'card mb-3 bg-light-success' : 'card mb-3';
+
             html += `
-                <div class="card mb-3">
+                <div class="${cardClass}">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start">
                             <div class="flex-fill">
@@ -543,6 +559,87 @@ $(document).ready(function() {
         $('#detailContent').html(content);
         $('#detailModal').modal('show');
     }
+
+    // Global function for showing user detail
+    window.showUserDetail = function(id) {
+        $.ajax({
+            url: `/full-detail/${id}`,
+            method: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    showFullDetailModal(response.data, id);
+                } else {
+                    alert('Gagal mengambil detail lengkap');
+                }
+            },
+            error: function(xhr) {
+                console.error('Full detail error:', xhr);
+                alert('Terjadi kesalahan saat mengambil detail lengkap');
+            }
+        });
+    };
+
+    function showFullDetailModal(data, id) {
+        const content = `
+            <div class="alert alert-success">
+                <i class="fas fa-info-circle me-2"></i>
+                Data lengkap tanpa sensor - Anda telah membeli akses ke data ini
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <h6 class="fw-bold">Informasi Personal</h6>
+                    <table class="table table-borderless table-sm">
+                        <tr><td><strong>Nama:</strong></td><td>${data.nama_lengkap}</td></tr>
+                        <tr><td><strong>NIK:</strong></td><td>${data.nik}</td></tr>
+                        <tr><td><strong>No. HP:</strong></td><td>${data.no_hp}</td></tr>
+                        <tr><td><strong>Alamat:</strong></td><td>${data.alamat}</td></tr>
+                        <tr><td><strong>Jenis Kelamin:</strong></td><td>${data.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan'}</td></tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="fw-bold">Informasi Laporan</h6>
+                    <table class="table table-borderless table-sm">
+                        <tr><td><strong>Jenis Rental:</strong></td><td>${data.jenis_rental}</td></tr>
+                        <tr><td><strong>Jenis Laporan:</strong></td><td>${Array.isArray(data.jenis_laporan) ? data.jenis_laporan.join(', ') : data.jenis_laporan}</td></tr>
+                        <tr><td><strong>Tanggal Kejadian:</strong></td><td>${data.tanggal_kejadian}</td></tr>
+                        <tr><td><strong>Total Laporan:</strong></td><td>${data.jumlah_laporan}</td></tr>
+                        <tr><td><strong>Pelapor:</strong></td><td>${data.pelapor}</td></tr>
+                    </table>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12">
+                    <h6 class="fw-bold">Kronologi Kejadian</h6>
+                    <div class="alert alert-warning">
+                        ${data.kronologi}
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12 text-center">
+                    <button onclick="printDetail(${id})" class="btn btn-primary me-2">
+                        <i class="fas fa-print me-2"></i>Print
+                    </button>
+                    <button onclick="downloadPDF(${id})" class="btn btn-danger">
+                        <i class="fas fa-file-pdf me-2"></i>Download PDF
+                    </button>
+                </div>
+            </div>
+        `;
+
+        $('#detailContent').html(content);
+        $('#detailModal').modal('show');
+    }
+
+    // Print function
+    window.printDetail = function(id) {
+        window.open(`/print-detail/${id}`, '_blank');
+    };
+
+    // Download PDF function
+    window.downloadPDF = function(id) {
+        window.open(`/download-pdf/${id}`, '_blank');
+    };
 
     function showAlert(type, message) {
         const alertHtml = `

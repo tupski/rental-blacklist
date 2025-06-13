@@ -6,8 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\RentalBlacklist;
 use App\Models\Setting;
 use App\Models\Sponsor;
-use App\Models\UserUnlock;
 use App\Helpers\PhoneHelper;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PublicController extends Controller
 {
@@ -72,16 +72,23 @@ class PublicController extends Controller
                 $isSearchingName = stripos($item->nama_lengkap, $search) !== false;
                 $isSearchingPhone = $item->no_hp === $search || $item->no_hp === $normalizedSearch;
 
+                // Cek apakah query lengkap cocok (exact match)
+                $isExactNameMatch = strcasecmp($item->nama_lengkap, $search) === 0;
+                $isExactNikMatch = $item->nik === $search;
+                $isExactPhoneMatch = $item->no_hp === $search || $item->no_hp === $normalizedSearch;
+                $isExactMatch = $isExactNameMatch || $isExactNikMatch || $isExactPhoneMatch;
+
                 // Cek apakah user sudah unlock data ini
                 $isUnlocked = $isAuthenticated && $user->hasUnlockedData($item->id);
 
-                // Jika user sudah login (rental terverifikasi) atau sudah unlock data, tampilkan data lengkap
-                if ($isAuthenticated && ($user->role === 'pengusaha_rental' || $isUnlocked)) {
+                // Jika user adalah pengusaha rental, sudah unlock, atau query lengkap cocok, tampilkan data lengkap
+                if (($isAuthenticated && ($user->role === 'pengusaha_rental' || $isUnlocked)) || $isExactMatch) {
                     return [
                         'id' => $item->id,
                         'nama_lengkap' => $item->nama_lengkap,
                         'nik' => $item->nik,
                         'no_hp' => $item->no_hp,
+                        'alamat' => $item->alamat,
                         'jenis_rental' => $item->jenis_rental,
                         'jenis_laporan' => $item->jenis_laporan,
                         'tanggal_kejadian' => $item->tanggal_kejadian->format('d/m/Y'),
@@ -91,10 +98,11 @@ class PublicController extends Controller
                     ];
                 }
 
-                // Untuk user tidak login, gunakan logika sensor dengan highlighting
+                // Untuk user tidak login atau query parsial, gunakan logika sensor dengan highlighting
                 $displayNama = $item->sensored_nama;
                 $displayNik = $item->sensored_nik;
                 $displayPhone = $item->sensored_no_hp;
+                $displayAlamat = $item->sensored_alamat;
 
                 // Jika search cocok dengan nama, tampilkan bagian yang cocok
                 if ($isSearchingName) {
@@ -116,6 +124,7 @@ class PublicController extends Controller
                     'nama_lengkap' => $displayNama,
                     'nik' => $displayNik,
                     'no_hp' => $displayPhone,
+                    'alamat' => $displayAlamat,
                     'jenis_rental' => $item->jenis_rental,
                     'jenis_laporan' => $item->jenis_laporan,
                     'tanggal_kejadian' => $item->tanggal_kejadian->format('d/m/Y'),
@@ -143,6 +152,7 @@ class PublicController extends Controller
                 'nama_lengkap' => $blacklist->sensored_nama,
                 'nik' => $blacklist->sensored_nik,
                 'no_hp' => $blacklist->sensored_no_hp,
+                'alamat' => $blacklist->sensored_alamat,
                 'jenis_rental' => $blacklist->jenis_rental,
                 'jenis_laporan' => $blacklist->jenis_laporan,
                 'tanggal_kejadian' => $blacklist->tanggal_kejadian->format('d/m/Y'),
@@ -278,7 +288,7 @@ class PublicController extends Controller
         $price = $detailPrices[$blacklist->jenis_rental] ?? 800;
 
         try {
-            $unlock = $user->unlockData($id, $price, "Unlock data blacklist: {$blacklist->nama_lengkap}");
+            $user->unlockData($id, $price, "Unlock data blacklist: {$blacklist->nama_lengkap}");
 
             return response()->json([
                 'success' => true,
@@ -294,5 +304,63 @@ class PublicController extends Controller
                 'message' => $e->getMessage()
             ], 400);
         }
+    }
+
+    public function fullDetail($id)
+    {
+        $user = auth()->user();
+        $blacklist = RentalBlacklist::with('user')->findOrFail($id);
+
+        // Check if user has access (pengusaha_rental or has unlocked)
+        if (!$user || ($user->role !== 'pengusaha_rental' && !$user->hasUnlockedData($id))) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Anda tidak memiliki akses ke data lengkap ini'
+            ], 403);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'nama_lengkap' => $blacklist->nama_lengkap,
+                'nik' => $blacklist->nik,
+                'no_hp' => $blacklist->no_hp,
+                'alamat' => $blacklist->alamat,
+                'jenis_kelamin' => $blacklist->jenis_kelamin,
+                'jenis_rental' => $blacklist->jenis_rental,
+                'jenis_laporan' => $blacklist->jenis_laporan,
+                'tanggal_kejadian' => $blacklist->tanggal_kejadian->format('d/m/Y'),
+                'kronologi' => $blacklist->kronologi,
+                'jumlah_laporan' => RentalBlacklist::countReportsByNik($blacklist->nik),
+                'pelapor' => $blacklist->user->name
+            ]
+        ]);
+    }
+
+    public function printDetail($id)
+    {
+        $user = auth()->user();
+        $blacklist = RentalBlacklist::with('user')->findOrFail($id);
+
+        // Check if user has access
+        if (!$user || ($user->role !== 'pengusaha_rental' && !$user->hasUnlockedData($id))) {
+            abort(403, 'Anda tidak memiliki akses ke data lengkap ini');
+        }
+
+        return view('public.print-detail', compact('blacklist'));
+    }
+
+    public function downloadPDF($id)
+    {
+        $user = auth()->user();
+        $blacklist = RentalBlacklist::with('user')->findOrFail($id);
+
+        // Check if user has access
+        if (!$user || ($user->role !== 'pengusaha_rental' && !$user->hasUnlockedData($id))) {
+            abort(403, 'Anda tidak memiliki akses ke data lengkap ini');
+        }
+
+        $pdf = Pdf::loadView('public.pdf-detail', compact('blacklist'));
+        return $pdf->download('blacklist-detail-' . $blacklist->nik . '.pdf');
     }
 }

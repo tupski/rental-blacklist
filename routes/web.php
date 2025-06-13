@@ -65,6 +65,11 @@ Route::middleware('auth')->group(function () {
     // Data unlock (for regular users)
     Route::post('/unlock-data/{id}', [PublicController::class, 'unlockData'])->name('public.unlock');
 
+    // Full detail access for unlocked data
+    Route::get('/full-detail/{id}', [PublicController::class, 'fullDetail'])->name('public.full-detail');
+    Route::get('/print-detail/{id}', [PublicController::class, 'printDetail'])->name('public.print-detail');
+    Route::get('/download-pdf/{id}', [PublicController::class, 'downloadPDF'])->name('public.download-pdf');
+
     // Profile management
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -124,6 +129,7 @@ Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
     Route::get('/topup/create', [TopupController::class, 'create'])->name('topup.create');
     Route::post('/topup', [TopupController::class, 'store'])->name('topup.store');
     Route::get('/topup/confirm/{invoice}', [TopupController::class, 'confirm'])->name('topup.confirm');
+    Route::post('/topup/upload-proof/{invoice}', [TopupController::class, 'uploadProof'])->name('topup.upload-proof');
     Route::get('/balance/history', [BalanceController::class, 'history'])->name('balance.history');
 });
 

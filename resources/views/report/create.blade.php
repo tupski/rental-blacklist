@@ -112,9 +112,17 @@
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label for="jenis_rental" class="form-label">Jenis Rental <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control @error('jenis_rental') is-invalid @enderror"
-                                               id="jenis_rental" name="jenis_rental" value="{{ old('jenis_rental') }}"
-                                               placeholder="Motor, Mobil, Alat, dll" required>
+                                        <select class="form-select @error('jenis_rental') is-invalid @enderror"
+                                                id="jenis_rental" name="jenis_rental" required>
+                                            <option value="">Pilih Jenis Rental</option>
+                                            <option value="Rental Mobil" {{ old('jenis_rental') == 'Rental Mobil' ? 'selected' : '' }}>Rental Mobil</option>
+                                            <option value="Rental Motor" {{ old('jenis_rental') == 'Rental Motor' ? 'selected' : '' }}>Rental Motor</option>
+                                            <option value="Rental Kamera" {{ old('jenis_rental') == 'Rental Kamera' ? 'selected' : '' }}>Rental Kamera</option>
+                                            <option value="Rental Alat Musik" {{ old('jenis_rental') == 'Rental Alat Musik' ? 'selected' : '' }}>Rental Alat Musik</option>
+                                            <option value="Rental Elektronik" {{ old('jenis_rental') == 'Rental Elektronik' ? 'selected' : '' }}>Rental Elektronik</option>
+                                            <option value="Rental Alat Berat" {{ old('jenis_rental') == 'Rental Alat Berat' ? 'selected' : '' }}>Rental Alat Berat</option>
+                                            <option value="Lainnya" {{ old('jenis_rental') == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
+                                        </select>
                                         @error('jenis_rental')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -182,14 +190,22 @@
                                 <h5 class="text-primary mb-3">
                                     <i class="fas fa-user-edit me-2"></i>
                                     Data Pelapor
+                                    @auth
+                                        <small class="text-success">
+                                            <i class="fas fa-check-circle me-1"></i>
+                                            Otomatis terisi dari akun Anda
+                                        </small>
+                                    @endauth
                                 </h5>
 
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label for="nama_pelapor" class="form-label">Nama Pelapor <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control @error('nama_pelapor') is-invalid @enderror"
-                                               id="nama_pelapor" name="nama_pelapor" value="{{ old('nama_pelapor') }}"
-                                               placeholder="Nama lengkap pelapor" required>
+                                               id="nama_pelapor" name="nama_pelapor"
+                                               value="{{ old('nama_pelapor', auth()->user()->name ?? '') }}"
+                                               placeholder="Nama lengkap pelapor"
+                                               {{ auth()->check() ? 'readonly' : '' }} required>
                                         @error('nama_pelapor')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -198,8 +214,10 @@
                                     <div class="col-md-6">
                                         <label for="email_pelapor" class="form-label">Email Pelapor <span class="text-danger">*</span></label>
                                         <input type="email" class="form-control @error('email_pelapor') is-invalid @enderror"
-                                               id="email_pelapor" name="email_pelapor" value="{{ old('email_pelapor') }}"
-                                               placeholder="email@example.com" required>
+                                               id="email_pelapor" name="email_pelapor"
+                                               value="{{ old('email_pelapor', auth()->user()->email ?? '') }}"
+                                               placeholder="email@example.com"
+                                               {{ auth()->check() ? 'readonly' : '' }} required>
                                         @error('email_pelapor')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -208,8 +226,10 @@
                                     <div class="col-md-6">
                                         <label for="no_hp_pelapor" class="form-label">No. HP Pelapor <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control @error('no_hp_pelapor') is-invalid @enderror"
-                                               id="no_hp_pelapor" name="no_hp_pelapor" value="{{ old('no_hp_pelapor') }}"
-                                               placeholder="08xxxxxxxxxx" required>
+                                               id="no_hp_pelapor" name="no_hp_pelapor"
+                                               value="{{ old('no_hp_pelapor', auth()->user()->no_hp ?? '') }}"
+                                               placeholder="08xxxxxxxxxx"
+                                               {{ auth()->check() ? 'readonly' : '' }} required>
                                         @error('no_hp_pelapor')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror

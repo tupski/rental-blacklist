@@ -22,7 +22,7 @@
                         <div class="dropdown-menu">
                             <a class="dropdown-item" href="{{ route('admin.topup.index') }}">Semua</a>
                             <a class="dropdown-item" href="{{ route('admin.topup.index', ['status' => 'pending']) }}">Pending</a>
-                            <a class="dropdown-item" href="{{ route('admin.topup.index', ['status' => 'approved']) }}">Approved</a>
+                            <a class="dropdown-item" href="{{ route('admin.topup.index', ['status' => 'confirmed']) }}">Confirmed</a>
                             <a class="dropdown-item" href="{{ route('admin.topup.index', ['status' => 'rejected']) }}">Rejected</a>
                         </div>
                     </div>
@@ -55,40 +55,32 @@
                                 </td>
                                 <td>{{ $topup->payment_method ?? 'Transfer Bank' }}</td>
                                 <td>
-                                    @if($topup->status === 'pending')
-                                        <span class="badge badge-warning">Pending</span>
-                                    @elseif($topup->status === 'approved')
-                                        <span class="badge badge-success">Approved</span>
-                                    @elseif($topup->status === 'rejected')
-                                        <span class="badge badge-danger">Rejected</span>
-                                    @else
-                                        <span class="badge badge-secondary">{{ ucfirst($topup->status) }}</span>
-                                    @endif
+                                    <span class="badge badge-{{ $topup->status_color }}">{{ $topup->status_text }}</span>
                                 </td>
                                 <td>{{ $topup->created_at->format('d/m/Y H:i') }}</td>
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <a href="{{ route('admin.topup.show', $topup->id) }}" 
+                                        <a href="{{ route('admin.topup.show', $topup->id) }}"
                                            class="btn btn-info btn-sm" title="Lihat Detail">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        
+
                                         @if($topup->status === 'pending')
-                                            <button type="button" class="btn btn-success btn-sm" 
+                                            <button type="button" class="btn btn-success btn-sm"
                                                     onclick="approveTopup({{ $topup->id }})" title="Approve">
                                                 <i class="fas fa-check"></i>
                                             </button>
-                                            <button type="button" class="btn btn-danger btn-sm" 
+                                            <button type="button" class="btn btn-danger btn-sm"
                                                     onclick="rejectTopup({{ $topup->id }})" title="Reject">
                                                 <i class="fas fa-times"></i>
                                             </button>
                                         @endif
-                                        
-                                        <form action="{{ route('admin.topup.destroy', $topup->id) }}" 
+
+                                        <form action="{{ route('admin.topup.destroy', $topup->id) }}"
                                               method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm" 
+                                            <button type="submit" class="btn btn-danger btn-sm"
                                                     title="Hapus" onclick="return confirm('Hapus data topup ini?')">
                                                 <i class="fas fa-trash"></i>
                                             </button>
@@ -130,8 +122,8 @@
     <div class="col-lg-3 col-6">
         <div class="small-box bg-success">
             <div class="inner">
-                <h3>{{ $topups->where('status', 'approved')->count() }}</h3>
-                <p>Approved</p>
+                <h3>{{ $topups->where('status', 'confirmed')->count() }}</h3>
+                <p>Confirmed</p>
             </div>
             <div class="icon">
                 <i class="fas fa-check"></i>
@@ -152,8 +144,8 @@
     <div class="col-lg-3 col-6">
         <div class="small-box bg-info">
             <div class="inner">
-                <h3>Rp {{ number_format($topups->where('status', 'approved')->sum('amount'), 0, ',', '.') }}</h3>
-                <p>Total Approved</p>
+                <h3>Rp {{ number_format($topups->where('status', 'confirmed')->sum('amount'), 0, ',', '.') }}</h3>
+                <p>Total Confirmed</p>
             </div>
             <div class="icon">
                 <i class="fas fa-money-bill"></i>
@@ -202,7 +194,7 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="rejection_reason">Alasan Penolakan <span class="text-danger">*</span></label>
-                        <textarea class="form-control" id="rejection_reason" name="rejection_reason" 
+                        <textarea class="form-control" id="rejection_reason" name="rejection_reason"
                                   rows="3" required placeholder="Masukkan alasan penolakan..."></textarea>
                     </div>
                 </div>

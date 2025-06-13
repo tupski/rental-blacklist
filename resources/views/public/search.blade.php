@@ -253,6 +253,15 @@
 </div>
 @endsection
 
+@push('styles')
+<style>
+.bg-light-success {
+    background-color: rgba(25, 135, 84, 0.1) !important;
+    border-left: 4px solid #198754 !important;
+}
+</style>
+@endpush
+
 @push('scripts')
 <script>
 $(document).ready(function() {
@@ -342,9 +351,10 @@ $(document).ready(function() {
         data.forEach(function(item, index) {
             const isUnlocked = item.is_verified || false; // Check if user has unlocked this data
             const lockIcon = isUnlocked ? '' : '<i class="fas fa-lock text-warning ms-2" title="Data disensor - beli kredit untuk melihat lengkap"></i>';
+            const cardBgClass = isUnlocked ? 'bg-light-success' : ''; // Green background for unlocked data
 
             html += `
-                <div class="border-bottom p-4 ${index === 0 ? 'border-top' : ''}">
+                <div class="border-bottom p-4 ${index === 0 ? 'border-top' : ''} ${cardBgClass}">
                     <div class="row">
                         <div class="col-lg-9">
                             <div class="d-flex align-items-center mb-3">
@@ -436,20 +446,29 @@ $(document).ready(function() {
 
     // Global function for detail modal
     window.showDetail = function(id) {
-        $.ajax({
-            url: `/detail/${id}`,
-            method: 'GET',
-            success: function(response) {
-                if (response.success) {
-                    // Show detail in modal or alert
-                    showDetailModal(response.data, response.message);
+        // Check if this data is unlocked by finding it in current results
+        const currentResults = $('#resultsList').find(`[onclick="showDetail(${id})"]`).closest('.border-bottom');
+        const isUnlocked = currentResults.hasClass('bg-light-success');
+
+        if (isUnlocked) {
+            // Show full detail with print/PDF options
+            showFullDetailModal(id);
+        } else {
+            // Show censored detail with unlock option
+            $.ajax({
+                url: `/detail/${id}`,
+                method: 'GET',
+                success: function(response) {
+                    if (response.success) {
+                        showDetailModal(response.data, response.message, id);
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Detail error:', xhr);
+                    alert('Terjadi kesalahan saat mengambil detail');
                 }
-            },
-            error: function(xhr) {
-                console.error('Detail error:', xhr);
-                alert('Terjadi kesalahan saat mengambil detail');
-            }
-        });
+            });
+        }
     };
 
     // Global function for unlocking data
@@ -570,6 +589,131 @@ $(document).ready(function() {
             $(this).remove();
         });
     }
+
+    function showFullDetailModal(id) {
+        $.ajax({
+            url: `/full-detail/${id}`,
+            method: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    let modalHtml = `
+                        <div class="modal fade" id="fullDetailModal" tabindex="-1">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-success text-white">
+                                        <h5 class="modal-title">
+                                            <i class="fas fa-check-circle me-2"></i>
+                                            Detail Lengkap Blacklist
+                                        </h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="alert alert-success">
+                                            <i class="fas fa-info-circle me-2"></i>
+                                            Data lengkap tanpa sensor - Anda telah membeli akses ke data ini
+                                        </div>
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <strong>Nama Lengkap:</strong><br>
+                                                ${response.data.nama_lengkap}
+                                            </div>
+                                            <div class="col-md-6">
+                                                <strong>NIK:</strong><br>
+                                                ${response.data.nik}
+                                            </div>
+                                            <div class="col-md-6">
+                                                <strong>No HP:</strong><br>
+                                                ${response.data.no_hp}
+                                            </div>
+                                            <div class="col-md-6">
+                                                <strong>Alamat:</strong><br>
+                                                ${response.data.alamat}
+                                            </div>
+                                            <div class="col-md-6">
+                                                <strong>Jenis Kelamin:</strong><br>
+                                                ${response.data.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan'}
+                                            </div>
+                                            <div class="col-md-6">
+                                                <strong>Jenis Rental:</strong><br>
+                                                ${response.data.jenis_rental}
+                                            </div>
+                                            <div class="col-md-6">
+                                                <strong>Tanggal Kejadian:</strong><br>
+                                                ${response.data.tanggal_kejadian}
+                                            </div>
+                                            <div class="col-md-6">
+                                                <strong>Jumlah Laporan:</strong><br>
+                                                ${response.data.jumlah_laporan}
+                                            </div>
+                                            <div class="col-12">
+                                                <strong>Jenis Laporan:</strong><br>
+                                                ${response.data.jenis_laporan.map(laporan => \`
+                                                    <span class="badge bg-warning text-dark me-1">
+                                                        \${formatJenisLaporan(laporan)}
+                                                    </span>
+                                                \`).join('')}
+                                            </div>
+                                            <div class="col-12">
+                                                <strong>Kronologi:</strong><br>
+                                                <div class="border p-3 bg-light rounded">
+                                                    ${response.data.kronologi}
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <strong>Dilaporkan oleh:</strong><br>
+                                                ${response.data.pelapor}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                        <button onclick="printDetail(${id})" class="btn btn-primary">
+                                            <i class="fas fa-print me-2"></i>
+                                            Print
+                                        </button>
+                                        <button onclick="downloadPDF(${id})" class="btn btn-danger">
+                                            <i class="fas fa-file-pdf me-2"></i>
+                                            Download PDF
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    // Remove existing modal if any
+                    $('#fullDetailModal').remove();
+
+                    // Add modal to body
+                    $('body').append(modalHtml);
+
+                    // Show modal
+                    $('#fullDetailModal').modal('show');
+
+                    // Remove modal from DOM when hidden
+                    $('#fullDetailModal').on('hidden.bs.modal', function() {
+                        $(this).remove();
+                    });
+                } else {
+                    alert('Gagal mengambil detail lengkap');
+                }
+            },
+            error: function(xhr) {
+                console.error('Full detail error:', xhr);
+                alert('Terjadi kesalahan saat mengambil detail lengkap');
+            }
+        });
+    }
+
+    // Print function
+    window.printDetail = function(id) {
+        window.open(`/print-detail/${id}`, '_blank');
+    };
+
+    // Download PDF function
+    window.downloadPDF = function(id) {
+        window.open(`/download-pdf/${id}`, '_blank');
+    };
 });
 </script>
 @endpush

@@ -178,4 +178,34 @@ class TopupController extends Controller
 
         return view('topup.confirm', compact('topupRequest'));
     }
+
+    public function uploadProof(Request $request, $invoice)
+    {
+        $request->validate([
+            'proof_of_payment' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'notes' => 'nullable|string|max:500'
+        ]);
+
+        $topupRequest = TopupRequest::where('invoice_number', $invoice)
+                                  ->where('user_id', Auth::id())
+                                  ->firstOrFail();
+
+        if (!$topupRequest->canBePaid()) {
+            return redirect()->route('topup.index')->with('error', 'Request topup sudah tidak valid');
+        }
+
+        // Store the uploaded file
+        $file = $request->file('proof_of_payment');
+        $filename = 'proof_' . $invoice . '_' . time() . '.' . $file->getClientOriginalExtension();
+        $path = $file->storeAs('topup-proofs', $filename, 'public');
+
+        // Update topup request
+        $topupRequest->update([
+            'proof_of_payment' => $path,
+            'notes' => $request->notes,
+            'status' => 'pending_confirmation'
+        ]);
+
+        return redirect()->route('topup.index')->with('success', 'Bukti pembayaran berhasil diupload. Pembayaran akan dikonfirmasi dalam 1x24 jam.');
+    }
 }
