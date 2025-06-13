@@ -18,6 +18,56 @@
                     </p>
                 </div>
 
+                <!-- API Key Management -->
+                @auth
+                <div class="card shadow-lg border-0 mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-key me-2"></i>
+                            API Key Management
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label for="apiKeyField" class="form-label fw-bold">Your API Key</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="apiKeyField"
+                                           placeholder="Klik 'Generate' untuk membuat API key" readonly>
+                                    <button class="btn btn-outline-secondary" type="button" id="toggleApiKey">
+                                        <i class="fas fa-eye" id="toggleIcon"></i>
+                                    </button>
+                                    <button class="btn btn-primary" type="button" id="copyApiKey">
+                                        <i class="fas fa-copy me-1"></i>
+                                        Copy
+                                    </button>
+                                </div>
+                                <small class="text-muted">API key ini digunakan untuk mengakses endpoint yang memerlukan authentication</small>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Actions</label>
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-success" id="generateApiKey">
+                                        <i class="fas fa-plus me-1"></i>
+                                        Generate Key
+                                    </button>
+                                    <button class="btn btn-warning" id="resetApiKey">
+                                        <i class="fas fa-refresh me-1"></i>
+                                        Reset Key
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="apiKeyInfo" class="mt-3 d-none">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Last Used:</strong> <span id="lastUsed">Never</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endauth
+
                 <!-- API Info Card -->
                 <div class="card shadow-lg border-0 mb-4">
                     <div class="card-header bg-info text-white">
@@ -369,3 +419,157 @@
     </div>
 </div>
 @endsection
+
+@auth
+@push('scripts')
+<script>
+$(document).ready(function() {
+    let currentApiKey = '';
+    let isVisible = false;
+
+    // Load existing API key
+    loadApiKey();
+
+    // Toggle API key visibility
+    $('#toggleApiKey').on('click', function() {
+        if (isVisible) {
+            $('#apiKeyField').attr('type', 'password');
+            $('#toggleIcon').removeClass('fa-eye-slash').addClass('fa-eye');
+            isVisible = false;
+        } else {
+            $('#apiKeyField').attr('type', 'text');
+            $('#toggleIcon').removeClass('fa-eye').addClass('fa-eye-slash');
+            isVisible = true;
+        }
+    });
+
+    // Copy API key
+    $('#copyApiKey').on('click', function() {
+        if (currentApiKey) {
+            navigator.clipboard.writeText(currentApiKey).then(function() {
+                showAlert('API key berhasil disalin!', 'success');
+            }).catch(function() {
+                // Fallback for older browsers
+                $('#apiKeyField').attr('type', 'text').select();
+                document.execCommand('copy');
+                $('#apiKeyField').attr('type', 'password');
+                showAlert('API key berhasil disalin!', 'success');
+            });
+        } else {
+            showAlert('Tidak ada API key untuk disalin', 'warning');
+        }
+    });
+
+    // Generate API key
+    $('#generateApiKey').on('click', function() {
+        if (currentApiKey && !confirm('Ini akan mengganti API key yang ada. Lanjutkan?')) {
+            return;
+        }
+
+        $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Generating...');
+
+        $.ajax({
+            url: '{{ route("api-key.generate") }}',
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                if (response.success) {
+                    currentApiKey = response.api_key;
+                    $('#apiKeyField').val(currentApiKey);
+                    $('#apiKeyInfo').removeClass('d-none');
+                    $('#lastUsed').text('Never');
+                    showAlert(response.message, 'success');
+                }
+            },
+            error: function(xhr) {
+                console.error('Generate error:', xhr);
+                showAlert('Terjadi kesalahan saat membuat API key', 'danger');
+            },
+            complete: function() {
+                $('#generateApiKey').prop('disabled', false).html('<i class="fas fa-plus me-1"></i>Generate Key');
+            }
+        });
+    });
+
+    // Reset API key
+    $('#resetApiKey').on('click', function() {
+        if (!confirm('Ini akan mereset API key Anda. API key lama tidak akan bisa digunakan lagi. Lanjutkan?')) {
+            return;
+        }
+
+        $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Resetting...');
+
+        $.ajax({
+            url: '{{ route("api-key.reset") }}',
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                if (response.success) {
+                    currentApiKey = response.api_key;
+                    $('#apiKeyField').val(currentApiKey);
+                    $('#apiKeyInfo').removeClass('d-none');
+                    $('#lastUsed').text('Never');
+                    showAlert(response.message, 'success');
+                }
+            },
+            error: function(xhr) {
+                console.error('Reset error:', xhr);
+                showAlert('Terjadi kesalahan saat mereset API key', 'danger');
+            },
+            complete: function() {
+                $('#resetApiKey').prop('disabled', false).html('<i class="fas fa-refresh me-1"></i>Reset Key');
+            }
+        });
+    });
+
+    function loadApiKey() {
+        $.ajax({
+            url: '{{ route("api-key.show") }}',
+            method: 'GET',
+            success: function(response) {
+                if (response.success && response.api_key) {
+                    currentApiKey = response.api_key;
+                    $('#apiKeyField').val(currentApiKey);
+                    $('#apiKeyInfo').removeClass('d-none');
+
+                    if (response.last_used) {
+                        const lastUsed = new Date(response.last_used).toLocaleString('id-ID');
+                        $('#lastUsed').text(lastUsed);
+                    } else {
+                        $('#lastUsed').text('Never');
+                    }
+                }
+            },
+            error: function(xhr) {
+                console.error('Load API key error:', xhr);
+            }
+        });
+    }
+
+    function showAlert(message, type) {
+        const alertHtml = `
+            <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+
+        // Remove existing alerts
+        $('.alert').remove();
+
+        // Add new alert at the top of the API key card
+        $('.card-body').first().prepend(alertHtml);
+
+        // Auto dismiss after 5 seconds
+        setTimeout(function() {
+            $('.alert').fadeOut();
+        }, 5000);
+    }
+});
+</script>
+@endpush
+@endauth

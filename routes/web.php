@@ -41,6 +41,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/search', [BlacklistController::class, 'searchForDashboard'])->name('search');
     });
 
+    // API Key management
+    Route::prefix('api-key')->name('api-key.')->group(function () {
+        Route::get('/', [App\Http\Controllers\ApiKeyController::class, 'show'])->name('show');
+        Route::post('/generate', [App\Http\Controllers\ApiKeyController::class, 'generate'])->name('generate');
+        Route::post('/reset', [App\Http\Controllers\ApiKeyController::class, 'reset'])->name('reset');
+    });
+
     // Admin Settings
     Route::get('/admin/settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('admin.settings.index');
     Route::put('/admin/settings', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('admin.settings.update');

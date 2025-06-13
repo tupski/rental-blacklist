@@ -382,6 +382,9 @@ $(document).ready(function() {
             $.ajax({
                 url: `/dashboard/blacklist/${id}`,
                 method: 'DELETE',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
                 success: function(response) {
                     if (response.success) {
                         alert(response.message);

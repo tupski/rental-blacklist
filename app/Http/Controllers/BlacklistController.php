@@ -9,10 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 class BlacklistController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
 
     public function index(Request $request)
     {
@@ -62,7 +58,7 @@ class BlacklistController extends Controller
             'alamat' => 'required|string',
             'jenis_rental' => 'required|string|max:100',
             'jenis_laporan' => 'required|array|min:1',
-            'jenis_laporan.*' => 'in:percobaan_penipuan,penipuan,tidak_mengembalikan_barang,identitas_palsu,sindikat,merusak_barang',
+            'jenis_laporan.*' => 'in:Tidak Mengembalikan,Merusak Barang,Tidak Bayar,Kabur,Lainnya',
             'kronologi' => 'required|string',
             'tanggal_kejadian' => 'required|date|before_or_equal:today',
             'bukti.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,mp4,avi,mov|max:10240'
@@ -147,7 +143,7 @@ class BlacklistController extends Controller
             'alamat' => 'required|string',
             'jenis_rental' => 'required|string|max:100',
             'jenis_laporan' => 'required|array|min:1',
-            'jenis_laporan.*' => 'in:percobaan_penipuan,penipuan,tidak_mengembalikan_barang,identitas_palsu,sindikat,merusak_barang',
+            'jenis_laporan.*' => 'in:Tidak Mengembalikan,Merusak Barang,Tidak Bayar,Kabur,Lainnya',
             'kronologi' => 'required|string',
             'tanggal_kejadian' => 'required|date|before_or_equal:today',
             'bukti.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,mp4,avi,mov|max:10240'

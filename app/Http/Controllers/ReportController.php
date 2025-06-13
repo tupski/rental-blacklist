@@ -18,7 +18,7 @@ class ReportController extends Controller
         $request->validate([
             'nik' => 'required|string|size:16',
             'nama_lengkap' => 'required|string|max:255',
-            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+            'jenis_kelamin' => 'required|in:L,P',
             'no_hp' => 'required|string|max:20',
             'alamat' => 'required|string',
             'jenis_rental' => 'required|string|max:100',

@@ -175,9 +175,9 @@
                                 <i class="fas fa-search me-2"></i>
                                 Cari Publik
                             </a>
-                            <a href="{{ route('admin.settings.index') }}" class="btn btn-info">
-                                <i class="fas fa-cog me-2"></i>
-                                Pengaturan Situs
+                            <a href="{{ route('api.docs') }}" class="btn btn-info">
+                                <i class="fas fa-code me-2"></i>
+                                API Documentation
                             </a>
                         </div>
 
@@ -199,103 +199,105 @@
         </div>
 
         <!-- Recent Reports -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-            <div class="px-6 py-4 border-b border-gray-100">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                    <h3 class="text-lg font-semibold text-gray-900">
-                        <i class="fas fa-clock text-green-500 mr-2"></i>
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-light border-0">
+                <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-clock text-success me-2"></i>
                         Laporan Terbaru
-                    </h3>
-                    <a href="{{ route('dashboard.blacklist.index') }}" class="mt-2 sm:mt-0 text-sm text-blue-600 hover:text-blue-500 font-medium">
+                    </h5>
+                    <a href="{{ route('dashboard.blacklist.index') }}" class="mt-2 mt-sm-0 text-decoration-none">
                         Lihat semua
-                        <i class="fas fa-arrow-right ml-1"></i>
+                        <i class="fas fa-arrow-right ms-1"></i>
                     </a>
                 </div>
             </div>
 
             <!-- Mobile View -->
-            <div class="block sm:hidden">
+            <div class="d-block d-sm-none">
                 @forelse($recentReports as $report)
-                <div class="p-4 border-b border-gray-100 last:border-b-0">
-                    <div class="flex items-start justify-between">
-                        <div class="flex-1">
-                            <h4 class="font-medium text-gray-900">{{ $report->nama_lengkap }}</h4>
-                            <p class="text-sm text-gray-600 mt-1">NIK: {{ $report->nik }}</p>
-                            <p class="text-sm text-gray-600">{{ $report->jenis_rental }}</p>
-                            <div class="flex items-center mt-2 space-x-2">
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full
-                                    @if($report->status_validitas === 'Valid') bg-green-100 text-green-800
-                                    @elseif($report->status_validitas === 'Pending') bg-yellow-100 text-yellow-800
-                                    @else bg-red-100 text-red-800 @endif">
+                <div class="card-body border-bottom">
+                    <div class="d-flex align-items-start justify-content-between">
+                        <div class="flex-fill">
+                            <h6 class="fw-bold text-dark mb-1">{{ $report->nama_lengkap }}</h6>
+                            <p class="text-muted small mb-1">NIK: {{ $report->nik }}</p>
+                            <p class="text-muted small mb-2">{{ $report->jenis_rental }}</p>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge
+                                    @if($report->status_validitas === 'Valid') bg-success
+                                    @elseif($report->status_validitas === 'Pending') bg-warning
+                                    @else bg-danger @endif">
                                     {{ $report->status_validitas }}
                                 </span>
-                                <span class="text-xs text-gray-500">{{ $report->created_at->format('d/m/Y') }}</span>
+                                <small class="text-muted">{{ $report->created_at->format('d/m/Y') }}</small>
                             </div>
                         </div>
                     </div>
-                    <p class="text-xs text-gray-500 mt-2">
-                        <i class="fas fa-user mr-1"></i>
+                    <p class="text-muted small mt-2 mb-0">
+                        <i class="fas fa-user me-1"></i>
                         {{ $report->user->name }}
                     </p>
                 </div>
                 @empty
-                <div class="p-8 text-center text-gray-500">
-                    <i class="fas fa-inbox text-4xl text-gray-300 mb-4"></i>
-                    <p>Belum ada laporan</p>
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-inbox display-1 text-muted mb-3"></i>
+                    <p class="text-muted">Belum ada laporan</p>
                 </div>
                 @endforelse
             </div>
 
             <!-- Desktop View -->
-            <div class="hidden sm:block overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-100">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NIK</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jenis Rental</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pelapor</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-100">
-                        @forelse($recentReports as $report)
-                        <tr class="hover:bg-gray-50 transition duration-150">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">{{ $report->nama_lengkap }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900 font-mono">{{ $report->nik }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{{ $report->jenis_rental }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                    @if($report->status_validitas === 'Valid') bg-green-100 text-green-800
-                                    @elseif($report->status_validitas === 'Pending') bg-yellow-100 text-yellow-800
-                                    @else bg-red-100 text-red-800 @endif">
-                                    {{ $report->status_validitas }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{{ $report->user->name }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-500">{{ $report->created_at->format('d/m/Y') }}</div>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="6" class="px-6 py-8 text-center text-gray-500">
-                                <i class="fas fa-inbox text-4xl text-gray-300 mb-4"></i>
-                                <p>Belum ada laporan</p>
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+            <div class="d-none d-sm-block">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="border-0">Nama</th>
+                                <th class="border-0">NIK</th>
+                                <th class="border-0">Jenis Rental</th>
+                                <th class="border-0">Status</th>
+                                <th class="border-0">Pelapor</th>
+                                <th class="border-0">Tanggal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($recentReports as $report)
+                            <tr>
+                                <td class="align-middle">
+                                    <div class="fw-bold text-dark">{{ $report->nama_lengkap }}</div>
+                                </td>
+                                <td class="align-middle">
+                                    <code class="text-dark">{{ $report->nik }}</code>
+                                </td>
+                                <td class="align-middle">
+                                    <span class="text-dark">{{ $report->jenis_rental }}</span>
+                                </td>
+                                <td class="align-middle">
+                                    <span class="badge
+                                        @if($report->status_validitas === 'Valid') bg-success
+                                        @elseif($report->status_validitas === 'Pending') bg-warning
+                                        @else bg-danger @endif">
+                                        {{ $report->status_validitas }}
+                                    </span>
+                                </td>
+                                <td class="align-middle">
+                                    <span class="text-dark">{{ $report->user->name }}</span>
+                                </td>
+                                <td class="align-middle">
+                                    <small class="text-muted">{{ $report->created_at->format('d/m/Y') }}</small>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="6" class="text-center py-5">
+                                    <i class="fas fa-inbox display-1 text-muted mb-3"></i>
+                                    <p class="text-muted">Belum ada laporan</p>
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -319,7 +321,7 @@ $(document).ready(function() {
             return;
         }
 
-        $('#dashboardSearchBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-2"></i>Mencari...');
+        $('#dashboardSearchBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Mencari...');
 
         $.ajax({
             url: '{{ route("dashboard.blacklist.search") }}',
@@ -332,8 +334,8 @@ $(document).ready(function() {
                 if (response.success && response.data.length > 0) {
                     displayDashboardResults(response.data);
                 } else {
-                    $('#dashboardResultsList').html('<p class="text-gray-500 text-sm">Tidak ada data ditemukan</p>');
-                    $('#dashboardSearchResults').removeClass('hidden');
+                    $('#dashboardResultsList').html('<p class="text-muted small">Tidak ada data ditemukan</p>');
+                    $('#dashboardSearchResults').removeClass('d-none');
                 }
             },
             error: function(xhr) {
@@ -341,7 +343,7 @@ $(document).ready(function() {
                 alert('Terjadi kesalahan saat mencari data');
             },
             complete: function() {
-                $('#dashboardSearchBtn').prop('disabled', false).html('<i class="fas fa-search mr-2"></i>Cari');
+                $('#dashboardSearchBtn').prop('disabled', false).html('<i class="fas fa-search me-2"></i>Cari');
             }
         });
     }
@@ -349,41 +351,43 @@ $(document).ready(function() {
     function displayDashboardResults(data) {
         let html = '';
         data.forEach(function(item) {
-            const statusClass = item.status_validitas === 'Valid' ? 'bg-green-100 text-green-800' :
-                               item.status_validitas === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
-                               'bg-red-100 text-red-800';
+            const statusClass = item.status_validitas === 'Valid' ? 'bg-success' :
+                               item.status_validitas === 'Pending' ? 'bg-warning' :
+                               'bg-danger';
 
             html += `
-                <div class="border border-gray-200 rounded-lg p-4">
-                    <div class="flex justify-between items-start">
-                        <div class="flex-1">
-                            <h5 class="font-medium text-gray-900">${item.nama_lengkap}</h5>
-                            <p class="text-sm text-gray-600">NIK: ${item.nik}</p>
-                            <p class="text-sm text-gray-600">HP: ${item.no_hp}</p>
-                            <p class="text-sm text-gray-600">Rental: ${item.jenis_rental}</p>
-                            <div class="mt-2">
-                                <span class="px-2 py-1 text-xs font-medium rounded-full ${statusClass}">
-                                    ${item.status_validitas}
-                                </span>
-                                <span class="ml-2 text-xs text-gray-500">
-                                    ${item.jumlah_laporan} laporan
-                                </span>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-fill">
+                                <h6 class="fw-bold text-dark">${item.nama_lengkap}</h6>
+                                <p class="text-muted small mb-1">NIK: ${item.nik}</p>
+                                <p class="text-muted small mb-1">HP: ${item.no_hp}</p>
+                                <p class="text-muted small mb-2">Rental: ${item.jenis_rental}</p>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge ${statusClass}">
+                                        ${item.status_validitas}
+                                    </span>
+                                    <small class="text-muted">
+                                        ${item.jumlah_laporan} laporan
+                                    </small>
+                                </div>
                             </div>
+                            ${item.can_edit ? `
+                                <div class="ms-3">
+                                    <a href="/dashboard/blacklist/${item.id}/edit" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </div>
+                            ` : ''}
                         </div>
-                        ${item.can_edit ? `
-                            <div class="ml-4 space-x-2">
-                                <a href="/dashboard/blacklist/${item.id}/edit" class="text-blue-600 hover:text-blue-800 text-sm">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                            </div>
-                        ` : ''}
                     </div>
                 </div>
             `;
         });
 
         $('#dashboardResultsList').html(html);
-        $('#dashboardSearchResults').removeClass('hidden');
+        $('#dashboardSearchResults').removeClass('d-none');
     }
 });
 </script>

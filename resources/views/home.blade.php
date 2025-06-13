@@ -397,6 +397,33 @@
         </div>
     </footer>
 </div>
+
+<!-- Detail Modal -->
+<div class="modal fade" id="detailModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-info-circle text-primary me-2"></i>
+                    Detail Blacklist
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="detailContent">
+                    <!-- Detail content will be loaded here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-success" onclick="showFullAccess()">
+                    <i class="fas fa-unlock me-2"></i>
+                    Akses Penuh
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
@@ -475,54 +502,52 @@ $(document).ready(function() {
         let html = '';
         data.forEach(function(item) {
             html += `
-                <div class="border-bottom p-4">
-                    <div class="row align-items-center">
-                        <div class="col-lg-8">
-                            <div class="d-flex align-items-center mb-2">
-                                <h5 class="fw-bold mb-0 me-3">${item.nama_lengkap}</h5>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h6 class="fw-bold text-dark mb-0">${item.nama_lengkap}</h6>
                                 <span class="badge bg-danger">
                                     ${item.jumlah_laporan} Laporan
                                 </span>
                             </div>
-                            <div class="row g-3 text-muted small">
-                                <div class="col-md-6">
-                                    <i class="fas fa-id-card me-2"></i>
-                                    <strong>NIK:</strong> ${item.nik}
-                                </div>
-                                <div class="col-md-6">
-                                    <i class="fas fa-phone me-2"></i>
-                                    <strong>No HP:</strong> ${item.no_hp}
-                                </div>
-                                <div class="col-md-6">
-                                    <i class="fas fa-car me-2"></i>
-                                    <strong>Jenis Rental:</strong> ${item.jenis_rental}
-                                </div>
-                                <div class="col-md-6">
-                                    <i class="fas fa-exclamation-triangle me-2"></i>
-                                    <strong>Jenis Laporan:</strong> ${item.jenis_laporan}
-                                </div>
-                                <div class="col-md-6">
-                                    <i class="fas fa-calendar me-2"></i>
-                                    <strong>Tanggal Kejadian:</strong> ${item.tanggal_kejadian}
-                                </div>
-                                <div class="col-md-6">
-                                    <i class="fas fa-user me-2"></i>
-                                    <strong>Pelapor:</strong> ${item.pelapor}
-                                </div>
+
+                            <div class="mb-3">
+                                <small class="text-muted d-block">
+                                    <i class="fas fa-id-card me-1"></i>
+                                    NIK: ${item.nik}
+                                </small>
+                                <small class="text-muted d-block">
+                                    <i class="fas fa-phone me-1"></i>
+                                    HP: ${item.no_hp}
+                                </small>
+                                <small class="text-muted d-block">
+                                    <i class="fas fa-car me-1"></i>
+                                    ${item.jenis_rental}
+                                </small>
                             </div>
-                        </div>
-                        <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                            <button onclick="viewDetail(${item.id})" class="btn btn-primary">
-                                <i class="fas fa-eye me-2"></i>
-                                Lihat Detail
-                            </button>
+
+                            <div class="mb-3">
+                                <span class="badge bg-warning text-dark me-1">${item.jenis_laporan}</span>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    ${item.tanggal_kejadian}
+                                </small>
+                                <button onclick="viewDetail(${item.id})" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-eye me-1"></i>
+                                    Detail
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             `;
         });
 
-        $('#resultsList').html(html);
+        $('#resultsList').html(`<div class="row">${html}</div>`);
         $('#results').removeClass('d-none');
     }
 
@@ -543,7 +568,73 @@ $(document).ready(function() {
             method: 'GET',
             success: function(response) {
                 if (response.success) {
-                    alert(response.message);
+                    const data = response.data;
+                    let jenisLaporanHtml = '';
+                    if (Array.isArray(data.jenis_laporan)) {
+                        data.jenis_laporan.forEach(function(jenis) {
+                            jenisLaporanHtml += `<span class="badge bg-warning text-dark me-2 mb-2">${jenis}</span>`;
+                        });
+                    } else {
+                        jenisLaporanHtml = `<span class="badge bg-warning text-dark">${data.jenis_laporan}</span>`;
+                    }
+
+                    $('#detailContent').html(`
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-primary">Nama Lengkap</label>
+                                <p class="mb-0">${data.nama_lengkap}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-primary">NIK</label>
+                                <p class="mb-0">${data.nik}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-primary">Jenis Kelamin</label>
+                                <p class="mb-0">${data.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan'}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-primary">No HP</label>
+                                <p class="mb-0">${data.no_hp}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-primary">Jenis Rental</label>
+                                <p class="mb-0">${data.jenis_rental}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-primary">Jumlah Laporan</label>
+                                <p class="mb-0"><span class="badge bg-danger">${data.jumlah_laporan} Laporan</span></p>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-medium text-primary">Alamat</label>
+                                <p class="mb-0">${data.alamat || 'Data tersensor'}</p>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-medium text-primary">Jenis Laporan</label>
+                                <div>${jenisLaporanHtml}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-primary">Tanggal Kejadian</label>
+                                <p class="mb-0">${data.tanggal_kejadian}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-primary">Pelapor</label>
+                                <p class="mb-0">${data.pelapor}</p>
+                            </div>
+                            <div class="col-12">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Informasi:</strong> Beberapa data disensor untuk privasi.
+                                    <a href="{{ route('rental.register') }}" class="alert-link">Daftar sebagai rental</a>
+                                    untuk akses penuh atau beli kredit.
+                                </div>
+                            </div>
+                        </div>
+                    `);
+
+                    const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+                    modal.show();
+                } else {
+                    alert(response.message || 'Data tidak ditemukan');
                 }
             },
             error: function(xhr) {
@@ -551,6 +642,11 @@ $(document).ready(function() {
                 alert('Terjadi kesalahan saat mengambil detail');
             }
         });
+    };
+
+    // Show full access info
+    window.showFullAccess = function() {
+        alert('Untuk akses penuh:\n\n1. Daftar sebagai rental (GRATIS)\n2. Beli kredit untuk akses sekali pakai\n\nKlik "Daftar Rental" di menu untuk mendaftar gratis!');
     };
 });
 </script>

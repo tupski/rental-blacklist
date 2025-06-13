@@ -45,4 +45,27 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function apiKeys()
+    {
+        return $this->hasMany(ApiKey::class);
+    }
+
+    public function getActiveApiKey()
+    {
+        return $this->apiKeys()->where('is_active', true)->first();
+    }
+
+    public function createApiKey($name = 'Default API Key')
+    {
+        // Deactivate existing keys
+        $this->apiKeys()->update(['is_active' => false]);
+
+        // Create new key
+        return $this->apiKeys()->create([
+            'name' => $name,
+            'key' => ApiKey::generateKey(),
+            'is_active' => true
+        ]);
+    }
 }

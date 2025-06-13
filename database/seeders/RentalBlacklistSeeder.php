@@ -15,26 +15,30 @@ class RentalBlacklistSeeder extends Seeder
     public function run(): void
     {
         // Create test users
-        $user1 = User::create([
-            'name' => 'Budi Santoso',
-            'email' => 'budi@rental.com',
-            'password' => Hash::make('password'),
-            'role' => 'pengusaha_rental'
-        ]);
+        $user1 = User::firstOrCreate(
+            ['email' => 'budi@rental.com'],
+            [
+                'name' => 'Budi Santoso',
+                'password' => Hash::make('password'),
+                'role' => 'pengusaha_rental'
+            ]
+        );
 
-        $user2 = User::create([
-            'name' => 'Siti Aminah',
-            'email' => 'siti@rental.com',
-            'password' => Hash::make('password'),
-            'role' => 'pengusaha_rental'
-        ]);
+        $user2 = User::firstOrCreate(
+            ['email' => 'siti@rental.com'],
+            [
+                'name' => 'Siti Aminah',
+                'password' => Hash::make('password'),
+                'role' => 'pengusaha_rental'
+            ]
+        );
 
         // Create blacklist data
         $blacklists = [
             [
                 'nik' => '3674012345670001',
                 'nama_lengkap' => 'Angga Artupas',
-                'jenis_kelamin' => 'Laki-laki',
+                'jenis_kelamin' => 'L',
                 'no_hp' => '081234567890',
                 'alamat' => 'Jl. Merdeka No. 123, Jakarta Pusat',
                 'jenis_rental' => 'Mobil',
@@ -48,7 +52,7 @@ class RentalBlacklistSeeder extends Seeder
             [
                 'nik' => '3674012345670001', // Same NIK to test validation
                 'nama_lengkap' => 'Angga Artupas',
-                'jenis_kelamin' => 'Laki-laki',
+                'jenis_kelamin' => 'L',
                 'no_hp' => '081234567890',
                 'alamat' => 'Jl. Merdeka No. 123, Jakarta Pusat',
                 'jenis_rental' => 'Motor',
@@ -62,11 +66,11 @@ class RentalBlacklistSeeder extends Seeder
             [
                 'nik' => '3201987654321002',
                 'nama_lengkap' => 'Rina Kusuma',
-                'jenis_kelamin' => 'Perempuan',
+                'jenis_kelamin' => 'P',
                 'no_hp' => '087654321098',
                 'alamat' => 'Jl. Sudirman No. 456, Bandung',
                 'jenis_rental' => 'Kamera',
-                'jenis_laporan' => ['merusak_barang'],
+                'jenis_laporan' => ['Merusak Barang'],
                 'status_validitas' => 'Pending',
                 'kronologi' => 'Pelanggan menyewa kamera DSLR untuk acara pernikahan. Setelah dikembalikan, kamera dalam kondisi rusak parah dengan lensa yang retak.',
                 'bukti' => [],
@@ -76,11 +80,11 @@ class RentalBlacklistSeeder extends Seeder
             [
                 'nik' => '3301123456789003',
                 'nama_lengkap' => 'Dedi Kurniawan',
-                'jenis_kelamin' => 'Laki-laki',
+                'jenis_kelamin' => 'L',
                 'no_hp' => '089876543210',
                 'alamat' => 'Jl. Diponegoro No. 789, Semarang',
                 'jenis_rental' => 'Alat Elektronik',
-                'jenis_laporan' => ['percobaan_penipuan'],
+                'jenis_laporan' => ['Lainnya'],
                 'status_validitas' => 'Pending',
                 'kronologi' => 'Pelanggan mencoba menyewa sound system dengan memberikan uang muka palsu (uang mainan). Untungnya staff kami teliti dan menolak transaksi tersebut.',
                 'bukti' => [],

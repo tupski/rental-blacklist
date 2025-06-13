@@ -38,62 +38,62 @@
                     <div class="card-body p-4">
                         <form action="{{ route('report.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
-                            
+
                             <!-- Data Pelanggan Bermasalah -->
                             <div class="mb-4">
                                 <h5 class="text-primary mb-3">
                                     <i class="fas fa-user me-2"></i>
                                     Data Pelanggan Bermasalah
                                 </h5>
-                                
+
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label for="nik" class="form-label">NIK <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control @error('nik') is-invalid @enderror" 
-                                               id="nik" name="nik" value="{{ old('nik') }}" 
+                                        <input type="text" class="form-control @error('nik') is-invalid @enderror"
+                                               id="nik" name="nik" value="{{ old('nik') }}"
                                                placeholder="16 digit NIK" maxlength="16" required>
                                         @error('nik')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    
+
                                     <div class="col-md-6">
                                         <label for="nama_lengkap" class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control @error('nama_lengkap') is-invalid @enderror" 
-                                               id="nama_lengkap" name="nama_lengkap" value="{{ old('nama_lengkap') }}" 
+                                        <input type="text" class="form-control @error('nama_lengkap') is-invalid @enderror"
+                                               id="nama_lengkap" name="nama_lengkap" value="{{ old('nama_lengkap') }}"
                                                placeholder="Nama lengkap sesuai KTP" required>
                                         @error('nama_lengkap')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    
+
                                     <div class="col-md-6">
                                         <label for="jenis_kelamin" class="form-label">Jenis Kelamin <span class="text-danger">*</span></label>
-                                        <select class="form-select @error('jenis_kelamin') is-invalid @enderror" 
+                                        <select class="form-select @error('jenis_kelamin') is-invalid @enderror"
                                                 id="jenis_kelamin" name="jenis_kelamin" required>
                                             <option value="">Pilih Jenis Kelamin</option>
-                                            <option value="Laki-laki" {{ old('jenis_kelamin') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
-                                            <option value="Perempuan" {{ old('jenis_kelamin') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                                            <option value="L" {{ old('jenis_kelamin') == 'L' ? 'selected' : '' }}>Laki-laki</option>
+                                            <option value="P" {{ old('jenis_kelamin') == 'P' ? 'selected' : '' }}>Perempuan</option>
                                         </select>
                                         @error('jenis_kelamin')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    
+
                                     <div class="col-md-6">
                                         <label for="no_hp" class="form-label">No. HP <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control @error('no_hp') is-invalid @enderror" 
-                                               id="no_hp" name="no_hp" value="{{ old('no_hp') }}" 
+                                        <input type="text" class="form-control @error('no_hp') is-invalid @enderror"
+                                               id="no_hp" name="no_hp" value="{{ old('no_hp') }}"
                                                placeholder="08xxxxxxxxxx" required>
                                         @error('no_hp')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    
+
                                     <div class="col-12">
                                         <label for="alamat" class="form-label">Alamat <span class="text-danger">*</span></label>
-                                        <textarea class="form-control @error('alamat') is-invalid @enderror" 
-                                                  id="alamat" name="alamat" rows="3" 
+                                        <textarea class="form-control @error('alamat') is-invalid @enderror"
+                                                  id="alamat" name="alamat" rows="3"
                                                   placeholder="Alamat lengkap" required>{{ old('alamat') }}</textarea>
                                         @error('alamat')
                                             <div class="invalid-feedback">{{ $message }}</div>
@@ -108,28 +108,28 @@
                                     <i class="fas fa-clipboard-list me-2"></i>
                                     Data Laporan
                                 </h5>
-                                
+
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label for="jenis_rental" class="form-label">Jenis Rental <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control @error('jenis_rental') is-invalid @enderror" 
-                                               id="jenis_rental" name="jenis_rental" value="{{ old('jenis_rental') }}" 
+                                        <input type="text" class="form-control @error('jenis_rental') is-invalid @enderror"
+                                               id="jenis_rental" name="jenis_rental" value="{{ old('jenis_rental') }}"
                                                placeholder="Motor, Mobil, Alat, dll" required>
                                         @error('jenis_rental')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    
+
                                     <div class="col-md-6">
                                         <label for="tanggal_kejadian" class="form-label">Tanggal Kejadian <span class="text-danger">*</span></label>
-                                        <input type="date" class="form-control @error('tanggal_kejadian') is-invalid @enderror" 
-                                               id="tanggal_kejadian" name="tanggal_kejadian" value="{{ old('tanggal_kejadian') }}" 
+                                        <input type="date" class="form-control @error('tanggal_kejadian') is-invalid @enderror"
+                                               id="tanggal_kejadian" name="tanggal_kejadian" value="{{ old('tanggal_kejadian') }}"
                                                max="{{ date('Y-m-d') }}" required>
                                         @error('tanggal_kejadian')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    
+
                                     <div class="col-12">
                                         <label class="form-label">Jenis Laporan <span class="text-danger">*</span></label>
                                         <div class="row g-2">
@@ -139,8 +139,8 @@
                                             @foreach($jenisLaporan as $jenis)
                                             <div class="col-md-4">
                                                 <div class="form-check">
-                                                    <input class="form-check-input @error('jenis_laporan') is-invalid @enderror" 
-                                                           type="checkbox" name="jenis_laporan[]" value="{{ $jenis }}" 
+                                                    <input class="form-check-input @error('jenis_laporan') is-invalid @enderror"
+                                                           type="checkbox" name="jenis_laporan[]" value="{{ $jenis }}"
                                                            id="jenis_{{ $loop->index }}"
                                                            {{ in_array($jenis, old('jenis_laporan', [])) ? 'checked' : '' }}>
                                                     <label class="form-check-label" for="jenis_{{ $loop->index }}">
@@ -154,20 +154,20 @@
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    
+
                                     <div class="col-12">
                                         <label for="kronologi" class="form-label">Kronologi Kejadian <span class="text-danger">*</span></label>
-                                        <textarea class="form-control @error('kronologi') is-invalid @enderror" 
-                                                  id="kronologi" name="kronologi" rows="5" 
+                                        <textarea class="form-control @error('kronologi') is-invalid @enderror"
+                                                  id="kronologi" name="kronologi" rows="5"
                                                   placeholder="Ceritakan kronologi kejadian secara detail..." required>{{ old('kronologi') }}</textarea>
                                         @error('kronologi')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    
+
                                     <div class="col-12">
                                         <label for="bukti" class="form-label">Bukti Pendukung</label>
-                                        <input type="file" class="form-control @error('bukti.*') is-invalid @enderror" 
+                                        <input type="file" class="form-control @error('bukti.*') is-invalid @enderror"
                                                id="bukti" name="bukti[]" multiple accept=".jpg,.jpeg,.png,.pdf">
                                         <div class="form-text">Upload foto, screenshot, atau dokumen pendukung (JPG, PNG, PDF, max 2MB per file)</div>
                                         @error('bukti.*')
@@ -183,32 +183,32 @@
                                     <i class="fas fa-user-edit me-2"></i>
                                     Data Pelapor
                                 </h5>
-                                
+
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label for="nama_pelapor" class="form-label">Nama Pelapor <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control @error('nama_pelapor') is-invalid @enderror" 
-                                               id="nama_pelapor" name="nama_pelapor" value="{{ old('nama_pelapor') }}" 
+                                        <input type="text" class="form-control @error('nama_pelapor') is-invalid @enderror"
+                                               id="nama_pelapor" name="nama_pelapor" value="{{ old('nama_pelapor') }}"
                                                placeholder="Nama lengkap pelapor" required>
                                         @error('nama_pelapor')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    
+
                                     <div class="col-md-6">
                                         <label for="email_pelapor" class="form-label">Email Pelapor <span class="text-danger">*</span></label>
-                                        <input type="email" class="form-control @error('email_pelapor') is-invalid @enderror" 
-                                               id="email_pelapor" name="email_pelapor" value="{{ old('email_pelapor') }}" 
+                                        <input type="email" class="form-control @error('email_pelapor') is-invalid @enderror"
+                                               id="email_pelapor" name="email_pelapor" value="{{ old('email_pelapor') }}"
                                                placeholder="email@example.com" required>
                                         @error('email_pelapor')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    
+
                                     <div class="col-md-6">
                                         <label for="no_hp_pelapor" class="form-label">No. HP Pelapor <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control @error('no_hp_pelapor') is-invalid @enderror" 
-                                               id="no_hp_pelapor" name="no_hp_pelapor" value="{{ old('no_hp_pelapor') }}" 
+                                        <input type="text" class="form-control @error('no_hp_pelapor') is-invalid @enderror"
+                                               id="no_hp_pelapor" name="no_hp_pelapor" value="{{ old('no_hp_pelapor') }}"
                                                placeholder="08xxxxxxxxxx" required>
                                         @error('no_hp_pelapor')
                                             <div class="invalid-feedback">{{ $message }}</div>
@@ -275,7 +275,7 @@ $(document).ready(function() {
             this.value = this.value.slice(0, 16);
         }
     });
-    
+
     // Phone number validation
     $('#no_hp, #no_hp_pelapor').on('input', function() {
         this.value = this.value.replace(/[^0-9+]/g, '');
