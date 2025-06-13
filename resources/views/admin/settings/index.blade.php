@@ -16,7 +16,7 @@
                 <h3 class="card-title">Pengaturan Sistem</h3>
             </div>
             <div class="card-body">
-                    <form action="{{ route('admin.settings.update') }}" method="POST">
+                    <form id="settingsForm" action="{{ route('admin.settings.update') }}" method="POST">
                         @csrf
                         @method('PUT')
 
@@ -219,8 +219,7 @@
 @push('scripts')
 <script>
 $(document).ready(function() {
-    // Add form ID for footer button
-    $('form').attr('id', 'settingsForm');
+    // Form ID already set in HTML
 
     // Test SMTP connection
     $('#testSmtp').on('click', function() {

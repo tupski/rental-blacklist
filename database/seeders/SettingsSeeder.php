@@ -248,6 +248,178 @@ class SettingsSeeder extends Seeder
                 'label' => 'Harga Lainnya',
                 'description' => 'Harga per detail untuk kategori lainnya (Rupiah)'
             ],
+
+            // System Settings
+            [
+                'key' => 'timezone',
+                'value' => 'Asia/Jakarta',
+                'type' => 'select',
+                'group' => 'system',
+                'label' => 'Zona Waktu',
+                'description' => 'Zona waktu sistem'
+            ],
+            [
+                'key' => 'date_format',
+                'value' => 'd/m/Y',
+                'type' => 'select',
+                'group' => 'system',
+                'label' => 'Format Tanggal',
+                'description' => 'Format tampilan tanggal'
+            ],
+            [
+                'key' => 'time_format',
+                'value' => 'H:i',
+                'type' => 'select',
+                'group' => 'system',
+                'label' => 'Format Waktu',
+                'description' => 'Format tampilan waktu'
+            ],
+            [
+                'key' => 'currency_symbol',
+                'value' => 'Rp',
+                'type' => 'text',
+                'group' => 'system',
+                'label' => 'Simbol Mata Uang',
+                'description' => 'Simbol mata uang yang digunakan'
+            ],
+            [
+                'key' => 'currency_position',
+                'value' => 'before',
+                'type' => 'select',
+                'group' => 'system',
+                'label' => 'Posisi Mata Uang',
+                'description' => 'Posisi simbol mata uang (before/after)'
+            ],
+            [
+                'key' => 'maintenance_mode',
+                'value' => '0',
+                'type' => 'boolean',
+                'group' => 'system',
+                'label' => 'Mode Maintenance',
+                'description' => 'Aktifkan mode maintenance untuk sistem'
+            ],
+            [
+                'key' => 'maintenance_message',
+                'value' => 'Sistem sedang dalam pemeliharaan. Silakan coba lagi nanti.',
+                'type' => 'textarea',
+                'group' => 'system',
+                'label' => 'Pesan Maintenance',
+                'description' => 'Pesan yang ditampilkan saat mode maintenance aktif'
+            ],
+
+            // Payment Instructions
+            [
+                'key' => 'bank_bca_number',
+                'value' => '6050381330',
+                'type' => 'text',
+                'group' => 'payment',
+                'label' => 'Nomor Rekening BCA',
+                'description' => 'Nomor rekening BCA untuk transfer manual'
+            ],
+            [
+                'key' => 'bank_bca_name',
+                'value' => 'ANGGA DWY SAPUTRA',
+                'type' => 'text',
+                'group' => 'payment',
+                'label' => 'Nama Pemilik Rekening BCA',
+                'description' => 'Nama pemilik rekening BCA'
+            ],
+            [
+                'key' => 'bank_bjb_number',
+                'value' => '12345869594939',
+                'type' => 'text',
+                'group' => 'payment',
+                'label' => 'Nomor Rekening BJB',
+                'description' => 'Nomor rekening BJB untuk transfer manual'
+            ],
+            [
+                'key' => 'bank_bjb_name',
+                'value' => 'ANGGA DWY SAPUTRA',
+                'type' => 'text',
+                'group' => 'payment',
+                'label' => 'Nama Pemilik Rekening BJB',
+                'description' => 'Nama pemilik rekening BJB'
+            ],
+            [
+                'key' => 'bank_bri_number',
+                'value' => '208319382834',
+                'type' => 'text',
+                'group' => 'payment',
+                'label' => 'Nomor Rekening BRI',
+                'description' => 'Nomor rekening BRI untuk transfer manual'
+            ],
+            [
+                'key' => 'bank_bri_name',
+                'value' => 'ANGGA DWY SAPUTRA',
+                'type' => 'text',
+                'group' => 'payment',
+                'label' => 'Nama Pemilik Rekening BRI',
+                'description' => 'Nama pemilik rekening BRI'
+            ],
+            [
+                'key' => 'gopay_number',
+                'value' => '0819-1191-9993',
+                'type' => 'text',
+                'group' => 'payment',
+                'label' => 'Nomor GoPay',
+                'description' => 'Nomor GoPay untuk pembayaran digital'
+            ],
+            [
+                'key' => 'dana_number',
+                'value' => '0819-1191-9993',
+                'type' => 'text',
+                'group' => 'payment',
+                'label' => 'Nomor DANA',
+                'description' => 'Nomor DANA untuk pembayaran digital'
+            ],
+            [
+                'key' => 'ovo_number',
+                'value' => '0822-1121-9993',
+                'type' => 'text',
+                'group' => 'payment',
+                'label' => 'Nomor OVO',
+                'description' => 'Nomor OVO untuk pembayaran digital'
+            ],
+            [
+                'key' => 'payment_instruction',
+                'value' => 'Silakan transfer sesuai nominal yang tertera ke salah satu rekening di atas. Setelah transfer, kirim bukti transfer melalui WhatsApp untuk konfirmasi.',
+                'type' => 'textarea',
+                'group' => 'payment',
+                'label' => 'Instruksi Pembayaran',
+                'description' => 'Instruksi pembayaran untuk transfer manual'
+            ],
+            [
+                'key' => 'auto_payment_enabled',
+                'value' => '0',
+                'type' => 'boolean',
+                'group' => 'payment',
+                'label' => 'Pembayaran Otomatis',
+                'description' => 'Aktifkan pembayaran otomatis melalui payment gateway'
+            ],
+            [
+                'key' => 'midtrans_server_key',
+                'value' => '',
+                'type' => 'password',
+                'group' => 'payment',
+                'label' => 'Midtrans Server Key',
+                'description' => 'Server key untuk integrasi Midtrans'
+            ],
+            [
+                'key' => 'midtrans_client_key',
+                'value' => '',
+                'type' => 'text',
+                'group' => 'payment',
+                'label' => 'Midtrans Client Key',
+                'description' => 'Client key untuk integrasi Midtrans'
+            ],
+            [
+                'key' => 'xendit_secret_key',
+                'value' => '',
+                'type' => 'password',
+                'group' => 'payment',
+                'label' => 'Xendit Secret Key',
+                'description' => 'Secret key untuk integrasi Xendit'
+            ],
         ];
 
         foreach ($settings as $setting) {

@@ -8,6 +8,11 @@ use App\Http\Controllers\Admin\GuestReportController as AdminGuestReportControll
 use App\Http\Controllers\Admin\SponsorController as AdminSponsorController;
 use App\Http\Controllers\Admin\TopupController as AdminTopupController;
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
+use App\Http\Controllers\Admin\ApplicationSettingController as AdminApplicationSettingController;
+use App\Http\Controllers\Admin\SystemSettingController as AdminSystemSettingController;
+use App\Http\Controllers\Admin\SmtpSettingController as AdminSmtpSettingController;
+use App\Http\Controllers\Admin\PaymentSettingController as AdminPaymentSettingController;
+use App\Http\Controllers\Admin\DatabaseSettingController as AdminDatabaseSettingController;
 use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
 
@@ -55,10 +60,33 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('topup/{topup}/reject', [AdminTopupController::class, 'reject'])->name('topup.reject');
     Route::delete('topup/{topup}', [AdminTopupController::class, 'destroy'])->name('topup.destroy');
 
-    // Settings
+    // Settings - General (keep for backward compatibility)
     Route::get('settings', [AdminSettingController::class, 'index'])->name('settings.index');
     Route::put('settings', [AdminSettingController::class, 'update'])->name('settings.update');
     Route::post('settings/test-smtp', [AdminSettingController::class, 'testSmtp'])->name('settings.test-smtp');
+
+    // Settings - Application
+    Route::get('settings/application', [AdminApplicationSettingController::class, 'index'])->name('settings.application.index');
+    Route::put('settings/application', [AdminApplicationSettingController::class, 'update'])->name('settings.application.update');
+
+    // Settings - System
+    Route::get('settings/system', [AdminSystemSettingController::class, 'index'])->name('settings.system.index');
+    Route::put('settings/system', [AdminSystemSettingController::class, 'update'])->name('settings.system.update');
+
+    // Settings - SMTP
+    Route::get('settings/smtp', [AdminSmtpSettingController::class, 'index'])->name('settings.smtp.index');
+    Route::put('settings/smtp', [AdminSmtpSettingController::class, 'update'])->name('settings.smtp.update');
+    Route::post('settings/smtp/test', [AdminSmtpSettingController::class, 'testSmtp'])->name('settings.smtp.test');
+
+    // Settings - Payment
+    Route::get('settings/payment', [AdminPaymentSettingController::class, 'index'])->name('settings.payment.index');
+    Route::put('settings/payment', [AdminPaymentSettingController::class, 'update'])->name('settings.payment.update');
+
+    // Settings - Database
+    Route::get('settings/database', [AdminDatabaseSettingController::class, 'index'])->name('settings.database.index');
+    Route::post('settings/database/clear-cache', [AdminDatabaseSettingController::class, 'clearCache'])->name('settings.database.clear-cache');
+    Route::post('settings/database/optimize', [AdminDatabaseSettingController::class, 'optimize'])->name('settings.database.optimize');
+    Route::post('settings/database/optimize-db', [AdminDatabaseSettingController::class, 'optimizeDatabase'])->name('settings.database.optimize-db');
 
     // System Maintenance
     Route::get('maintenance', [AdminDashboardController::class, 'maintenance'])->name('maintenance');
