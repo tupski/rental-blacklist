@@ -58,6 +58,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Settings
     Route::get('settings', [AdminSettingController::class, 'index'])->name('settings.index');
     Route::put('settings', [AdminSettingController::class, 'update'])->name('settings.update');
+    Route::post('settings/test-smtp', [AdminSettingController::class, 'testSmtp'])->name('settings.test-smtp');
 
     // System Maintenance
     Route::get('maintenance', [AdminDashboardController::class, 'maintenance'])->name('maintenance');

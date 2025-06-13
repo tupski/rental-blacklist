@@ -34,12 +34,22 @@ class BlacklistController extends Controller
 
         $blacklists = $query->latest()->paginate(20)->appends($request->query());
 
-        // Get report counts for each blacklist
-        $blacklistIds = $blacklists->pluck('id');
-        $reportCounts = GuestReport::whereIn('reported_nik', $blacklists->pluck('nik'))
-                                  ->selectRaw('reported_nik, COUNT(*) as total_reports')
-                                  ->groupBy('reported_nik')
-                                  ->pluck('total_reports', 'reported_nik');
+        // Get report counts for each blacklist (from guest reports)
+        $reportCounts = GuestReport::whereIn('nik', $blacklists->pluck('nik'))
+                                  ->selectRaw('nik, COUNT(*) as total_reports')
+                                  ->groupBy('nik')
+                                  ->pluck('total_reports', 'nik');
+
+        // Also count reports from same NIK in blacklist table (different rental types)
+        $blacklistCounts = RentalBlacklist::whereIn('nik', $blacklists->pluck('nik'))
+                                         ->selectRaw('nik, COUNT(*) as total_reports')
+                                         ->groupBy('nik')
+                                         ->pluck('total_reports', 'nik');
+
+        // Merge counts
+        foreach ($blacklistCounts as $nik => $count) {
+            $reportCounts[$nik] = ($reportCounts[$nik] ?? 0) + $count;
+        }
 
         return view('admin.blacklist.index', compact('blacklists', 'reportCounts'));
     }
@@ -85,7 +95,7 @@ class BlacklistController extends Controller
 
     public function show(RentalBlacklist $blacklist)
     {
-        // Get all reports for this NIK from different rental types
+        // Get ALL reports for this NIK including same rental type and same user
         $relatedReports = RentalBlacklist::where('nik', $blacklist->nik)
                                        ->where('id', '!=', $blacklist->id)
                                        ->with('user')
@@ -93,7 +103,7 @@ class BlacklistController extends Controller
                                        ->get();
 
         // Get guest reports for this NIK
-        $guestReports = GuestReport::where('reported_nik', $blacklist->nik)
+        $guestReports = GuestReport::where('nik', $blacklist->nik)
                                   ->orderBy('created_at', 'desc')
                                   ->get();
 
