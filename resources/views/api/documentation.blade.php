@@ -391,7 +391,7 @@
                             <div class="col-md-6">
                                 <h6 class="text-primary">1. Daftar Rental</h6>
                                 <p class="text-muted mb-3">Daftarkan bisnis rental Anda untuk mendapatkan akses penuh</p>
-                                <a href="{{ route('rental.register') }}" class="btn btn-primary">
+                                <a href="{{ route('rental.daftar') }}" class="btn btn-primary">
                                     <i class="fas fa-user-plus me-2"></i>
                                     Daftar Sekarang
                                 </a>
@@ -400,12 +400,12 @@
                                 <h6 class="text-primary">2. Dapatkan API Token</h6>
                                 <p class="text-muted mb-3">Setelah verifikasi, dapatkan API token di dashboard</p>
                                 @auth
-                                    <a href="{{ route('dashboard') }}" class="btn btn-success">
+                                    <a href="{{ route('dasbor') }}" class="btn btn-success">
                                         <i class="fas fa-tachometer-alt me-2"></i>
                                         Ke Dashboard
                                     </a>
                                 @else
-                                    <a href="{{ route('login') }}" class="btn btn-outline-primary">
+                                    <a href="{{ route('masuk') }}" class="btn btn-outline-primary">
                                         <i class="fas fa-sign-in-alt me-2"></i>
                                         Login
                                     </a>

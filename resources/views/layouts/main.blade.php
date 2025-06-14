@@ -107,20 +107,20 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('api.*') ? 'active fw-bold' : '' }}" href="{{ route('api.docs') }}">
+                        <a class="nav-link {{ request()->routeIs('api.*') ? 'active fw-bold' : '' }}" href="{{ route('api.dokumentasi') }}">
                             <i class="fas fa-code me-1"></i>
                             API
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('sponsors.*') ? 'active fw-bold' : '' }}" href="{{ route('sponsors.index') }}">
+                        <a class="nav-link {{ request()->routeIs('sponsor.*') ? 'active fw-bold' : '' }}" href="{{ route('sponsor.indeks') }}">
                             <i class="fas fa-handshake me-1"></i>
                             Sponsor
                         </a>
                     </li>
                     @auth
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('dashboard*') ? 'active fw-bold' : '' }}" href="{{ route('dashboard') }}">
+                            <a class="nav-link {{ request()->routeIs('dasbor*') ? 'active fw-bold' : '' }}" href="{{ route('dasbor') }}">
                                 <i class="fas fa-tachometer-alt me-1"></i>
                                 Dashboard
                             </a>
@@ -172,12 +172,12 @@
                         </li>
                     @else
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('login') }}">
+                            <a class="nav-link" href="{{ route('masuk') }}">
                                 <i class="fas fa-sign-in-alt me-1"></i>Login
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-danger btn-sm ms-2" href="{{ route('register') }}">
+                            <a class="btn btn-danger btn-sm ms-2" href="{{ route('daftar') }}">
                                 <i class="fas fa-user-plus me-1"></i>Register
                             </a>
                         </li>

@@ -18,7 +18,7 @@ class AdminMiddleware
         // Untuk sementara, semua user yang login dianggap admin
         // Nanti bisa ditambahkan role system
         if (!auth()->check()) {
-            return redirect()->route('login')->with('error', 'Anda harus login untuk mengakses halaman ini.');
+            return redirect()->route('masuk')->with('error', 'Anda harus login untuk mengakses halaman ini.');
         }
 
         return $next($request);

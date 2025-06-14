@@ -292,7 +292,7 @@
                             </li>
                         </ul>
                         <div class="mt-4">
-                            <a href="{{ route('register') }}" class="btn btn-primary btn-lg">
+                            <a href="{{ route('daftar') }}" class="btn btn-primary btn-lg">
                                 <i class="fas fa-user-plus me-2"></i>
                                 Daftar Sekarang
                             </a>
@@ -405,16 +405,16 @@
                     <p class="text-muted mb-4">Bergabunglah dengan ribuan pengusaha rental yang sudah merasakan manfaatnya</p>
                     <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
                         @guest
-                            <a href="{{ route('register') }}" class="btn btn-danger btn-lg">
+                            <a href="{{ route('daftar') }}" class="btn btn-danger btn-lg">
                                 <i class="fas fa-user-plus me-2"></i>
                                 Daftar Gratis Sekarang
                             </a>
-                            <a href="{{ route('login') }}" class="btn btn-outline-primary btn-lg">
+                            <a href="{{ route('masuk') }}" class="btn btn-outline-primary btn-lg">
                                 <i class="fas fa-sign-in-alt me-2"></i>
                                 Sudah Punya Akun? Login
                             </a>
                         @else
-                            <a href="{{ route('dashboard') }}" class="btn btn-primary btn-lg">
+                            <a href="{{ route('dasbor') }}" class="btn btn-primary btn-lg">
                                 <i class="fas fa-tachometer-alt me-2"></i>
                                 Ke Dashboard
                             </a>

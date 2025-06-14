@@ -47,7 +47,7 @@
                 <!-- Register Form -->
                 <div class="card border-0 shadow-lg">
                     <div class="card-body p-4">
-                        <form method="POST" action="{{ route('register') }}" id="registrationForm">
+                        <form method="POST" action="{{ route('daftar') }}" id="registrationForm">
                             @csrf
                             <input type="hidden" name="user_type" id="user_type" value="rental">
 
@@ -369,7 +369,7 @@
                         <div class="text-center mb-3">
                             <p class="text-muted mb-0">
                                 Sudah punya akun?
-                                <a href="{{ route('login') }}" class="text-decoration-none text-primary fw-medium">
+                                <a href="{{ route('masuk') }}" class="text-decoration-none text-primary fw-medium">
                                     Masuk di sini
                                 </a>
                             </p>
@@ -377,7 +377,7 @@
 
                         <!-- Back to Home -->
                         <div class="text-center">
-                            <a href="{{ route('home') }}" class="text-decoration-none text-muted">
+                            <a href="{{ route('beranda') }}" class="text-decoration-none text-muted">
                                 <i class="fas fa-arrow-left me-1"></i>
                                 Kembali ke beranda
                             </a>

@@ -25,7 +25,7 @@
                                 </p>
                             </div>
                             <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                                <a href="{{ route('dashboard') }}" class="btn btn-outline-primary">
+                                <a href="{{ route('dasbor') }}" class="btn btn-outline-primary">
                                     <i class="fas fa-arrow-left me-2"></i>
                                     Kembali ke Dashboard
                                 </a>

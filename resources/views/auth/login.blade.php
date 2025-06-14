@@ -31,7 +31,7 @@
                 <!-- Login Form -->
                 <div class="card border-0 shadow-lg">
                     <div class="card-body p-4">
-                        <form method="POST" action="{{ route('login') }}">
+                        <form method="POST" action="{{ route('masuk') }}">
                             @csrf
 
                             <!-- Email Address -->
@@ -137,7 +137,7 @@
                         <div class="text-center mb-3">
                             <p class="text-muted mb-0">
                                 Belum punya akun?
-                                <a href="{{ route('register') }}" class="text-decoration-none text-danger fw-medium">
+                                <a href="{{ route('daftar') }}" class="text-decoration-none text-danger fw-medium">
                                     Daftar sekarang
                                 </a>
                             </p>

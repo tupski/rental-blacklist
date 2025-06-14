@@ -198,7 +198,7 @@
                             </li>
                         </ul>
                         <div class="mt-4">
-                            <a href="{{ route('register') }}" class="btn btn-primary">
+                            <a href="{{ route('daftar') }}" class="btn btn-primary">
                                 <i class="fas fa-user-plus me-2"></i>
                                 Daftar Sekarang
                             </a>
@@ -566,7 +566,7 @@ $(document).ready(function() {
                                     Beli Kredit
                                 </a>
                             @else
-                                <a href="{{ route('register') }}" class="btn btn-primary">
+                                <a href="{{ route('daftar') }}" class="btn btn-primary">
                                     <i class="fas fa-user-plus me-2"></i>
                                     Daftar Gratis
                                 </a>

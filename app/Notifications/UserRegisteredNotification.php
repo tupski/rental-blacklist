@@ -51,7 +51,7 @@ class UserRegisteredNotification extends Notification implements ShouldQueue
                    ->line('⚠️ **Penting:** Silakan ganti password Anda setelah login pertama kali.');
         }
 
-        $message->action('Login Sekarang', route('login'))
+        $message->action('Login Sekarang', route('masuk'))
                ->line('Jika Anda memiliki pertanyaan, jangan ragu untuk menghubungi kami.')
                ->line('Terima kasih telah bergabung dengan kami!')
                ->salutation('Salam hangat, Tim ' . config('app.name'));
