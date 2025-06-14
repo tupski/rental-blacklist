@@ -5,7 +5,7 @@
 
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('admin.dasbor') }}">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('admin.blacklist.index') }}">Daftar Blacklist</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.daftar-hitam.indeks') }}">Daftar Blacklist</a></li>
     <li class="breadcrumb-item active">Edit Blacklist</li>
 @endsection
 
@@ -16,7 +16,7 @@
             <div class="card-header">
                 <h3 class="card-title">Form Edit Blacklist</h3>
             </div>
-            <form action="{{ route('admin.blacklist.update', $blacklist->id) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.daftar-hitam.perbarui', $blacklist->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 <div class="card-body">
@@ -24,7 +24,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="nama_lengkap">Nama Lengkap <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control @error('nama_lengkap') is-invalid @enderror" 
+                                <input type="text" class="form-control @error('nama_lengkap') is-invalid @enderror"
                                        id="nama_lengkap" name="nama_lengkap" value="{{ old('nama_lengkap', $blacklist->nama_lengkap) }}" required>
                                 @error('nama_lengkap')
                                     <span class="invalid-feedback">{{ $message }}</span>
@@ -34,7 +34,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="nik">NIK <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control @error('nik') is-invalid @enderror" 
+                                <input type="text" class="form-control @error('nik') is-invalid @enderror"
                                        id="nik" name="nik" value="{{ old('nik', $blacklist->nik) }}" required>
                                 @error('nik')
                                     <span class="invalid-feedback">{{ $message }}</span>
@@ -47,7 +47,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="no_hp">No. HP <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control @error('no_hp') is-invalid @enderror" 
+                                <input type="text" class="form-control @error('no_hp') is-invalid @enderror"
                                        id="no_hp" name="no_hp" value="{{ old('no_hp', $blacklist->no_hp) }}" required>
                                 @error('no_hp')
                                     <span class="invalid-feedback">{{ $message }}</span>
@@ -57,7 +57,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="jenis_rental">Jenis Rental <span class="text-danger">*</span></label>
-                                <select class="form-control @error('jenis_rental') is-invalid @enderror" 
+                                <select class="form-control @error('jenis_rental') is-invalid @enderror"
                                         id="jenis_rental" name="jenis_rental" required>
                                     <option value="">Pilih Jenis Rental</option>
                                     <option value="Rental Mobil" {{ old('jenis_rental', $blacklist->jenis_rental) == 'Rental Mobil' ? 'selected' : '' }}>Rental Mobil</option>
@@ -74,7 +74,7 @@
 
                     <div class="form-group">
                         <label for="alamat">Alamat</label>
-                        <textarea class="form-control @error('alamat') is-invalid @enderror" 
+                        <textarea class="form-control @error('alamat') is-invalid @enderror"
                                   id="alamat" name="alamat" rows="3">{{ old('alamat', $blacklist->alamat) }}</textarea>
                         @error('alamat')
                             <span class="invalid-feedback">{{ $message }}</span>
@@ -83,7 +83,7 @@
 
                     <div class="form-group">
                         <label for="deskripsi_masalah">Deskripsi Masalah <span class="text-danger">*</span></label>
-                        <textarea class="form-control @error('deskripsi_masalah') is-invalid @enderror" 
+                        <textarea class="form-control @error('deskripsi_masalah') is-invalid @enderror"
                                   id="deskripsi_masalah" name="deskripsi_masalah" rows="4" required>{{ old('deskripsi_masalah', $blacklist->deskripsi_masalah) }}</textarea>
                         @error('deskripsi_masalah')
                             <span class="invalid-feedback">{{ $message }}</span>
@@ -118,7 +118,7 @@
                         <label for="bukti">Tambah Bukti Baru (Foto/Dokumen)</label>
                         <div class="input-group">
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input @error('bukti.*') is-invalid @enderror" 
+                                <input type="file" class="custom-file-input @error('bukti.*') is-invalid @enderror"
                                        id="bukti" name="bukti[]" multiple accept="image/*,.pdf,.doc,.docx">
                                 <label class="custom-file-label" for="bukti">Pilih file...</label>
                             </div>
@@ -133,7 +133,7 @@
 
                     <div class="form-group">
                         <label for="status_validitas">Status Validitas</label>
-                        <select class="form-control @error('status_validitas') is-invalid @enderror" 
+                        <select class="form-control @error('status_validitas') is-invalid @enderror"
                                 id="status_validitas" name="status_validitas">
                             <option value="Pending" {{ old('status_validitas', $blacklist->status_validitas) == 'Pending' ? 'selected' : '' }}>Pending</option>
                             <option value="Valid" {{ old('status_validitas', $blacklist->status_validitas) == 'Valid' ? 'selected' : '' }}>Valid</option>
@@ -146,7 +146,7 @@
 
                     <div class="form-group">
                         <label for="catatan_admin">Catatan Admin</label>
-                        <textarea class="form-control @error('catatan_admin') is-invalid @enderror" 
+                        <textarea class="form-control @error('catatan_admin') is-invalid @enderror"
                                   id="catatan_admin" name="catatan_admin" rows="3">{{ old('catatan_admin', $blacklist->catatan_admin) }}</textarea>
                         @error('catatan_admin')
                             <span class="invalid-feedback">{{ $message }}</span>
@@ -158,7 +158,7 @@
                     <button type="submit" class="btn btn-warning">
                         <i class="fas fa-save"></i> Update
                     </button>
-                    <a href="{{ route('admin.blacklist.show', $blacklist->id) }}" class="btn btn-secondary">
+                    <a href="{{ route('admin.daftar-hitam.tampil', $blacklist->id) }}" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Kembali
                     </a>
                 </div>
@@ -179,12 +179,12 @@
                     <li><i class="fas fa-info text-info"></i> Ubah status validitas sesuai kebutuhan</li>
                     <li><i class="fas fa-info text-info"></i> Tambahkan catatan admin jika perlu</li>
                 </ul>
-                
+
                 <hr>
-                
+
                 <p><strong>Data Terakhir Update:</strong></p>
                 <p class="text-muted">{{ $blacklist->updated_at->format('d/m/Y H:i:s') }}</p>
-                
+
                 <p><strong>Dibuat oleh:</strong></p>
                 <p class="text-muted">{{ $blacklist->user->name ?? 'N/A' }}</p>
             </div>
@@ -201,7 +201,7 @@ $(document).ready(function() {
         let fileName = $(this).val().split('\\').pop();
         $(this).siblings('.custom-file-label').addClass('selected').html(fileName);
     });
-    
+
     // NIK validation
     $('#nik').on('input', function() {
         let nik = $(this).val();
@@ -209,7 +209,7 @@ $(document).ready(function() {
             $(this).val(nik.substring(0, 16));
         }
     });
-    
+
     // Phone number formatting
     $('#no_hp').on('input', function() {
         let phone = $(this).val().replace(/\D/g, '');

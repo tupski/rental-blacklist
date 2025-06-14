@@ -5,7 +5,7 @@
 
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('admin.dasbor') }}">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('admin.blacklist.index') }}">Daftar Blacklist</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.daftar-hitam.indeks') }}">Daftar Blacklist</a></li>
     <li class="breadcrumb-item active">Detail Blacklist</li>
 @endsection
 
@@ -16,10 +16,10 @@
             <div class="card-header">
                 <h3 class="card-title">Detail Data Blacklist</h3>
                 <div class="card-tools">
-                    <a href="{{ route('admin.blacklist.edit', $blacklist->id) }}" class="btn btn-warning btn-sm">
+                    <a href="{{ route('admin.daftar-hitam.edit', $blacklist->id) }}" class="btn btn-warning btn-sm">
                         <i class="fas fa-edit"></i> Edit
                     </a>
-                    <a href="{{ route('admin.blacklist.index') }}" class="btn btn-secondary btn-sm">
+                    <a href="{{ route('admin.daftar-hitam.indeks') }}" class="btn btn-secondary btn-sm">
                         <i class="fas fa-arrow-left"></i> Kembali
                     </a>
                 </div>
@@ -176,7 +176,7 @@
                                     @endif
                                 </div>
                                 <div class="timeline-footer">
-                                    <a href="{{ route('admin.blacklist.show', $report->id) }}" class="btn btn-sm btn-primary">
+                                    <a href="{{ route('admin.daftar-hitam.tampil', $report->id) }}" class="btn btn-sm btn-primary">
                                         <i class="fas fa-eye"></i> Lihat Detail
                                     </a>
                                 </div>
@@ -257,11 +257,11 @@
                 </form>
                 @endif
 
-                <a href="{{ route('admin.blacklist.edit', $blacklist->id) }}" class="btn btn-warning btn-block">
+                <a href="{{ route('admin.daftar-hitam.edit', $blacklist->id) }}" class="btn btn-warning btn-block">
                     <i class="fas fa-edit"></i> Edit Data
                 </a>
 
-                <form action="{{ route('admin.blacklist.destroy', $blacklist->id) }}" method="POST" class="mt-2">
+                <form action="{{ route('admin.daftar-hitam.hapus', $blacklist->id) }}" method="POST" class="mt-2">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger btn-block"

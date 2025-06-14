@@ -89,7 +89,7 @@ class BlacklistController extends Controller
 
         RentalBlacklist::create($data);
 
-        return redirect()->route('admin.blacklist.index')
+        return redirect()->route('admin.daftar-hitam.indeks')
             ->with('success', 'Data blacklist berhasil ditambahkan.');
     }
 
