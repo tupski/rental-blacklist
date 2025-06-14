@@ -5,13 +5,24 @@
 
 @push('styles')
 <style>
+    :root {
+        --primary-color: #da3544;
+        --primary-dark: #c62d42;
+        --primary-darker: #b02a37;
+        --shadow-light: rgba(218, 53, 68, 0.1);
+        --shadow-medium: rgba(218, 53, 68, 0.2);
+        --shadow-dark: rgba(218, 53, 68, 0.3);
+        --border-radius: 24px;
+        --border-radius-sm: 16px;
+    }
+
     .detail-hero {
-        background: linear-gradient(135deg, #da3544 0%, #c62d42 50%, #b02a37 100%);
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 50%, var(--primary-darker) 100%);
         color: white;
-        padding: 4rem 0;
+        padding: 5rem 0;
         position: relative;
         overflow: hidden;
-        box-shadow: 0 10px 30px rgba(218, 53, 68, 0.3);
+        box-shadow: 0 20px 40px var(--shadow-dark);
     }
 
     .detail-hero::before {
@@ -21,8 +32,8 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-        opacity: 0.15;
+        background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 70% 80%, rgba(255,255,255,0.05) 0%, transparent 50%);
         z-index: 1;
     }
 
@@ -31,28 +42,53 @@
         z-index: 2;
     }
 
+    .hero-icon {
+        width: 100px;
+        height: 100px;
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        border-radius: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid rgba(255,255,255,0.2);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
     .detail-card {
         border: none;
-        border-radius: 20px;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-        transition: all 0.4s ease;
+        border-radius: var(--border-radius);
+        box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         margin-bottom: 2rem;
-        background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-        border: 1px solid rgba(218, 53, 68, 0.1);
+        background: white;
+        border: 1px solid rgba(0,0,0,0.05);
+        overflow: hidden;
     }
 
     .detail-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 25px 50px rgba(218, 53, 68, 0.15);
-        border-color: rgba(218, 53, 68, 0.2);
+        transform: translateY(-8px);
+        box-shadow: 0 24px 60px rgba(0,0,0,0.12);
+        border-color: var(--shadow-light);
     }
 
     .section-header {
-        background: linear-gradient(135deg, #da3544 0%, #c62d42 100%);
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
         color: white;
-        padding: 1rem 1.5rem;
-        border-radius: 15px 15px 0 0;
-        margin: -1px -1px 0 -1px;
+        padding: 1.5rem 2rem;
+        border-radius: var(--border-radius) var(--border-radius) 0 0;
+        margin: 0;
+        position: relative;
+    }
+
+    .section-header::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
     }
 
     .danger-level {
@@ -108,19 +144,24 @@
     .back-button {
         background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
         color: white;
-        padding: 0.75rem 1.5rem;
-        border-radius: 25px;
+        padding: 1rem 2rem;
+        border-radius: 20px;
         text-decoration: none;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        border: 2px solid #495057;
+        font-weight: 700;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: none;
         display: inline-block;
+        box-shadow: 0 8px 24px rgba(108, 117, 125, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.9rem;
     }
 
     .back-button:hover {
         color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+        transform: translateY(-3px);
+        box-shadow: 0 16px 40px rgba(108, 117, 125, 0.4);
+        background: linear-gradient(135deg, #495057 0%, #343a40 100%);
     }
 
     .related-card {
@@ -140,28 +181,53 @@
 
     .image-gallery {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-top: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
     }
 
     .image-item {
         position: relative;
-        border-radius: 15px;
+        border-radius: var(--border-radius-sm);
         overflow: hidden;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        transition: transform 0.3s ease;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        background: white;
     }
 
     .image-item:hover {
-        transform: scale(1.05);
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
     }
 
     .image-item img {
         width: 100%;
-        height: 200px;
+        height: 220px;
         object-fit: cover;
         cursor: pointer;
+        transition: transform 0.4s ease;
+    }
+
+    .image-item:hover img {
+        transform: scale(1.05);
+    }
+
+    .image-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, rgba(0,0,0,0.3), transparent);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .image-item:hover .image-overlay {
+        opacity: 1;
     }
 
     .file-item {
@@ -177,6 +243,74 @@
         border-color: rgba(218, 53, 68, 0.3);
         transform: translateY(-2px);
     }
+
+    .info-item {
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-radius: var(--border-radius-sm);
+        border-left: 4px solid var(--primary-color);
+        transition: all 0.3s ease;
+    }
+
+    .info-item:hover {
+        background: #e9ecef;
+        transform: translateX(4px);
+    }
+
+    .content-section {
+        padding: 2rem;
+        border-radius: var(--border-radius-sm);
+        background: #f8f9fa;
+        border-left: 4px solid var(--primary-color);
+        margin: 1.5rem 0;
+    }
+
+    .badge-modern {
+        padding: 0.75rem 1.5rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin: 0.25rem;
+        display: inline-block;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .status-badge {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 20px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 16px rgba(40, 167, 69, 0.3);
+    }
+
+    @media (max-width: 768px) {
+        .hero-icon {
+            width: 80px;
+            height: 80px;
+        }
+
+        .detail-hero {
+            padding: 3rem 0;
+        }
+
+        .timeline-main {
+            padding-left: 2rem;
+        }
+
+        .timeline-main::before {
+            left: 16px;
+            width: 4px;
+        }
+
+        .timeline-item::before {
+            left: -2rem;
+            width: 20px;
+            height: 20px;
+        }
+    }
 </style>
 @endpush
 
@@ -186,46 +320,45 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8">
-                <div class="d-flex align-items-center mb-3">
+                <div class="d-flex align-items-center mb-4">
                     <div class="me-4">
-                        <div class="bg-white rounded-circle d-flex align-items-center justify-content-center"
-                             style="width: 80px; height: 80px;">
-                            <i class="fas fa-exclamation-triangle text-danger" style="font-size: 2rem;"></i>
+                        <div class="hero-icon">
+                            <i class="fas fa-file-alt text-white" style="font-size: 2.5rem;"></i>
                         </div>
                     </div>
                     <div>
-                        <h1 class="display-6 fw-bold mb-2">Detail Laporan Blacklist</h1>
-                        <h3 class="mb-2">{{ $showUncensored ? $report->nama_lengkap : $report->sensored_nama }}</h3>
-                        <div class="d-flex align-items-center flex-wrap">
-                            <span class="badge bg-light text-dark me-3 mb-2">
-                                <i class="fas fa-id-card me-1"></i>
+                        <h1 class="display-4 fw-bold mb-3">Detail Laporan Blacklist</h1>
+                        <h2 class="mb-3 opacity-90">{{ $showUncensored ? $report->nama_lengkap : $report->sensored_nama }}</h2>
+                        <div class="d-flex align-items-center flex-wrap gap-3">
+                            <span class="badge bg-white bg-opacity-20 text-white px-3 py-2 rounded-pill">
+                                <i class="fas fa-id-card me-2"></i>
                                 NIK: {{ $showUncensored ? $report->nik : $report->sensored_nik }}
                             </span>
-                            <span class="badge bg-light text-dark me-3 mb-2">
-                                <i class="fas fa-phone me-1"></i>
+                            <span class="badge bg-white bg-opacity-20 text-white px-3 py-2 rounded-pill">
+                                <i class="fas fa-phone me-2"></i>
                                 HP: {{ $showUncensored ? $report->no_hp : $report->sensored_no_hp }}
                             </span>
                             @if($showUncensored)
-                                <span class="badge bg-success text-white mb-2">
-                                    <i class="fas fa-eye me-1"></i>
+                                <span class="badge bg-success px-3 py-2 rounded-pill">
+                                    <i class="fas fa-eye me-2"></i>
                                     Data Lengkap
                                 </span>
                             @else
-                                <span class="badge bg-warning text-dark mb-2">
-                                    <i class="fas fa-eye-slash me-1"></i>
+                                <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">
+                                    <i class="fas fa-eye-slash me-2"></i>
                                     Data Disensor
                                 </span>
                             @endif
                         </div>
                     </div>
                 </div>
-                <p class="lead mb-0">
+                <p class="lead mb-0 opacity-90 fs-5">
                     Detail lengkap laporan blacklist untuk {{ $report->jenis_rental }} -
                     {{ \App\Helpers\DateHelper::formatIndonesian($report->tanggal_kejadian) }}
                 </p>
             </div>
             <div class="col-lg-4 text-lg-end">
-                <div class="danger-level danger-{{ $dangerLevel }}">
+                <div class="danger-level danger-{{ $dangerLevel }} bg-white bg-opacity-15 text-white border-0">
                     <i class="fas fa-shield-alt me-2"></i>
                     Tingkat Risiko: {{ $dangerText }}
                 </div>
@@ -235,16 +368,16 @@
 </section>
 
 <!-- Navigation -->
-<section class="py-3 bg-light">
+<section class="py-4" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
             <a href="{{ route('laporan.timeline', $report->nik) }}" class="back-button">
                 <i class="fas fa-arrow-left me-2"></i>
                 Kembali ke Timeline
             </a>
             <div class="info-badge">
-                <i class="fas fa-calendar me-1"></i>
-                Laporan #{{ $totalReports }} dari {{ $totalReports }} total laporan
+                <i class="fas fa-calendar me-2"></i>
+                Laporan dari {{ $totalReports }} total laporan
             </div>
         </div>
     </div>
@@ -264,39 +397,71 @@
                             Informasi Pelapor (Rental)
                         </h5>
                     </div>
-                    <div class="card-body p-4">
-                        <div class="row g-3">
+                    <div class="p-4">
+                        <div class="row g-4">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold text-muted">Nama Perusahaan</label>
-                                <p class="mb-0 fs-5">{{ $report->nama_perusahaan_rental ?: 'N/A' }}</p>
+                                <div class="info-item">
+                                    <label class="form-label fw-bold text-muted mb-2">
+                                        <i class="fas fa-building me-2 text-primary"></i>
+                                        Nama Perusahaan
+                                    </label>
+                                    <p class="mb-0 fs-5 fw-semibold">{{ $report->nama_perusahaan_rental ?: 'N/A' }}</p>
+                                </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold text-muted">Penanggung Jawab</label>
-                                <p class="mb-0 fs-5">{{ $report->nama_penanggung_jawab ?: 'N/A' }}</p>
+                                <div class="info-item">
+                                    <label class="form-label fw-bold text-muted mb-2">
+                                        <i class="fas fa-user-tie me-2 text-primary"></i>
+                                        Penanggung Jawab
+                                    </label>
+                                    <p class="mb-0 fs-5 fw-semibold">{{ $report->nama_penanggung_jawab ?: 'N/A' }}</p>
+                                </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold text-muted">No. WhatsApp</label>
-                                <p class="mb-0 fs-5">{{ $report->no_wa_pelapor ?: 'N/A' }}</p>
+                                <div class="info-item">
+                                    <label class="form-label fw-bold text-muted mb-2">
+                                        <i class="fab fa-whatsapp me-2 text-success"></i>
+                                        No. WhatsApp
+                                    </label>
+                                    <p class="mb-0 fs-5 fw-semibold font-monospace">{{ $report->no_wa_pelapor ?: 'N/A' }}</p>
+                                </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold text-muted">Email</label>
-                                <p class="mb-0 fs-5">{{ $report->email_pelapor ?: 'N/A' }}</p>
+                                <div class="info-item">
+                                    <label class="form-label fw-bold text-muted mb-2">
+                                        <i class="fas fa-envelope me-2 text-info"></i>
+                                        Email
+                                    </label>
+                                    <p class="mb-0 fs-5 fw-semibold">{{ $report->email_pelapor ?: 'N/A' }}</p>
+                                </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold text-muted">Alamat Usaha</label>
-                                <p class="mb-0">{{ $report->alamat_usaha ?: 'N/A' }}</p>
+                                <div class="info-item">
+                                    <label class="form-label fw-bold text-muted mb-2">
+                                        <i class="fas fa-map-marker-alt me-2 text-danger"></i>
+                                        Alamat Usaha
+                                    </label>
+                                    <p class="mb-0 lh-lg">{{ $report->alamat_usaha ?: 'N/A' }}</p>
+                                </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold text-muted">Website/Instagram</label>
-                                <p class="mb-0">
-                                    @if($report->website_usaha)
-                                        <a href="{{ $report->website_usaha }}" target="_blank" class="text-decoration-none">
-                                            {{ $report->website_usaha }}
-                                        </a>
-                                    @else
-                                        N/A
-                                    @endif
-                                </p>
+                                <div class="info-item">
+                                    <label class="form-label fw-bold text-muted mb-2">
+                                        <i class="fas fa-globe me-2 text-warning"></i>
+                                        Website/Instagram
+                                    </label>
+                                    <p class="mb-0">
+                                        @if($report->website_usaha)
+                                            <a href="{{ $report->website_usaha }}" target="_blank"
+                                               class="text-decoration-none fw-semibold text-primary">
+                                                {{ $report->website_usaha }}
+                                                <i class="fas fa-external-link-alt ms-1"></i>
+                                            </a>
+                                        @else
+                                            <span class="text-muted">N/A</span>
+                                        @endif
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
