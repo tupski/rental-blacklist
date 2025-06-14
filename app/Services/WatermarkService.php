@@ -5,9 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
-use FFMpeg\FFMpeg;
-use FFMpeg\Coordinate\TimeCode;
-use FFMpeg\Format\Video\X264;
+// FFMpeg imports are loaded dynamically to handle missing package
 
 class WatermarkService
 {
@@ -102,8 +100,14 @@ class WatermarkService
             // Create temporary watermark image for video
             $tempWatermarkPath = $this->createVideoWatermark();
 
+            // Check if FFMpeg class exists
+            if (!class_exists('FFMpeg\FFMpeg')) {
+                \Log::info('FFMpeg not available, skipping video watermark for: ' . $originalPath);
+                return false;
+            }
+
             // Use FFMpeg to add watermark
-            $ffmpeg = FFMpeg::create([
+            $ffmpeg = \FFMpeg\FFMpeg::create([
                 'ffmpeg.binaries'  => env('FFMPEG_BINARIES', '/usr/bin/ffmpeg'),
                 'ffprobe.binaries' => env('FFPROBE_BINARIES', '/usr/bin/ffprobe'),
                 'timeout'          => 3600,
@@ -117,7 +121,7 @@ class WatermarkService
                 ->custom("overlay=(main_w-overlay_w)/2:(main_h-overlay_h)/2:format=auto,format=yuv420p");
 
             // Save with watermark
-            $format = new X264();
+            $format = new \FFMpeg\Format\Video\X264();
             $format->setKiloBitrate(1000);
 
             $video->save($format, $fullOutputPath);
@@ -141,7 +145,6 @@ class WatermarkService
     {
         // Calculate watermark size (max 25% of image width)
         $maxWatermarkWidth = $width * 0.25;
-        $watermarkHeight = 120; // Fixed height for text
 
         // Create canvas
         $canvas = $this->imageManager->create($width, $height);

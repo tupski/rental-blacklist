@@ -36,12 +36,15 @@ class FileWatermark extends Model
     {
         $bytes = $this->file_size;
         $units = ['B', 'KB', 'MB', 'GB'];
-        
-        for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
+
+        for ($i = 0; $bytes >= 1024 && $i < count($units) - 1; $i++) {
             $bytes /= 1024;
         }
-        
-        return round($bytes, 2) . ' ' . $units[$i];
+
+        // Remove decimal places if it's a whole number
+        $formatted = ($bytes == floor($bytes)) ? floor($bytes) : round($bytes, 1);
+
+        return $formatted . ' ' . $units[$i];
     }
 
     /**
@@ -69,7 +72,7 @@ class FileWatermark extends Model
         if ($user && $user->role === 'admin') {
             return $this->original_path;
         }
-        
+
         // Others see watermarked version
         return $this->watermarked_path ?: $this->original_path;
     }
