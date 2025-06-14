@@ -136,6 +136,25 @@
         font-size: 0.875rem;
     }
 
+    .btn-detail {
+        background: linear-gradient(135deg, #da3544 0%, #c62d42 100%);
+        border: none;
+        border-radius: 15px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(218, 53, 68, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-detail:hover {
+        background: linear-gradient(135deg, #c62d42 0%, #b02a37 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(218, 53, 68, 0.4);
+        color: white;
+    }
+
     .danger-low { background: #d4edda; color: #155724; }
     .danger-medium { background: #fff3cd; color: #856404; }
     .danger-high { background: #f8d7da; color: #721c24; }
@@ -376,9 +395,17 @@
                                             }
                                         @endphp
 
-                                        <div>
+                                        <div class="mb-3">
                                             <small class="text-muted">Tingkat Risiko:</small><br>
                                             <span class="danger-level danger-{{ $dangerLevel }}">{{ $dangerText }}</span>
+                                        </div>
+
+                                        <div class="d-grid">
+                                            <a href="{{ route('laporan.detail', $report->id) }}"
+                                               class="btn-detail text-center">
+                                                <i class="fas fa-eye me-1"></i>
+                                                Lihat Detail Lengkap
+                                            </a>
                                         </div>
                                     </div>
                                 </div>

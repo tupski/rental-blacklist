@@ -105,4 +105,62 @@ class PublicRentalController extends Controller
             'showUncensored'
         ));
     }
+
+    /**
+     * Tampilkan detail lengkap laporan blacklist
+     */
+    public function reportDetail($id)
+    {
+        $report = RentalBlacklist::with('user')->findOrFail($id);
+
+        // Cek apakah laporan valid
+        if ($report->status_validitas !== 'Valid') {
+            abort(404, 'Laporan tidak ditemukan atau belum divalidasi');
+        }
+
+        // Cek apakah user memiliki akses uncensored
+        $showUncensored = false;
+        if (auth()->check()) {
+            $user = auth()->user();
+            // Admin dan rental owner dapat melihat data tanpa sensor
+            $showUncensored = in_array($user->role, ['admin', 'rental_owner']);
+        }
+
+        // Ambil laporan lain dengan NIK yang sama untuk konteks
+        $relatedReports = RentalBlacklist::where('nik', $report->nik)
+                                       ->where('id', '!=', $report->id)
+                                       ->where('status_validitas', 'Valid')
+                                       ->with('user')
+                                       ->orderBy('tanggal_kejadian', 'desc')
+                                       ->limit(5)
+                                       ->get();
+
+        $totalReports = RentalBlacklist::where('nik', $report->nik)
+                                     ->where('status_validitas', 'Valid')
+                                     ->count();
+
+        // Tentukan tingkat bahaya berdasarkan jenis laporan
+        $dangerLevel = 'low';
+        $dangerText = 'Rendah';
+        if ($report->jenis_laporan && is_array($report->jenis_laporan)) {
+            $highRiskCategories = ['Tidak Mengembalikan', 'Merusak Barang', 'Tidak Bayar', 'Kabur'];
+            $hasHighRisk = !empty(array_intersect($report->jenis_laporan, $highRiskCategories));
+            if ($hasHighRisk) {
+                $dangerLevel = 'high';
+                $dangerText = 'Tinggi';
+            } elseif (count($report->jenis_laporan) > 1) {
+                $dangerLevel = 'medium';
+                $dangerText = 'Sedang';
+            }
+        }
+
+        return view('public.report-detail', compact(
+            'report',
+            'relatedReports',
+            'totalReports',
+            'showUncensored',
+            'dangerLevel',
+            'dangerText'
+        ));
+    }
 }

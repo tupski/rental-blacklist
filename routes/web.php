@@ -38,6 +38,7 @@ Route::post('/kontak', [ContactController::class, 'store'])->name('kontak.kirim'
 // Public rental profile and report timeline
 Route::get('/rental/{id}/profil', [PublicRentalController::class, 'profile'])->name('rental.profil');
 Route::get('/laporan/{nik}/timeline', [PublicRentalController::class, 'reportTimeline'])->name('laporan.timeline');
+Route::get('/laporan/{id}/detail', [PublicRentalController::class, 'reportDetail'])->name('laporan.detail');
 
 // Guest reporting (no authentication required)
 Route::get('/lapor', [ReportController::class, 'create'])->name('laporan.buat');
