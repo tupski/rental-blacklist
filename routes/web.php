@@ -11,6 +11,7 @@ use App\Http\Controllers\SponsorController;
 use App\Http\Controllers\TopupController;
 use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\ContactController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,6 +29,10 @@ Route::get('/detail/{id}', [PublicController::class, 'detail'])->name('publik.de
 Route::get('/sponsor', [SponsorController::class, 'index'])->name('sponsor.indeks');
 Route::get('/sponsorship', [SponsorController::class, 'sponsorship'])->name('sponsor.kemitraan');
 Route::get('/dokumentasi-api', [ApiController::class, 'documentation'])->name('api.dokumentasi');
+
+// Contact page
+Route::get('/kontak', [ContactController::class, 'index'])->name('kontak');
+Route::post('/kontak', [ContactController::class, 'store'])->name('kontak.kirim');
 
 // Guest reporting (no authentication required)
 Route::get('/lapor', [ReportController::class, 'create'])->name('laporan.buat');

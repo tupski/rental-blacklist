@@ -429,69 +429,7 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white mt-5">
-        <div class="container py-5">
-            <div class="row g-4">
-                <div class="col-lg-6">
-                    <h4 class="fw-bold text-danger mb-3">
-                        <i class="fas fa-shield-alt me-2"></i>
-                        {{ $settings['site_name'] }}
-                    </h4>
-                    <p class="text-light mb-4">
-                        {{ $settings['meta_description'] }}
-                    </p>
-                    <div class="d-flex gap-3">
-                        @if($settings['facebook_url'])
-                        <a href="{{ $settings['facebook_url'] }}" target="_blank" class="text-light">
-                            <i class="fab fa-facebook-f fs-5"></i>
-                        </a>
-                        @endif
-                        @if($settings['twitter_url'])
-                        <a href="{{ $settings['twitter_url'] }}" target="_blank" class="text-light">
-                            <i class="fab fa-twitter fs-5"></i>
-                        </a>
-                        @endif
-                        @if($settings['instagram_url'])
-                        <a href="{{ $settings['instagram_url'] }}" target="_blank" class="text-light">
-                            <i class="fab fa-instagram fs-5"></i>
-                        </a>
-                        @endif
-                        @if($settings['whatsapp_number'])
-                        <a href="https://wa.me/{{ $settings['whatsapp_number'] }}" target="_blank" class="text-light">
-                            <i class="fab fa-whatsapp fs-5"></i>
-                        </a>
-                        @endif
-                    </div>
-                </div>
 
-                <div class="col-lg-3">
-                    <h5 class="fw-bold mb-3">Layanan</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="{{ route('beranda') }}" class="text-light text-decoration-none">Cek Blacklist</a></li>
-                        <li class="mb-2"><a href="{{ route('rental.daftar') }}" class="text-light text-decoration-none">Daftar Rental</a></li>
-                        <li class="mb-2"><a href="{{ route('laporan.buat') }}" class="text-light text-decoration-none">Lapor Masalah</a></li>
-                        <li class="mb-2"><a href="{{ route('api.dokumentasi') }}" class="text-light text-decoration-none">API Access</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-lg-3">
-                    <h5 class="fw-bold mb-3">Bantuan</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">FAQ</a></li>
-                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Kontak</a></li>
-                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Kebijakan Privasi</a></li>
-                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Syarat & Ketentuan</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <hr class="my-4">
-            <div class="text-center">
-                <p class="mb-0">&copy; {{ date('Y') }} {{ $settings['site_name'] }}. Semua hak dilindungi.</p>
-            </div>
-        </div>
-    </footer>
 </div>
 
 <!-- Detail Modal -->

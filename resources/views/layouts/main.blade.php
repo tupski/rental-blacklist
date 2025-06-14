@@ -507,7 +507,7 @@
                     <h5 class="fw-bold mb-3">Bantuan</h5>
                     <ul class="list-unstyled">
                         <li class="mb-2"><a href="#">FAQ</a></li>
-                        <li class="mb-2"><a href="#">Kontak</a></li>
+                        <li class="mb-2"><a href="{{ route('kontak') }}">Kontak</a></li>
                         <li class="mb-2"><a href="#">Kebijakan Privasi</a></li>
                         <li class="mb-2"><a href="#">Syarat & Ketentuan</a></li>
                     </ul>
