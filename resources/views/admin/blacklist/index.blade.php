@@ -8,13 +8,69 @@
     <li class="breadcrumb-item active">Daftar Blacklist</li>
 @endsection
 
+@push('styles')
+<style>
+    .table-row-hover:hover {
+        background-color: #f8f9fa !important;
+    }
+    .form-control {
+        border: 2px solid #dee2e6;
+        color: #495057;
+        font-weight: 500;
+    }
+    .form-control:focus {
+        border-color: #da3544;
+        box-shadow: 0 0 0 0.2rem rgba(218, 53, 68, 0.25);
+        color: #212529;
+    }
+    .btn-primary {
+        background-color: #da3544;
+        border-color: #da3544;
+        font-weight: 600;
+    }
+    .btn-primary:hover {
+        background-color: #c12e3f;
+        border-color: #b02a37;
+    }
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 2px solid #dee2e6;
+    }
+    .card-title {
+        color: #212529;
+        font-weight: 600;
+    }
+    .text-dark {
+        color: #212529 !important;
+    }
+    .font-weight-medium {
+        font-weight: 500 !important;
+    }
+    .border-left-primary {
+        border-left: 4px solid #da3544 !important;
+    }
+    .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+</style>
+@endpush
+
 @section('content')
 <!-- Filter Section -->
 <div class="row">
     <div class="col-12">
-        <div class="card">
+        <div class="card shadow-sm">
             <div class="card-header">
-                <h3 class="card-title">Filter Pencarian</h3>
+                <h3 class="card-title"><i class="fas fa-filter mr-2"></i>Filter Pencarian</h3>
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                         <i class="fas fa-minus"></i>
@@ -22,15 +78,15 @@
                 </div>
             </div>
             <div class="card-body">
-                <form method="GET" action="{{ route('admin.daftar-hitam.indeks') }}" id="filterForm">
+                <form id="filterForm">
                     <div class="row">
                         <div class="col-md-3 col-sm-6 mb-3">
-                            <label for="search">Cari (Nama/NIK/HP)</label>
+                            <label for="search" class="font-weight-bold text-dark">Cari (Nama/NIK/HP)</label>
                             <input type="text" class="form-control" id="search" name="search"
                                    value="{{ request('search') }}" placeholder="Masukkan kata kunci...">
                         </div>
                         <div class="col-md-3 col-sm-6 mb-3">
-                            <label for="jenis_rental">Jenis Rental</label>
+                            <label for="jenis_rental" class="font-weight-bold text-dark">Jenis Rental</label>
                             <select class="form-control" id="jenis_rental" name="jenis_rental">
                                 <option value="">Semua</option>
                                 <option value="Rental Mobil" {{ request('jenis_rental') == 'Rental Mobil' ? 'selected' : '' }}>Rental Mobil</option>
@@ -40,7 +96,7 @@
                             </select>
                         </div>
                         <div class="col-md-3 col-sm-6 mb-3">
-                            <label for="status_validitas">Status</label>
+                            <label for="status_validitas" class="font-weight-bold text-dark">Status</label>
                             <select class="form-control" id="status_validitas" name="status_validitas">
                                 <option value="">Semua</option>
                                 <option value="Pending" {{ request('status_validitas') == 'Pending' ? 'selected' : '' }}>Pending</option>
@@ -51,21 +107,19 @@
                         <div class="col-md-3 col-sm-6 mb-3">
                             <label>&nbsp;</label>
                             <div>
-                                <button type="submit" class="btn btn-primary btn-block">
+                                <button type="button" id="searchBtn" class="btn btn-primary btn-block">
                                     <i class="fas fa-search"></i> Cari
                                 </button>
                             </div>
                         </div>
                     </div>
-                    @if(request()->hasAny(['search', 'jenis_rental', 'status_validitas']))
-                        <div class="row">
-                            <div class="col-12">
-                                <a href="{{ route('admin.daftar-hitam.indeks') }}" class="btn btn-outline-secondary btn-sm">
-                                    <i class="fas fa-times"></i> Reset Filter
-                                </a>
-                            </div>
+                    <div class="row" id="resetFilterRow" style="display: none;">
+                        <div class="col-12">
+                            <button type="button" id="resetBtn" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-times"></i> Reset Filter
+                            </button>
                         </div>
-                    @endif
+                    </div>
                 </form>
             </div>
         </div>
@@ -75,224 +129,51 @@
 <!-- Data Table -->
 <div class="row">
     <div class="col-12">
-        <div class="card">
+        <div class="card shadow-sm">
             <div class="card-header">
-                <h3 class="card-title">Daftar Blacklist ({{ $blacklists->total() }} data)</h3>
+                <h3 class="card-title">
+                    <i class="fas fa-list mr-2"></i>
+                    <span id="dataCount">Daftar Blacklist ({{ $blacklists->total() }} data)</span>
+                </h3>
                 <div class="card-tools">
                     <a href="{{ route('admin.daftar-hitam.buat') }}" class="btn btn-primary btn-sm">
                         <i class="fas fa-plus"></i> <span class="d-none d-sm-inline">Tambah Blacklist</span>
                     </a>
                 </div>
             </div>
-            <div class="card-body p-0">
-                <!-- Mobile-friendly table -->
-                <div class="d-none d-lg-block">
-                    <!-- Desktop Table -->
-                    <table class="table table-hover mb-0">
-                        <thead>
-                            <tr>
-                                <th width="5%">ID</th>
-                                <th width="20%">Nama Lengkap</th>
-                                <th width="15%">NIK</th>
-                                <th width="12%">No. HP</th>
-                                <th width="12%">Jenis Rental</th>
-                                <th width="8%">Laporan</th>
-                                <th width="10%">Status</th>
-                                <th width="10%">Tanggal</th>
-                                <th width="8%">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($blacklists as $blacklist)
-                            <tr>
-                                <td>{{ $blacklist->id }}</td>
-                                <td>
-                                    <strong>{{ $blacklist->nama_lengkap }}</strong>
-                                    <br><small class="text-muted">{{ $blacklist->user->name ?? 'N/A' }}</small>
-                                </td>
-                                <td><code>{{ $blacklist->nik }}</code></td>
-                                <td>{{ $blacklist->no_hp }}</td>
-                                <td>
-                                    <span class="badge badge-info">{{ $blacklist->jenis_rental }}</span>
-                                </td>
-                                <td>
-                                    <span class="badge badge-secondary">
-                                        {{ $reportCounts[$blacklist->nik] ?? 0 }} laporan
-                                    </span>
-                                </td>
-                                <td>
-                                    @if($blacklist->status_validitas === 'Valid')
-                                        <span class="badge badge-success">Valid</span>
-                                    @elseif($blacklist->status_validitas === 'Invalid')
-                                        <span class="badge badge-danger">Invalid</span>
-                                    @else
-                                        <span class="badge badge-warning">Pending</span>
-                                    @endif
-                                </td>
-                                <td>{{ $blacklist->created_at->format('d/m/Y') }}</td>
-                                <td>
-                                    <div class="dropdown">
-                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
-                                                data-toggle="dropdown">
-                                            <i class="fas fa-cog"></i>
-                                        </button>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item" href="{{ route('admin.daftar-hitam.tampil', $blacklist->id) }}">
-                                                <i class="fas fa-eye text-info"></i> Lihat
-                                            </a>
-                                            <a class="dropdown-item" href="{{ route('admin.daftar-hitam.edit', $blacklist->id) }}">
-                                                <i class="fas fa-edit text-warning"></i> Edit
-                                            </a>
-                                            @if($blacklist->status_validitas === 'Pending')
-                                                <div class="dropdown-divider"></div>
-                                                <form action="{{ route('admin.daftar-hitam.validasi', $blacklist->id) }}"
-                                                      method="POST" class="d-inline">
-                                                    @csrf
-                                                    <button type="submit" class="dropdown-item"
-                                                            onclick="return confirm('Validasi data ini?')">
-                                                        <i class="fas fa-check text-success"></i> Valid
-                                                    </button>
-                                                </form>
-                                                <form action="{{ route('admin.daftar-hitam.batalkan', $blacklist->id) }}"
-                                                      method="POST" class="d-inline">
-                                                    @csrf
-                                                    <button type="submit" class="dropdown-item"
-                                                            onclick="return confirm('Tolak data ini?')">
-                                                        <i class="fas fa-times text-warning"></i> Pending
-                                                    </button>
-                                                </form>
-                                            @endif
-                                            <div class="dropdown-divider"></div>
-                                            <form action="{{ route('admin.daftar-hitam.hapus', $blacklist->id) }}"
-                                                  method="POST" class="d-inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="dropdown-item text-danger"
-                                                        onclick="return confirm('Hapus data ini?')">
-                                                    <i class="fas fa-trash"></i> Hapus
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="9" class="text-center py-4">
-                                    <i class="fas fa-search fa-2x text-muted mb-2"></i>
-                                    <p class="text-muted">Tidak ada data blacklist</p>
-                                </td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+            <div class="card-body p-0 position-relative">
+                <!-- Loading Overlay -->
+                <div id="loadingOverlay" class="loading-overlay d-none">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <p class="mt-2 text-dark font-weight-bold">Memuat data...</p>
+                    </div>
                 </div>
 
-                <!-- Mobile Cards -->
-                <div class="d-lg-none">
-                    @forelse($blacklists as $blacklist)
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-8">
-                                    <h6 class="card-title mb-1">{{ $blacklist->nama_lengkap }}</h6>
-                                    <p class="card-text">
-                                        <small class="text-muted">
-                                            <i class="fas fa-id-card"></i> {{ $blacklist->nik }}<br>
-                                            <i class="fas fa-phone"></i> {{ $blacklist->no_hp }}<br>
-                                            <i class="fas fa-car"></i> {{ $blacklist->jenis_rental }}<br>
-                                            <i class="fas fa-flag"></i> {{ $reportCounts[$blacklist->nik] ?? 0 }} laporan
-                                        </small>
-                                    </p>
-                                </div>
-                                <div class="col-4 text-right">
-                                    @if($blacklist->status_validitas === 'Valid')
-                                        <span class="badge badge-success mb-2">Valid</span>
-                                    @elseif($blacklist->status_validitas === 'Invalid')
-                                        <span class="badge badge-danger mb-2">Invalid</span>
-                                    @else
-                                        <span class="badge badge-warning mb-2">Pending</span>
-                                    @endif
-                                    <br>
-                                    <div class="dropdown">
-                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
-                                                data-toggle="dropdown">
-                                            <i class="fas fa-cog"></i>
-                                        </button>
-                                        <div class="dropdown-menu dropdown-menu-right">
-                                            <a class="dropdown-item" href="{{ route('admin.daftar-hitam.tampil', $blacklist->id) }}">
-                                                <i class="fas fa-eye text-info"></i> Lihat
-                                            </a>
-                                            <a class="dropdown-item" href="{{ route('admin.daftar-hitam.edit', $blacklist->id) }}">
-                                                <i class="fas fa-edit text-warning"></i> Edit
-                                            </a>
-                                            @if($blacklist->status_validitas === 'Pending')
-                                                <div class="dropdown-divider"></div>
-                                                <form action="{{ route('admin.daftar-hitam.validasi', $blacklist->id) }}"
-                                                      method="POST" class="d-inline">
-                                                    @csrf
-                                                    <button type="submit" class="dropdown-item"
-                                                            onclick="return confirm('Validasi data ini?')">
-                                                        <i class="fas fa-check text-success"></i> Valid
-                                                    </button>
-                                                </form>
-                                                <form action="{{ route('admin.daftar-hitam.batalkan', $blacklist->id) }}"
-                                                      method="POST" class="d-inline">
-                                                    @csrf
-                                                    <button type="submit" class="dropdown-item"
-                                                            onclick="return confirm('Tolak data ini?')">
-                                                        <i class="fas fa-times text-warning"></i> Pending
-                                                    </button>
-                                                </form>
-                                            @endif
-                                            <div class="dropdown-divider"></div>
-                                            <form action="{{ route('admin.daftar-hitam.hapus', $blacklist->id) }}"
-                                                  method="POST" class="d-inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="dropdown-item text-danger"
-                                                        onclick="return confirm('Hapus data ini?')">
-                                                    <i class="fas fa-trash"></i> Hapus
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row mt-2">
-                                <div class="col-12">
-                                    <small class="text-muted">
-                                        <i class="fas fa-user"></i> {{ $blacklist->user->name ?? 'N/A' }} •
-                                        <i class="fas fa-calendar"></i> {{ $blacklist->created_at->format('d/m/Y H:i') }}
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    @empty
-                    <div class="text-center py-5">
-                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
-                        <h5 class="text-muted">Tidak ada data blacklist</h5>
-                        <p class="text-muted">Coba ubah filter pencarian Anda</p>
-                    </div>
-                    @endforelse
+                <!-- Table Content -->
+                <div id="tableContent">
+                    @include('admin.blacklist.partials.table', ['blacklists' => $blacklists, 'reportCounts' => $reportCounts])
                 </div>
             </div>
-            @if($blacklists->hasPages())
-            <div class="card-footer">
+
+            <!-- Pagination -->
+            <div class="card-footer" id="paginationContainer">
+                @if($blacklists->hasPages())
                 <div class="row">
                     <div class="col-sm-12 col-md-5">
-                        <div class="dataTables_info">
+                        <div class="dataTables_info text-dark font-weight-medium" id="paginationInfo">
                             Menampilkan {{ $blacklists->firstItem() }} sampai {{ $blacklists->lastItem() }}
                             dari {{ $blacklists->total() }} data
                         </div>
                     </div>
-                    <div class="col-sm-12 col-md-7">
+                    <div class="col-sm-12 col-md-7" id="paginationLinks">
                         {{ $blacklists->links() }}
                     </div>
                 </div>
+                @endif
             </div>
-            @endif
         </div>
     </div>
 </div>
@@ -301,17 +182,135 @@
 @push('scripts')
 <script>
 $(document).ready(function() {
-    // Auto-submit form on select change
-    $('#jenis_rental, #status_validitas').on('change', function() {
-        $('#filterForm').submit();
+    let currentPage = 1;
+
+    // Load data function
+    function loadData(page = 1) {
+        $('#loadingOverlay').removeClass('d-none');
+
+        const formData = {
+            search: $('#search').val(),
+            jenis_rental: $('#jenis_rental').val(),
+            status_validitas: $('#status_validitas').val(),
+            page: page
+        };
+
+        $.ajax({
+            url: '{{ route('admin.daftar-hitam.indeks') }}',
+            method: 'GET',
+            data: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('#tableContent').html(response.html);
+                    updatePagination(response.pagination);
+                    updateDataCount(response.pagination.total);
+                    updateResetButton();
+                    currentPage = page;
+                }
+            },
+            error: function(xhr) {
+                console.error('Error loading data:', xhr);
+                alert('Terjadi kesalahan saat memuat data. Silakan coba lagi.');
+            },
+            complete: function() {
+                $('#loadingOverlay').addClass('d-none');
+            }
+        });
+    }
+
+    // Update pagination
+    function updatePagination(pagination) {
+        if (pagination.last_page > 1) {
+            let paginationHtml = '<div class="row"><div class="col-sm-12 col-md-5">';
+            paginationHtml += '<div class="dataTables_info text-dark font-weight-medium">';
+            paginationHtml += 'Menampilkan ' + pagination.from + ' sampai ' + pagination.to + ' dari ' + pagination.total + ' data';
+            paginationHtml += '</div></div><div class="col-sm-12 col-md-7">';
+            paginationHtml += '<nav><ul class="pagination justify-content-end">';
+
+            // Previous button
+            if (pagination.current_page > 1) {
+                paginationHtml += '<li class="page-item"><a class="page-link" href="#" data-page="' + (pagination.current_page - 1) + '">‹ Sebelumnya</a></li>';
+            }
+
+            // Page numbers
+            let startPage = Math.max(1, pagination.current_page - 2);
+            let endPage = Math.min(pagination.last_page, pagination.current_page + 2);
+
+            for (let i = startPage; i <= endPage; i++) {
+                if (i === pagination.current_page) {
+                    paginationHtml += '<li class="page-item active"><span class="page-link">' + i + '</span></li>';
+                } else {
+                    paginationHtml += '<li class="page-item"><a class="page-link" href="#" data-page="' + i + '">' + i + '</a></li>';
+                }
+            }
+
+            // Next button
+            if (pagination.current_page < pagination.last_page) {
+                paginationHtml += '<li class="page-item"><a class="page-link" href="#" data-page="' + (pagination.current_page + 1) + '">Selanjutnya ›</a></li>';
+            }
+
+            paginationHtml += '</ul></nav></div></div>';
+            $('#paginationContainer').html(paginationHtml).show();
+        } else {
+            $('#paginationContainer').hide();
+        }
+    }
+
+    // Update data count
+    function updateDataCount(total) {
+        $('#dataCount').text('Daftar Blacklist (' + total + ' data)');
+    }
+
+    // Update reset button visibility
+    function updateResetButton() {
+        const hasFilters = $('#search').val() || $('#jenis_rental').val() || $('#status_validitas').val();
+        if (hasFilters) {
+            $('#resetFilterRow').show();
+        } else {
+            $('#resetFilterRow').hide();
+        }
+    }
+
+    // Search button click
+    $('#searchBtn').on('click', function() {
+        loadData(1);
     });
 
-    // Add loading state to search button
-    $('#filterForm').on('submit', function() {
-        const submitBtn = $(this).find('button[type="submit"]');
-        submitBtn.html('<i class="fas fa-spinner fa-spin"></i> Mencari...');
-        submitBtn.prop('disabled', true);
+    // Auto-submit on select change
+    $('#jenis_rental, #status_validitas').on('change', function() {
+        loadData(1);
     });
+
+    // Enter key on search input
+    $('#search').on('keypress', function(e) {
+        if (e.which === 13) {
+            e.preventDefault();
+            loadData(1);
+        }
+    });
+
+    // Reset button
+    $('#resetBtn').on('click', function() {
+        $('#search').val('');
+        $('#jenis_rental').val('');
+        $('#status_validitas').val('');
+        loadData(1);
+    });
+
+    // Pagination click handler
+    $(document).on('click', '.page-link', function(e) {
+        e.preventDefault();
+        const page = $(this).data('page');
+        if (page) {
+            loadData(page);
+        }
+    });
+
+    // Initialize reset button state
+    updateResetButton();
 });
 </script>
 @endpush

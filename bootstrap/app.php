@@ -21,6 +21,12 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
+
+        // Redirect unauthenticated users to 'masuk' route instead of 'login'
+        $middleware->redirectGuestsTo(fn () => route('masuk'));
+
+        // Redirect authenticated users from guest pages to dashboard
+        $middleware->redirectUsersTo(fn () => route('dasbor'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

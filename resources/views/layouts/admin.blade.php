@@ -15,6 +15,185 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     @stack('styles')
+
+    <!-- Custom Admin Styles -->
+    <style>
+        :root {
+            --primary-color: #da3544;
+            --primary-dark: #b82d3c;
+            --primary-light: #e85566;
+            --primary-gradient: linear-gradient(135deg, #da3544 0%, #b82d3c 100%);
+        }
+
+        /* AdminLTE Customization */
+        .main-header.navbar {
+            background: var(--primary-gradient) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .main-header .navbar-brand {
+            color: white !important;
+            font-weight: 700;
+        }
+
+        .main-header .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+
+        .main-header .nav-link:hover {
+            color: white !important;
+        }
+
+        .main-sidebar {
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+        }
+
+        .main-sidebar .brand-link {
+            background: rgba(218, 53, 68, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .main-sidebar .brand-text {
+            color: white !important;
+            font-weight: 700;
+        }
+
+        .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active {
+            background-color: var(--primary-color) !important;
+            color: white !important;
+        }
+
+        .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link:hover {
+            background-color: rgba(218, 53, 68, 0.3) !important;
+            color: white !important;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: var(--primary-gradient);
+            border-color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(218, 53, 68, 0.3);
+        }
+
+        .btn-danger {
+            background: var(--primary-gradient);
+            border-color: var(--primary-color);
+        }
+
+        .btn-danger:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        /* Cards */
+        .card-primary .card-header {
+            background: var(--primary-gradient);
+            border-color: var(--primary-color);
+        }
+
+        .card-danger .card-header {
+            background: var(--primary-gradient);
+            border-color: var(--primary-color);
+        }
+
+        /* Small Boxes */
+        .small-box.bg-primary {
+            background: var(--primary-gradient) !important;
+        }
+
+        .small-box.bg-danger {
+            background: var(--primary-gradient) !important;
+        }
+
+        /* Text Colors */
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+
+        .text-danger {
+            color: var(--primary-color) !important;
+        }
+
+        /* Badges */
+        .badge-primary {
+            background: var(--primary-gradient);
+        }
+
+        .badge-danger {
+            background: var(--primary-gradient);
+        }
+
+        /* Footer */
+        .main-footer.bg-dark {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%) !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .main-footer .text-danger {
+            color: var(--primary-color) !important;
+        }
+
+        /* Animations */
+        .btn {
+            transition: all 0.3s ease;
+        }
+
+        .card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .small-box {
+            transition: transform 0.2s ease;
+        }
+
+        .small-box:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Notification Dropdown */
+        .dropdown-menu {
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border: none;
+        }
+
+        .dropdown-item:hover {
+            background-color: rgba(218, 53, 68, 0.1);
+            color: var(--primary-color);
+        }
+
+        /* Content Header */
+        .content-header h1 {
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb-item.active {
+            color: var(--primary-color);
+        }
+
+        .breadcrumb-item a {
+            color: #6c757d;
+            text-decoration: none;
+        }
+
+        .breadcrumb-item a:hover {
+            color: var(--primary-color);
+        }
+    </style>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
@@ -25,7 +204,8 @@
     </div>
 
     <!-- Navbar -->
-    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <nav class="main-header navbar navbar-expand navbar-dark"
+         style="background: linear-gradient(135deg, #da3544 0%, #b82d3c 100%);"&gt;
         <!-- Left navbar links -->
         <ul class="navbar-nav">
             <li class="nav-item">
@@ -384,12 +564,31 @@
         </section>
     </div>
 
-    <!-- Footer -->
-    <footer class="main-footer">
-        <strong>Copyright &copy; {{ date('Y') }} <a href="{{ route('beranda') }}">{{ config('app.name') }}</a>.</strong>
-        All rights reserved.
-        <div class="float-right d-none d-sm-inline-block">
-            <b>Version</b> 1.0.0
+    <!-- Modern Footer -->
+    <footer class="main-footer bg-dark text-white">
+        <div class="container-fluid">
+            <div class="row py-3">
+                <div class="col-md-6">
+                    <strong>
+                        <i class="fas fa-shield-alt text-danger me-2"></i>
+                        Copyright &copy; {{ date('Y') }}
+                        <a href="{{ route('beranda') }}" class="text-danger">{{ config('app.name') }}</a>
+                    </strong>
+                    <br>
+                    <small class="text-muted">Semua hak dilindungi undang-undang.</small>
+                </div>
+                <div class="col-md-6 text-md-right">
+                    <div class="mb-2">
+                        <small class="text-muted">Admin Panel</small>
+                        <span class="badge badge-danger ml-2">v1.0.0</span>
+                    </div>
+                    <div>
+                        <small class="text-muted">
+                            Dibuat dengan <i class="fas fa-heart text-danger"></i> untuk komunitas rental Indonesia
+                        </small>
+                    </div>
+                </div>
+            </div>
         </div>
     </footer>
 </div>

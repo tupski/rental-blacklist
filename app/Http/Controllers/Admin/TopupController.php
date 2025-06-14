@@ -15,13 +15,48 @@ class TopupController extends Controller
     {
         $query = TopupRequest::with('user');
 
+        // Filter berdasarkan status
         if ($request->has('status') && $request->status) {
             $query->where('status', $request->status);
         }
 
-        $topups = $query->latest()->paginate(20);
+        // Filter berdasarkan nomor invoice
+        if ($request->has('invoice') && $request->invoice) {
+            $query->where('invoice_number', 'like', '%' . $request->invoice . '%');
+        }
 
-        return view('admin.topup.index', compact('topups'));
+        // Filter berdasarkan nama user
+        if ($request->has('user') && $request->user) {
+            $query->whereHas('user', function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->user . '%')
+                  ->orWhere('email', 'like', '%' . $request->user . '%');
+            });
+        }
+
+        // Filter berdasarkan tanggal
+        if ($request->has('tanggal_dari') && $request->tanggal_dari) {
+            $query->whereDate('created_at', '>=', $request->tanggal_dari);
+        }
+
+        if ($request->has('tanggal_sampai') && $request->tanggal_sampai) {
+            $query->whereDate('created_at', '<=', $request->tanggal_sampai);
+        }
+
+        // Filter berdasarkan jumlah
+        if ($request->has('jumlah_min') && $request->jumlah_min) {
+            $query->where('amount', '>=', $request->jumlah_min);
+        }
+
+        if ($request->has('jumlah_max') && $request->jumlah_max) {
+            $query->where('amount', '<=', $request->jumlah_max);
+        }
+
+        $topups = $query->latest()->paginate(20)->appends($request->query());
+
+        // Get statistics for all topups (not just filtered ones)
+        $allTopups = TopupRequest::with('user')->get();
+
+        return view('admin.topup.index', compact('topups', 'allTopups'));
     }
 
     public function show(TopupRequest $topup)

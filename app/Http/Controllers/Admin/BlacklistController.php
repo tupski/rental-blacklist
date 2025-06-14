@@ -32,7 +32,7 @@ class BlacklistController extends Controller
             $query->where('status_validitas', $request->get('status_validitas'));
         }
 
-        $blacklists = $query->latest()->paginate(20)->appends($request->query());
+        $blacklists = $query->latest()->paginate(10)->appends($request->query());
 
         // Get report counts for each blacklist (from guest reports)
         $reportCounts = GuestReport::whereIn('nik', $blacklists->pluck('nik'))
@@ -49,6 +49,23 @@ class BlacklistController extends Controller
         // Merge counts
         foreach ($blacklistCounts as $nik => $count) {
             $reportCounts[$nik] = ($reportCounts[$nik] ?? 0) + $count;
+        }
+
+        // Handle AJAX request
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'html' => view('admin.blacklist.partials.table', compact('blacklists', 'reportCounts'))->render(),
+                'pagination' => [
+                    'current_page' => $blacklists->currentPage(),
+                    'last_page' => $blacklists->lastPage(),
+                    'per_page' => $blacklists->perPage(),
+                    'total' => $blacklists->total(),
+                    'from' => $blacklists->firstItem(),
+                    'to' => $blacklists->lastItem(),
+                    'links' => $blacklists->links()->render()
+                ]
+            ]);
         }
 
         return view('admin.blacklist.index', compact('blacklists', 'reportCounts'));

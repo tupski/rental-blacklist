@@ -20,7 +20,13 @@ Route::middleware('guest')->group(function () {
     Route::get('masuk', [AuthenticatedSessionController::class, 'create'])
         ->name('masuk');
 
+    // Alias untuk kompatibilitas dengan Laravel default
+    Route::get('login', [AuthenticatedSessionController::class, 'create'])
+        ->name('login');
+
     Route::post('masuk', [AuthenticatedSessionController::class, 'store']);
+
+    Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
     Route::get('lupa-kata-sandi', [PasswordResetLinkController::class, 'create'])
         ->name('kata-sandi.permintaan');

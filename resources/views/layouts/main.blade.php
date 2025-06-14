@@ -25,6 +25,234 @@
 
     <!-- Custom CSS -->
     <style>
+        :root {
+            --primary-color: #da3544;
+            --primary-dark: #b82d3c;
+            --primary-light: #e85566;
+            --primary-gradient: linear-gradient(135deg, #da3544 0%, #b82d3c 100%);
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+        }
+
+        /* Modern Navbar Styles */
+        .navbar-modern {
+            background: var(--primary-gradient) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(218, 53, 68, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.75rem 0;
+        }
+
+        .navbar-modern .navbar-brand {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: white !important;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .navbar-modern .navbar-brand:hover {
+            transform: translateY(-1px);
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar-modern .navbar-brand i {
+            background: linear-gradient(45deg, #fff, #f8f9fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .navbar-modern .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            margin: 0 0.25rem;
+        }
+
+        .navbar-modern .nav-link:hover {
+            color: white !important;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .navbar-modern .nav-link.active {
+            color: white !important;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-modern .btn-outline-light {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            font-weight: 600;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-modern .btn-outline-light:hover {
+            background: white;
+            color: var(--primary-color);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .navbar-modern .btn-light {
+            background: white;
+            color: var(--primary-color);
+            font-weight: 600;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-modern .btn-light:hover {
+            background: #f8f9fa;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .navbar-toggler {
+            border: none;
+            padding: 0.25rem 0.5rem;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: none;
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        /* Dropdown Styles */
+        .navbar-modern .dropdown-menu {
+            background: white;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            padding: 0.5rem 0;
+            margin-top: 0.5rem;
+        }
+
+        .navbar-modern .dropdown-item {
+            padding: 0.75rem 1.5rem;
+            color: var(--dark-color);
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-modern .dropdown-item:hover {
+            background: var(--light-color);
+            color: var(--primary-color);
+            padding-left: 2rem;
+        }
+
+        .navbar-modern .dropdown-divider {
+            margin: 0.5rem 0;
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 991.98px) {
+            .navbar-modern .navbar-collapse {
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+                border-radius: 12px;
+                margin-top: 1rem;
+                padding: 1rem;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            }
+
+            .navbar-modern .nav-link {
+                color: var(--dark-color) !important;
+                margin: 0.25rem 0;
+            }
+
+            .navbar-modern .nav-link:hover {
+                background: var(--light-color);
+                color: var(--primary-color) !important;
+            }
+
+            .navbar-modern .nav-link.active {
+                background: var(--primary-color);
+                color: white !important;
+            }
+        }
+
+        /* Primary Button Styles */
+        .btn-primary {
+            background: var(--primary-gradient);
+            border: none;
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(218, 53, 68, 0.3);
+        }
+
+        .btn-danger {
+            background: var(--primary-gradient);
+            border: none;
+            font-weight: 600;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-danger:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(218, 53, 68, 0.3);
+        }
+
+        /* Color Utilities */
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+
+        .bg-primary {
+            background: var(--primary-gradient) !important;
+        }
+
+        .border-primary {
+            border-color: var(--primary-color) !important;
+        }
+
+        .text-danger {
+            color: var(--primary-color) !important;
+        }
+
+        .bg-danger {
+            background: var(--primary-gradient) !important;
+        }
+
+        .badge.bg-danger {
+            background: var(--primary-gradient) !important;
+        }
+
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        /* Card Animations */
         .hover-card {
             transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         }
@@ -32,6 +260,8 @@
             transform: translateY(-5px);
             box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
         }
+
+        /* Background Gradients */
         .bg-gradient-to-br {
             background: linear-gradient(135deg, #fef2f2 0%, #ffffff 50%, #fff7ed 100%);
         }
@@ -41,16 +271,8 @@
         .bg-gradient-info {
             background: linear-gradient(135deg, #e1f5fe 0%, #ffffff 50%, #e8f5e8 100%);
         }
-        .navbar-brand:hover {
-            transform: scale(1.05);
-            transition: transform 0.2s ease-in-out;
-        }
-        .btn {
-            transition: all 0.2s ease-in-out;
-        }
-        .btn:hover {
-            transform: translateY(-2px);
-        }
+
+        /* Animations */
         .fade-in {
             animation: fadeIn 0.8s ease-in;
         }
@@ -66,17 +288,60 @@
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
+
+        /* Footer Styles */
+        .footer-modern {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            margin-top: auto;
+        }
+
+        .footer-modern h4, .footer-modern h5 {
+            color: white;
+        }
+
+        .footer-modern .text-danger {
+            color: var(--primary-color) !important;
+        }
+
+        .footer-modern a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-modern a:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .footer-modern .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .footer-modern .social-links a:hover {
+            background: var(--primary-color);
+            transform: translateY(-2px);
+        }
     </style>
 
     @yield('meta')
 </head>
 <body class="bg-light">
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-modern">
         <div class="container">
             <!-- Brand -->
-            <a class="navbar-brand fw-bold text-dark" href="{{ route('beranda') }}">
-                <i class="fas fa-shield-alt text-danger me-2"></i>
+            <a class="navbar-brand" href="{{ route('beranda') }}">
+                <i class="fas fa-shield-alt me-2"></i>
                 {{ $globalSettings['site_name'] ?? 'RentalGuard' }}
             </a>
 
@@ -177,7 +442,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-danger btn-sm ms-2" href="{{ route('daftar') }}">
+                            <a class="btn btn-light btn-sm ms-2" href="{{ route('daftar') }}">
                                 <i class="fas fa-user-plus me-1"></i>Register
                             </a>
                         </li>
@@ -192,35 +457,115 @@
         @yield('content')
     </main>
 
-    <!-- Footer with Sponsors -->
-    @if(isset($footerSponsors) && $footerSponsors->count() > 0)
-    <footer class="bg-white border-top mt-5">
-        <div class="container py-4">
-            <div class="row align-items-center">
-                <div class="col-md-4">
-                    <h6 class="text-muted mb-0">Didukung oleh:</h6>
+    <!-- Modern Footer -->
+    <footer class="footer-modern mt-5">
+        <div class="container py-5">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <h4 class="fw-bold mb-3">
+                        <i class="fas fa-shield-alt text-danger me-2"></i>
+                        {{ $globalSettings['site_name'] ?? 'RentalGuard' }}
+                    </h4>
+                    <p class="text-light mb-4">
+                        {{ $globalSettings['site_tagline'] ?? 'Sistem Blacklist Rental Indonesia yang terpercaya untuk melindungi bisnis rental Anda.' }}
+                    </p>
+                    <div class="social-links">
+                        @if($globalSettings['facebook_url'] ?? false)
+                        <a href="{{ $globalSettings['facebook_url'] }}" target="_blank" title="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        @endif
+                        @if($globalSettings['twitter_url'] ?? false)
+                        <a href="{{ $globalSettings['twitter_url'] }}" target="_blank" title="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        @endif
+                        @if($globalSettings['instagram_url'] ?? false)
+                        <a href="{{ $globalSettings['instagram_url'] }}" target="_blank" title="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        @endif
+                        @if($globalSettings['whatsapp_number'] ?? false)
+                        <a href="https://wa.me/{{ $globalSettings['whatsapp_number'] }}" target="_blank" title="WhatsApp">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                        @endif
+                    </div>
                 </div>
-                <div class="col-md-8">
-                    <div class="d-flex flex-wrap align-items-center justify-content-md-end gap-3">
-                        @foreach($footerSponsors as $sponsor)
-                            <a href="{{ $sponsor->website_url }}" target="_blank" class="text-decoration-none">
-                                <img src="{{ $sponsor->logo_url }}"
-                                     alt="{{ $sponsor->name }}"
-                                     class="img-fluid"
-                                     style="max-height: 40px; max-width: 120px;"
-                                     title="{{ $sponsor->name }}">
-                            </a>
-                        @endforeach
-                        <a href="{{ route('sponsor.kemitraan') }}" class="btn btn-outline-primary btn-sm">
+
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="fw-bold mb-3">Layanan</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{{ route('beranda') }}">Cek Blacklist</a></li>
+                        <li class="mb-2"><a href="{{ route('rental.daftar') }}">Daftar Rental</a></li>
+                        <li class="mb-2"><a href="{{ route('laporan.buat') }}">Lapor Masalah</a></li>
+                        <li class="mb-2"><a href="{{ route('api.dokumentasi') }}">API Access</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="fw-bold mb-3">Bantuan</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#">FAQ</a></li>
+                        <li class="mb-2"><a href="#">Kontak</a></li>
+                        <li class="mb-2"><a href="#">Kebijakan Privasi</a></li>
+                        <li class="mb-2"><a href="#">Syarat & Ketentuan</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-4">
+                    <h5 class="fw-bold mb-3">Kontak</h5>
+                    <div class="mb-3">
+                        <i class="fas fa-envelope me-2 text-danger"></i>
+                        <a href="mailto:{{ $globalSettings['contact_email'] ?? 'support@rentalguard.id' }}">
+                            {{ $globalSettings['contact_email'] ?? 'support@rentalguard.id' }}
+                        </a>
+                    </div>
+                    @if($globalSettings['contact_phone'] ?? false)
+                    <div class="mb-3">
+                        <i class="fas fa-phone me-2 text-danger"></i>
+                        <a href="tel:{{ $globalSettings['contact_phone'] }}">
+                            {{ $globalSettings['contact_phone'] }}
+                        </a>
+                    </div>
+                    @endif
+
+                    @if(isset($footerSponsors) && $footerSponsors->count() > 0)
+                    <div class="mt-4">
+                        <h6 class="fw-bold mb-3">Didukung oleh:</h6>
+                        <div class="d-flex flex-wrap gap-3">
+                            @foreach($footerSponsors as $sponsor)
+                                <a href="{{ $sponsor->website_url }}" target="_blank" class="text-decoration-none">
+                                    <img src="{{ $sponsor->logo_url }}"
+                                         alt="{{ $sponsor->name }}"
+                                         class="img-fluid bg-white rounded p-2"
+                                         style="max-height: 40px; max-width: 120px;"
+                                         title="{{ $sponsor->name }}">
+                                </a>
+                            @endforeach
+                        </div>
+                        <a href="{{ route('sponsor.kemitraan') }}" class="btn btn-outline-light btn-sm mt-3">
                             <i class="fas fa-plus me-1"></i>
                             Jadi Sponsor
                         </a>
                     </div>
+                    @endif
+                </div>
+            </div>
+
+            <hr class="my-4 border-light opacity-25">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; {{ date('Y') }} {{ $globalSettings['site_name'] ?? 'RentalGuard' }}. Semua hak dilindungi.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">
+                        <small>Dibuat dengan <i class="fas fa-heart text-danger"></i> untuk komunitas rental Indonesia</small>
+                    </p>
                 </div>
             </div>
         </div>
     </footer>
-    @endif
 
     <!-- Scripts -->
     <script>
