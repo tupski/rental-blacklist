@@ -5,7 +5,7 @@
 
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('admin.dasbor') }}">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">Manajemen User</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.pengguna.indeks') }}">Manajemen User</a></li>
     <li class="breadcrumb-item active">Detail User</li>
 @endsection
 
@@ -16,10 +16,10 @@
             <div class="card-header">
                 <h3 class="card-title">Informasi User</h3>
                 <div class="card-tools">
-                    <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-warning btn-sm">
+                    <a href="{{ route('admin.pengguna.edit', $user->id) }}" class="btn btn-warning btn-sm">
                         <i class="fas fa-edit"></i> Edit
                     </a>
-                    <a href="{{ route('admin.users.index') }}" class="btn btn-secondary btn-sm">
+                    <a href="{{ route('admin.pengguna.indeks') }}" class="btn btn-secondary btn-sm">
                         <i class="fas fa-arrow-left"></i> Kembali
                     </a>
                 </div>
@@ -167,19 +167,19 @@
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
-                    <form action="{{ route('admin.users.reset-password', $user->id) }}" method="POST" class="d-inline">
+                    <form action="{{ route('admin.pengguna.reset-kata-sandi', $user->id) }}" method="POST" class="d-inline">
                         @csrf
-                        <button type="submit" class="btn btn-warning btn-block" 
+                        <button type="submit" class="btn btn-warning btn-block"
                                 onclick="return confirm('Reset password user ini?')">
                             <i class="fas fa-key"></i> Reset Password
                         </button>
                     </form>
-                    
+
                     @if($user->role !== 'admin')
-                    <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="d-inline">
+                    <form action="{{ route('admin.pengguna.hapus', $user->id) }}" method="POST" class="d-inline">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-block" 
+                        <button type="submit" class="btn btn-danger btn-block"
                                 onclick="return confirm('Hapus user ini? Tindakan ini tidak dapat dibatalkan!')">
                             <i class="fas fa-trash"></i> Hapus User
                         </button>

@@ -5,7 +5,7 @@
 
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('admin.dasbor') }}">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">Manajemen User</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.pengguna.indeks') }}">Manajemen User</a></li>
     <li class="breadcrumb-item active">Tambah User</li>
 @endsection
 
@@ -16,12 +16,12 @@
             <div class="card-header">
                 <h3 class="card-title">Form Tambah User</h3>
             </div>
-            <form action="{{ route('admin.users.store') }}" method="POST">
+            <form action="{{ route('admin.pengguna.simpan') }}" method="POST">
                 @csrf
                 <div class="card-body">
                     <div class="form-group">
                         <label for="name">Nama Lengkap <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control @error('name') is-invalid @enderror" 
+                        <input type="text" class="form-control @error('name') is-invalid @enderror"
                                id="name" name="name" value="{{ old('name') }}" required>
                         @error('name')
                             <span class="invalid-feedback">{{ $message }}</span>
@@ -30,7 +30,7 @@
 
                     <div class="form-group">
                         <label for="email">Email <span class="text-danger">*</span></label>
-                        <input type="email" class="form-control @error('email') is-invalid @enderror" 
+                        <input type="email" class="form-control @error('email') is-invalid @enderror"
                                id="email" name="email" value="{{ old('email') }}" required>
                         @error('email')
                             <span class="invalid-feedback">{{ $message }}</span>
@@ -39,7 +39,7 @@
 
                     <div class="form-group">
                         <label for="role">Role <span class="text-danger">*</span></label>
-                        <select class="form-control @error('role') is-invalid @enderror" 
+                        <select class="form-control @error('role') is-invalid @enderror"
                                 id="role" name="role" required>
                             <option value="">Pilih Role</option>
                             <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>User Biasa</option>
@@ -54,7 +54,7 @@
                     <div class="form-group">
                         <label for="password">Password <span class="text-danger">*</span></label>
                         <div class="input-group">
-                            <input type="password" class="form-control @error('password') is-invalid @enderror" 
+                            <input type="password" class="form-control @error('password') is-invalid @enderror"
                                    id="password" name="password" required>
                             <div class="input-group-append">
                                 <button type="button" class="btn btn-outline-secondary" id="togglePassword">
@@ -70,7 +70,7 @@
 
                     <div class="form-group">
                         <label for="password_confirmation">Konfirmasi Password <span class="text-danger">*</span></label>
-                        <input type="password" class="form-control" 
+                        <input type="password" class="form-control"
                                id="password_confirmation" name="password_confirmation" required>
                     </div>
 
@@ -97,7 +97,7 @@
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i> Simpan
                     </button>
-                    <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">
+                    <a href="{{ route('admin.pengguna.indeks') }}" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Kembali
                     </a>
                 </div>
@@ -157,7 +157,7 @@ $(document).ready(function() {
     $('#togglePassword').click(function() {
         const passwordField = $('#password');
         const icon = $(this).find('i');
-        
+
         if (passwordField.attr('type') === 'password') {
             passwordField.attr('type', 'text');
             icon.removeClass('fa-eye').addClass('fa-eye-slash');
@@ -166,7 +166,7 @@ $(document).ready(function() {
             icon.removeClass('fa-eye-slash').addClass('fa-eye');
         }
     });
-    
+
     // Generate random password
     $('#generatePassword').click(function() {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
@@ -177,13 +177,13 @@ $(document).ready(function() {
         $('#password').val(password);
         $('#password_confirmation').val(password);
     });
-    
+
     // Email validation
     $('#email').on('blur', function() {
         const email = $(this).val();
         if (email) {
             $.ajax({
-                url: '{{ route("admin.users.check-email") }}',
+                url: '{{ route("admin.pengguna.cek-email") }}',
                 method: 'POST',
                 data: {
                     _token: '{{ csrf_token() }}',

@@ -15,7 +15,7 @@
             <div class="card-header">
                 <h3 class="card-title">Daftar Sponsor</h3>
                 <div class="card-tools">
-                    <a href="{{ route('admin.sponsors.create') }}" class="btn btn-primary btn-sm">
+                    <a href="{{ route('admin.sponsor.buat') }}" class="btn btn-primary btn-sm">
                         <i class="fas fa-plus"></i> Tambah Sponsor
                     </a>
                 </div>
@@ -79,15 +79,15 @@
                                     <td>{{ $sponsor->created_at->format('d/m/Y H:i') }}</td>
                                     <td>
                                         <div class="btn-group" role="group">
-                                            <a href="{{ route('admin.sponsors.show', $sponsor) }}"
+                                            <a href="{{ route('admin.sponsor.tampil', $sponsor) }}"
                                                class="btn btn-info btn-sm" title="Lihat Detail">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="{{ route('admin.sponsors.edit', $sponsor) }}"
+                                            <a href="{{ route('admin.sponsor.edit', $sponsor) }}"
                                                class="btn btn-warning btn-sm" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <form action="{{ route('admin.sponsors.toggle-status', $sponsor) }}"
+                                            <form action="{{ route('admin.sponsor.ubah-status', $sponsor) }}"
                                                   method="POST" class="d-inline">
                                                 @csrf
                                                 <button type="submit" class="btn btn-secondary btn-sm"
@@ -95,7 +95,7 @@
                                                     <i class="fas fa-{{ $sponsor->is_active ? 'eye-slash' : 'eye' }}"></i>
                                                 </button>
                                             </form>
-                                            <form action="{{ route('admin.sponsors.destroy', $sponsor) }}"
+                                            <form action="{{ route('admin.sponsor.hapus', $sponsor) }}"
                                                   method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
@@ -120,7 +120,7 @@
                         <i class="fas fa-handshake fa-3x text-muted mb-3"></i>
                         <h5 class="text-muted">Belum Ada Sponsor</h5>
                         <p class="text-muted">Mulai tambahkan sponsor untuk mendukung platform ini</p>
-                        <a href="{{ route('admin.sponsors.create') }}" class="btn btn-primary">
+                        <a href="{{ route('admin.sponsor.buat') }}" class="btn btn-primary">
                             <i class="fas fa-plus mr-2"></i>
                             Tambah Sponsor Pertama
                         </a>

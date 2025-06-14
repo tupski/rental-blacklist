@@ -121,7 +121,7 @@
                 </div>
             </div>
             <div class="card-footer">
-                <a href="{{ route('admin.blacklist.index') }}" class="btn btn-sm btn-primary">View All</a>
+                <a href="{{ route('admin.daftar-hitam.indeks') }}" class="btn btn-sm btn-primary">View All</a>
             </div>
         </div>
 
@@ -156,7 +156,7 @@
                                 <td>{{ $report->nama_pelapor }}</td>
                                 <td>{{ $report->created_at->format('d/m/Y') }}</td>
                                 <td>
-                                    <a href="{{ route('admin.guest-reports.show', $report->id) }}" class="btn btn-xs btn-info">
+                                    <a href="{{ route('admin.laporan-tamu.tampil', $report->id) }}" class="btn btn-xs btn-info">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                 </td>
@@ -171,7 +171,7 @@
                 </div>
             </div>
             <div class="card-footer">
-                <a href="{{ route('admin.guest-reports.index') }}" class="btn btn-sm btn-primary">View All</a>
+                <a href="{{ route('admin.laporan-tamu.indeks') }}" class="btn btn-sm btn-primary">View All</a>
             </div>
         </div>
     </section>
