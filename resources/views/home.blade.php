@@ -62,7 +62,7 @@
                                         <input
                                             type="text"
                                             id="searchInput"
-                                            name="search"
+                                            name="cari"
                                             class="form-control border-0 shadow-none"
                                             placeholder="Masukkan NIK, Nama Lengkap, atau Nomor HP (min. 3 karakter)"
                                             required
@@ -623,7 +623,7 @@ $(document).ready(function() {
 
     // Load search from URL on page load
     const urlParams = new URLSearchParams(window.location.search);
-    const searchParam = urlParams.get('search');
+    const searchParam = urlParams.get('cari');
     if (searchParam) {
         $('#searchInput').val(searchParam);
         performSearch();
@@ -648,10 +648,10 @@ $(document).ready(function() {
 
         // Perform AJAX search
         $.ajax({
-            url: '{{ route("public.search") }}',
+            url: '{{ route("publik.cari") }}',
             method: 'POST',
             data: {
-                search: search,
+                cari: search,
                 _token: '{{ csrf_token() }}'
             },
             success: function(response) {
@@ -750,7 +750,7 @@ $(document).ready(function() {
 
     function updateURL(search) {
         const url = new URL(window.location);
-        url.searchParams.set('search', search);
+        url.searchParams.set('cari', search);
         window.history.replaceState({}, '', url);
     }
 

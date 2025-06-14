@@ -79,7 +79,7 @@ class ReportController extends Controller
             }
         }
 
-        return redirect()->route('report.create')
+        return redirect()->route('laporan.buat')
             ->with('success', 'Laporan berhasil dikirim! Tim kami akan memverifikasi dalam 1-3 hari kerja. Anda akan menerima notifikasi email setelah verifikasi selesai.');
     }
 }

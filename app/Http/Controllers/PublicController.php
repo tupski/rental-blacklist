@@ -50,10 +50,10 @@ class PublicController extends Controller
     public function search(Request $request)
     {
         $request->validate([
-            'search' => 'required|string|min:3'
+            'cari' => 'required|string|min:3'
         ]);
 
-        $search = $request->input('search');
+        $search = $request->input('cari');
 
         $results = RentalBlacklist::search($search)
             ->where('status_validitas', 'Valid')

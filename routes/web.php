@@ -20,23 +20,23 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Homepage and search
-Route::get('/', [PublicController::class, 'index'])->name('home');
-Route::post('/search', [PublicController::class, 'search'])->name('public.search');
-Route::get('/detail/{id}', [PublicController::class, 'detail'])->name('public.detail');
+Route::get('/', [PublicController::class, 'index'])->name('beranda');
+Route::post('/cari', [PublicController::class, 'search'])->name('publik.cari');
+Route::get('/detail/{id}', [PublicController::class, 'detail'])->name('publik.detail');
 
 // Public information pages
-Route::get('/sponsor', [SponsorController::class, 'index'])->name('sponsors.index');
-Route::get('/sponsorship', [SponsorController::class, 'sponsorship'])->name('sponsors.sponsorship');
-Route::get('/api-docs', [ApiController::class, 'documentation'])->name('api.docs');
+Route::get('/sponsor', [SponsorController::class, 'index'])->name('sponsor.indeks');
+Route::get('/sponsorship', [SponsorController::class, 'sponsorship'])->name('sponsor.kemitraan');
+Route::get('/dokumentasi-api', [ApiController::class, 'documentation'])->name('api.dokumentasi');
 
 // Guest reporting (no authentication required)
-Route::get('/lapor', [ReportController::class, 'create'])->name('report.create');
-Route::post('/lapor', [ReportController::class, 'store'])->name('report.store');
+Route::get('/lapor', [ReportController::class, 'create'])->name('laporan.buat');
+Route::post('/lapor', [ReportController::class, 'store'])->name('laporan.simpan');
 
 // Rental pages
-Route::get('/rentals', [RentalController::class, 'index'])->name('rentals.index');
-Route::get('/daftar-rental', [RentalController::class, 'create'])->name('rental.register');
-Route::post('/daftar-rental', [RentalController::class, 'store'])->name('rental.store');
+Route::get('/rental', [RentalController::class, 'index'])->name('rental.indeks');
+Route::get('/daftar-rental', [RentalController::class, 'create'])->name('rental.daftar');
+Route::post('/daftar-rental', [RentalController::class, 'store'])->name('rental.simpan');
 
 /*
 |--------------------------------------------------------------------------
@@ -47,37 +47,37 @@ Route::post('/daftar-rental', [RentalController::class, 'store'])->name('rental.
 Route::middleware('auth')->group(function () {
 
     // Smart dashboard redirect based on role
-    Route::get('/dashboard', function () {
+    Route::get('/dasbor', function () {
         $user = auth()->user();
 
         if ($user->role === 'admin') {
-            return redirect()->route('admin.dashboard');
+            return redirect()->route('admin.dasbor');
         } elseif ($user->role === 'pengusaha_rental') {
-            return redirect()->route('rental.dashboard');
+            return redirect()->route('rental.dasbor');
         } elseif ($user->role === 'user') {
-            return redirect()->route('user.dashboard');
+            return redirect()->route('pengguna.dasbor');
         }
 
         // Default fallback
-        return redirect()->route('home');
-    })->name('dashboard');
+        return redirect()->route('beranda');
+    })->name('dasbor');
 
     // Data unlock (for regular users)
-    Route::post('/unlock-data/{id}', [PublicController::class, 'unlockData'])->name('public.unlock');
+    Route::post('/buka-data/{id}', [PublicController::class, 'unlockData'])->name('publik.buka');
 
     // Full detail access for unlocked data
-    Route::get('/full-detail/{id}', [PublicController::class, 'fullDetail'])->name('public.full-detail');
-    Route::get('/print-detail/{id}', [PublicController::class, 'printDetail'])->name('public.print-detail');
-    Route::get('/download-pdf/{id}', [PublicController::class, 'downloadPDF'])->name('public.download-pdf');
+    Route::get('/detail-lengkap/{id}', [PublicController::class, 'fullDetail'])->name('publik.detail-lengkap');
+    Route::get('/cetak-detail/{id}', [PublicController::class, 'printDetail'])->name('publik.cetak-detail');
+    Route::get('/unduh-pdf/{id}', [PublicController::class, 'downloadPDF'])->name('publik.unduh-pdf');
 
     // Profile management
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/profil', [ProfileController::class, 'edit'])->name('profil.edit');
+    Route::patch('/profil', [ProfileController::class, 'update'])->name('profil.perbarui');
+    Route::delete('/profil', [ProfileController::class, 'destroy'])->name('profil.hapus');
 
     // Invoice routes
-    Route::get('/invoice/{id}', [InvoiceController::class, 'show'])->name('invoice.show');
-    Route::get('/invoice/{id}/download', [InvoiceController::class, 'download'])->name('invoice.download');
+    Route::get('/faktur/{id}', [InvoiceController::class, 'show'])->name('faktur.tampil');
+    Route::get('/faktur/{id}/unduh', [InvoiceController::class, 'download'])->name('faktur.unduh');
 });
 
 /*
@@ -89,24 +89,24 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'verified', 'role:pengusaha_rental'])->group(function () {
 
     // Dashboard
-    Route::get('/rental/dashboard', [DashboardController::class, 'index'])->name('rental.dashboard');
+    Route::get('/rental/dasbor', [DashboardController::class, 'index'])->name('rental.dasbor');
 
     // Blacklist management
-    Route::prefix('dashboard/blacklist')->name('dashboard.blacklist.')->group(function () {
-        Route::get('/', [BlacklistController::class, 'index'])->name('index');
-        Route::get('/create', [BlacklistController::class, 'create'])->name('create');
-        Route::post('/', [BlacklistController::class, 'store'])->name('store');
-        Route::get('/{id}', [BlacklistController::class, 'show'])->name('show');
+    Route::prefix('dasbor/daftar-hitam')->name('dasbor.daftar-hitam.')->group(function () {
+        Route::get('/', [BlacklistController::class, 'index'])->name('indeks');
+        Route::get('/buat', [BlacklistController::class, 'create'])->name('buat');
+        Route::post('/', [BlacklistController::class, 'store'])->name('simpan');
+        Route::get('/{id}', [BlacklistController::class, 'show'])->name('tampil');
         Route::get('/{id}/edit', [BlacklistController::class, 'edit'])->name('edit');
-        Route::put('/{id}', [BlacklistController::class, 'update'])->name('update');
-        Route::delete('/{id}', [BlacklistController::class, 'destroy'])->name('destroy');
-        Route::post('/search', [BlacklistController::class, 'searchForDashboard'])->name('search');
+        Route::put('/{id}', [BlacklistController::class, 'update'])->name('perbarui');
+        Route::delete('/{id}', [BlacklistController::class, 'destroy'])->name('hapus');
+        Route::post('/cari', [BlacklistController::class, 'searchForDashboard'])->name('cari');
     });
 
     // API Key management
-    Route::prefix('api-key')->name('api-key.')->group(function () {
-        Route::get('/', [App\Http\Controllers\ApiKeyController::class, 'show'])->name('show');
-        Route::post('/generate', [App\Http\Controllers\ApiKeyController::class, 'generate'])->name('generate');
+    Route::prefix('kunci-api')->name('kunci-api.')->group(function () {
+        Route::get('/', [App\Http\Controllers\ApiKeyController::class, 'show'])->name('tampil');
+        Route::post('/buat', [App\Http\Controllers\ApiKeyController::class, 'generate'])->name('buat');
         Route::post('/reset', [App\Http\Controllers\ApiKeyController::class, 'reset'])->name('reset');
     });
 });
@@ -120,17 +120,17 @@ Route::middleware(['auth', 'verified', 'role:pengusaha_rental'])->group(function
 Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
 
     // Dashboard for regular users
-    Route::get('/user/dashboard', [App\Http\Controllers\UserDashboardController::class, 'index'])->name('user.dashboard');
-    Route::post('/user/search', [App\Http\Controllers\UserDashboardController::class, 'search'])->name('user.search');
-    Route::post('/user/unlock/{id}', [App\Http\Controllers\UserDashboardController::class, 'unlock'])->name('user.unlock');
+    Route::get('/pengguna/dasbor', [App\Http\Controllers\UserDashboardController::class, 'index'])->name('pengguna.dasbor');
+    Route::post('/pengguna/cari', [App\Http\Controllers\UserDashboardController::class, 'search'])->name('pengguna.cari');
+    Route::post('/pengguna/buka/{id}', [App\Http\Controllers\UserDashboardController::class, 'unlock'])->name('pengguna.buka');
 
     // Topup & Balance routes (only for regular users)
-    Route::get('/topup', [TopupController::class, 'index'])->name('topup.index');
-    Route::get('/topup/create', [TopupController::class, 'create'])->name('topup.create');
-    Route::post('/topup', [TopupController::class, 'store'])->name('topup.store');
-    Route::get('/topup/confirm/{invoice}', [TopupController::class, 'confirm'])->name('topup.confirm');
-    Route::post('/topup/upload-proof/{invoice}', [TopupController::class, 'uploadProof'])->name('topup.upload-proof');
-    Route::get('/balance/history', [BalanceController::class, 'history'])->name('balance.history');
+    Route::get('/isi-saldo', [TopupController::class, 'index'])->name('isi-saldo.indeks');
+    Route::get('/isi-saldo/buat', [TopupController::class, 'create'])->name('isi-saldo.buat');
+    Route::post('/isi-saldo', [TopupController::class, 'store'])->name('isi-saldo.simpan');
+    Route::get('/isi-saldo/konfirmasi/{invoice}', [TopupController::class, 'confirm'])->name('isi-saldo.konfirmasi');
+    Route::post('/isi-saldo/unggah-bukti/{invoice}', [TopupController::class, 'uploadProof'])->name('isi-saldo.unggah-bukti');
+    Route::get('/saldo/riwayat', [BalanceController::class, 'history'])->name('saldo.riwayat');
 });
 
 // Include authentication routes
