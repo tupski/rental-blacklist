@@ -795,7 +795,12 @@ $(document).ready(function() {
                                 <div class="col-md-6">
                                     <label class="form-label fw-medium text-primary">Pelapor</label>
                                     <p class="mb-0">
-                                        ${data.pelapor}
+                                        ${data.pelapor_role === 'pengusaha_rental' ?
+                                            `<a href="/rental/${data.pelapor_id}/profil" class="text-decoration-none fw-bold text-success">
+                                                <i class="fas fa-building me-1"></i>${data.pelapor}
+                                            </a>` :
+                                            data.pelapor
+                                        }
                                         ${data.is_verified ? '<i class="fas fa-check-circle text-primary ms-2" title="Rental Terverifikasi"></i>' : ''}
                                     </p>
                                 </div>
@@ -804,6 +809,15 @@ $(document).ready(function() {
                                     <label class="form-label fw-medium text-primary">Kronologi Kejadian</label>
                                     <div class="alert alert-warning">
                                         ${data.kronologi}
+                                    </div>
+                                </div>
+                                ` : ''}
+                                ${data.jumlah_laporan > 1 ? `
+                                <div class="col-12">
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-history me-2"></i>
+                                        <strong>Multiple Reports:</strong> Terlapor ini memiliki ${data.jumlah_laporan} laporan.
+                                        <a href="/laporan/${data.nik}/timeline" class="alert-link">Lihat Timeline Lengkap</a>
                                     </div>
                                 </div>
                                 ` : ''}
@@ -858,10 +872,24 @@ $(document).ready(function() {
                                 <div class="col-md-6">
                                     <label class="form-label fw-medium text-primary">Pelapor</label>
                                     <p class="mb-0">
-                                        ${data.pelapor}
+                                        ${data.pelapor_role === 'pengusaha_rental' ?
+                                            `<a href="/rental/${data.pelapor_id}/profil" class="text-decoration-none fw-bold text-success">
+                                                <i class="fas fa-building me-1"></i>${data.pelapor}
+                                            </a>` :
+                                            data.pelapor
+                                        }
                                         ${data.is_verified ? '<i class="fas fa-check-circle text-primary ms-2" title="Rental Terverifikasi"></i>' : ''}
                                     </p>
                                 </div>
+                                ${data.jumlah_laporan > 1 ? `
+                                <div class="col-12">
+                                    <div class="alert alert-warning">
+                                        <i class="fas fa-history me-2"></i>
+                                        <strong>Multiple Reports:</strong> Terlapor ini memiliki ${data.jumlah_laporan} laporan.
+                                        <a href="/laporan/${data.nik}/timeline" class="alert-link">Lihat Timeline Lengkap</a>
+                                    </div>
+                                </div>
+                                ` : ''}
                                 <div class="col-12">
                                     <div class="alert alert-info">
                                         <i class="fas fa-info-circle me-2"></i>

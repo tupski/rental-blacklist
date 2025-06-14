@@ -179,6 +179,8 @@ class PublicController extends Controller
                     'kronologi' => $blacklist->kronologi,
                     'jumlah_laporan' => RentalBlacklist::countReportsByNik($blacklist->nik),
                     'pelapor' => $blacklist->user->name,
+                    'pelapor_id' => $blacklist->user->id,
+                    'pelapor_role' => $blacklist->user->role,
                     'is_verified' => true,
                     'is_full_access' => true
                 ]
@@ -200,6 +202,8 @@ class PublicController extends Controller
                 'tanggal_kejadian' => $blacklist->tanggal_kejadian->format('d/m/Y'),
                 'jumlah_laporan' => RentalBlacklist::countReportsByNik($blacklist->nik),
                 'pelapor' => $blacklist->user->name,
+                'pelapor_id' => $blacklist->user->id,
+                'pelapor_role' => $blacklist->user->role,
                 'is_verified' => false,
                 'is_full_access' => false
             ]

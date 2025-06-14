@@ -12,6 +12,7 @@ use App\Http\Controllers\TopupController;
 use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\PublicRentalController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,6 +34,10 @@ Route::get('/dokumentasi-api', [ApiController::class, 'documentation'])->name('a
 // Contact page
 Route::get('/kontak', [ContactController::class, 'index'])->name('kontak');
 Route::post('/kontak', [ContactController::class, 'store'])->name('kontak.kirim');
+
+// Public rental profile and report timeline
+Route::get('/rental/{id}/profil', [PublicRentalController::class, 'profile'])->name('rental.profil');
+Route::get('/laporan/{nik}/timeline', [PublicRentalController::class, 'reportTimeline'])->name('laporan.timeline');
 
 // Guest reporting (no authentication required)
 Route::get('/lapor', [ReportController::class, 'create'])->name('laporan.buat');
