@@ -14,7 +14,7 @@ use App\Http\Controllers\Admin\SmtpSettingController as AdminSmtpSettingControll
 use App\Http\Controllers\Admin\PaymentSettingController as AdminPaymentSettingController;
 use App\Http\Controllers\Admin\DatabaseSettingController as AdminDatabaseSettingController;
 use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
-use App\Http\Controllers\Admin\ReportController as AdminReportController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -124,29 +124,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('laporan', function() { return view('admin.reports.index'); })->name('laporan');
     Route::get('analitik', function() { return view('admin.analytics.index'); })->name('analitik');
 
-    // Maintenance
-    Route::get('maintenance', [AdminSettingController::class, 'maintenance'])->name('maintenance');
-
     // Notifications
-    Route::get('notifikasi', [AdminNotificationController::class, 'get'])->name('notifikasi.ambil');
-    Route::post('notifikasi/baca', [AdminNotificationController::class, 'markRead'])->name('notifikasi.baca');
-
-
+    Route::get('notifikasi', [AdminNotificationController::class, 'getNotifications'])->name('notifikasi.ambil');
+    Route::post('notifikasi/baca', [AdminNotificationController::class, 'markAsRead'])->name('notifikasi.baca');
 
     // System Maintenance
     Route::get('maintenance', [AdminDashboardController::class, 'maintenance'])->name('maintenance');
     Route::post('maintenance/clear-cache', [AdminDashboardController::class, 'clearCache'])->name('maintenance.clear-cache');
     Route::post('maintenance/optimize', [AdminDashboardController::class, 'optimize'])->name('maintenance.optimize');
-
-    // Notifications
-    Route::get('notifications', [AdminNotificationController::class, 'index'])->name('notifications.index');
-    Route::get('notifications/get', [AdminNotificationController::class, 'getNotifications'])->name('notifications.get');
-    Route::post('notifications/mark-read', [AdminNotificationController::class, 'markAsRead'])->name('notifications.mark-read');
-
-    // Reports & Analytics
-    Route::get('reports', [AdminReportController::class, 'index'])->name('reports');
-    Route::get('analytics', [AdminReportController::class, 'analytics'])->name('analytics');
-    Route::post('reports/generate', [AdminReportController::class, 'generate'])->name('reports.generate');
-    Route::get('reports/export', [AdminReportController::class, 'export'])->name('reports.export');
 
 });
