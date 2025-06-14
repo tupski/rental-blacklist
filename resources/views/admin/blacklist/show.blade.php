@@ -89,8 +89,8 @@
 
                 <div class="row mt-3">
                     <div class="col-12">
-                        <h5>Deskripsi Masalah:</h5>
-                        <p>{{ $blacklist->deskripsi_masalah }}</p>
+                        <h5>Kronologi Masalah:</h5>
+                        <p>{{ $blacklist->kronologi }}</p>
                     </div>
                 </div>
 
@@ -170,7 +170,7 @@
                                 </h3>
                                 <div class="timeline-body">
                                     <strong>Pelapor:</strong> {{ $report->user->name ?? 'N/A' }}<br>
-                                    <strong>Masalah:</strong> {{ Str::limit($report->deskripsi_masalah, 150) }}
+                                    <strong>Masalah:</strong> {{ Str::limit($report->kronologi, 150) }}
                                     @if($report->alamat)
                                         <br><strong>Alamat:</strong> {{ $report->alamat }}
                                     @endif

@@ -34,7 +34,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/dasbor', [AdminDashboardController::class, 'index'])->name('dasbor.indeks');
 
     // Blacklist Management
-    Route::resource('daftar-hitam', AdminBlacklistController::class)->names([
+    Route::resource('daftar-hitam', AdminBlacklistController::class)->parameters([
+        'daftar-hitam' => 'blacklist'
+    ])->names([
         'index' => 'daftar-hitam.indeks',
         'create' => 'daftar-hitam.buat',
         'store' => 'daftar-hitam.simpan',

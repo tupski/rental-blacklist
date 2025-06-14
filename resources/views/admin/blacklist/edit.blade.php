@@ -46,6 +46,20 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
+                                <label for="jenis_kelamin">Jenis Kelamin <span class="text-danger">*</span></label>
+                                <select class="form-control @error('jenis_kelamin') is-invalid @enderror"
+                                        id="jenis_kelamin" name="jenis_kelamin" required>
+                                    <option value="">Pilih Jenis Kelamin</option>
+                                    <option value="L" {{ old('jenis_kelamin', $blacklist->jenis_kelamin) == 'L' ? 'selected' : '' }}>Laki-laki</option>
+                                    <option value="P" {{ old('jenis_kelamin', $blacklist->jenis_kelamin) == 'P' ? 'selected' : '' }}>Perempuan</option>
+                                </select>
+                                @error('jenis_kelamin')
+                                    <span class="invalid-feedback">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
                                 <label for="no_hp">No. HP <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('no_hp') is-invalid @enderror"
                                        id="no_hp" name="no_hp" value="{{ old('no_hp', $blacklist->no_hp) }}" required>
@@ -73,6 +87,32 @@
                     </div>
 
                     <div class="form-group">
+                        <label>Jenis Masalah <span class="text-danger">*</span></label>
+                        <div class="row">
+                            @php
+                                $jenisLaporan = ['Tidak Mengembalikan', 'Merusak Barang', 'Tidak Bayar', 'Kabur', 'Lainnya'];
+                                $selectedJenisLaporan = old('jenis_laporan', $blacklist->jenis_laporan ?? []);
+                            @endphp
+                            @foreach($jenisLaporan as $jenis)
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input @error('jenis_laporan') is-invalid @enderror"
+                                           type="checkbox" name="jenis_laporan[]" value="{{ $jenis }}"
+                                           id="jenis_{{ $loop->index }}"
+                                           {{ in_array($jenis, $selectedJenisLaporan) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="jenis_{{ $loop->index }}">
+                                        {{ $jenis }}
+                                    </label>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                        @error('jenis_laporan')
+                            <span class="invalid-feedback d-block">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
                         <label for="alamat">Alamat</label>
                         <textarea class="form-control @error('alamat') is-invalid @enderror"
                                   id="alamat" name="alamat" rows="3">{{ old('alamat', $blacklist->alamat) }}</textarea>
@@ -82,10 +122,10 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="deskripsi_masalah">Deskripsi Masalah <span class="text-danger">*</span></label>
-                        <textarea class="form-control @error('deskripsi_masalah') is-invalid @enderror"
-                                  id="deskripsi_masalah" name="deskripsi_masalah" rows="4" required>{{ old('deskripsi_masalah', $blacklist->deskripsi_masalah) }}</textarea>
-                        @error('deskripsi_masalah')
+                        <label for="kronologi">Kronologi Masalah <span class="text-danger">*</span></label>
+                        <textarea class="form-control @error('kronologi') is-invalid @enderror"
+                                  id="kronologi" name="kronologi" rows="4" required>{{ old('kronologi', $blacklist->kronologi) }}</textarea>
+                        @error('kronologi')
                             <span class="invalid-feedback">{{ $message }}</span>
                         @enderror
                     </div>
