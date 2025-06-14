@@ -34,7 +34,7 @@ class RentalController extends Controller
 
         $rentals = $query->orderBy('company_name')
                         ->paginate(9)
-                        ->appends($request->kueri());
+                        ->appends($request->query());
 
         return view('rentals.index', compact('rentals'));
     }
