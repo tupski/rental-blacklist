@@ -228,13 +228,78 @@
                 @if($users->hasPages())
                 <div class="row">
                     <div class="col-sm-12 col-md-5">
-                        <div class="dataTables_info text-dark font-weight-medium" id="paginationInfo">
+                        <div class="dataTables_info text-dark font-weight-medium">
                             Menampilkan {{ $users->firstItem() }} sampai {{ $users->lastItem() }}
                             dari {{ $users->total() }} data
                         </div>
                     </div>
-                    <div class="col-sm-12 col-md-7" id="paginationLinks">
-                        {{ $users->links() }}
+                    <div class="col-sm-12 col-md-7">
+                        <nav>
+                            <ul class="pagination justify-content-end">
+                                @if ($users->onFirstPage())
+                                    <li class="page-item disabled">
+                                        <span class="page-link"><i class="fas fa-chevron-left"></i> Sebelumnya</span>
+                                    </li>
+                                @else
+                                    <li class="page-item">
+                                        <a class="page-link" href="#" data-page="{{ $users->currentPage() - 1 }}">
+                                            <i class="fas fa-chevron-left"></i> Sebelumnya
+                                        </a>
+                                    </li>
+                                @endif
+
+                                @php
+                                    $start = max(1, $users->currentPage() - 2);
+                                    $end = min($users->lastPage(), $users->currentPage() + 2);
+                                @endphp
+
+                                @if($start > 1)
+                                    <li class="page-item">
+                                        <a class="page-link" href="#" data-page="1">1</a>
+                                    </li>
+                                    @if($start > 2)
+                                        <li class="page-item disabled">
+                                            <span class="page-link">...</span>
+                                        </li>
+                                    @endif
+                                @endif
+
+                                @for ($i = $start; $i <= $end; $i++)
+                                    @if ($i == $users->currentPage())
+                                        <li class="page-item active">
+                                            <span class="page-link">{{ $i }}</span>
+                                        </li>
+                                    @else
+                                        <li class="page-item">
+                                            <a class="page-link" href="#" data-page="{{ $i }}">{{ $i }}</a>
+                                        </li>
+                                    @endif
+                                @endfor
+
+                                @if($end < $users->lastPage())
+                                    @if($end < $users->lastPage() - 1)
+                                        <li class="page-item disabled">
+                                            <span class="page-link">...</span>
+                                        </li>
+                                    @endif
+                                    <li class="page-item">
+                                        <a class="page-link" href="#" data-page="{{ $users->lastPage() }}">{{ $users->lastPage() }}</a>
+                                    </li>
+                                @endif
+
+                                @if ($users->hasMorePages())
+                                    <li class="page-item">
+                                        <a class="page-link" href="#" data-page="{{ $users->currentPage() + 1 }}">
+                                            Selanjutnya <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                @else
+                                    <li class="page-item disabled">
+                                        <span class="page-link">Selanjutnya <i class="fas fa-chevron-right"></i></span>
+                                    </li>
+                                @endif
+                            </ul>
+                        </nav>
                     </div>
                 </div>
                 @endif
@@ -270,7 +335,7 @@ $(document).ready(function() {
             success: function(response) {
                 if (response.success) {
                     $('#tableContent').html(response.html);
-                    updatePagination(response.pagination);
+                    $('#paginationContainer').html(response.pagination_html);
                     updateDataCount(response.pagination.total);
                     updateResetButton();
                     currentPage = page;
@@ -286,61 +351,7 @@ $(document).ready(function() {
         });
     }
 
-    // Update pagination
-    function updatePagination(pagination) {
-        if (pagination.last_page > 1) {
-            let paginationHtml = '<div class="row"><div class="col-sm-12 col-md-5">';
-            paginationHtml += '<div class="dataTables_info text-dark font-weight-medium">';
-            paginationHtml += 'Menampilkan ' + pagination.from + ' sampai ' + pagination.to + ' dari ' + pagination.total + ' data';
-            paginationHtml += '</div></div><div class="col-sm-12 col-md-7">';
-            paginationHtml += '<nav><ul class="pagination justify-content-end">';
 
-            // Previous button
-            if (pagination.current_page > 1) {
-                paginationHtml += '<li class="page-item"><a class="page-link" href="#" data-page="' + (pagination.current_page - 1) + '"><i class="fas fa-chevron-left"></i> Sebelumnya</a></li>';
-            } else {
-                paginationHtml += '<li class="page-item disabled"><span class="page-link"><i class="fas fa-chevron-left"></i> Sebelumnya</span></li>';
-            }
-
-            // Page numbers
-            let startPage = Math.max(1, pagination.current_page - 2);
-            let endPage = Math.min(pagination.last_page, pagination.current_page + 2);
-
-            if (startPage > 1) {
-                paginationHtml += '<li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>';
-                if (startPage > 2) {
-                    paginationHtml += '<li class="page-item disabled"><span class="page-link">...</span></li>';
-                }
-            }
-
-            for (let i = startPage; i <= endPage; i++) {
-                if (i === pagination.current_page) {
-                    paginationHtml += '<li class="page-item active"><span class="page-link">' + i + '</span></li>';
-                } else {
-                    paginationHtml += '<li class="page-item"><a class="page-link" href="#" data-page="' + i + '">' + i + '</a></li>';
-                }
-            }
-
-            if (endPage < pagination.last_page) {
-                if (endPage < pagination.last_page - 1) {
-                    paginationHtml += '<li class="page-item disabled"><span class="page-link">...</span></li>';
-                }
-                paginationHtml += '<li class="page-item"><a class="page-link" href="#" data-page="' + pagination.last_page + '">' + pagination.last_page + '</a></li>';
-            }
-
-            // Next button
-            if (pagination.current_page < pagination.last_page) {
-                paginationHtml += '<li class="page-item"><a class="page-link" href="#" data-page="' + (pagination.current_page + 1) + '">Selanjutnya <i class="fas fa-chevron-right"></i></a></li>';
-            } else {
-                paginationHtml += '<li class="page-item disabled"><span class="page-link">Selanjutnya <i class="fas fa-chevron-right"></i></span></li>';
-            }
-
-            paginationHtml += '</ul></nav></div></div>';
-            $('#paginationContainer').html(paginationHtml).show();
-        } else {
-            $('#paginationContainer').hide();
-        }
-    }
 
     // Update data count
     function updateDataCount(total) {
@@ -384,7 +395,7 @@ $(document).ready(function() {
     });
 
     // Pagination click handler
-    $(document).on('click', '.page-link', function(e) {
+    $(document).on('click', '#paginationContainer .page-link[data-page]', function(e) {
         e.preventDefault();
         const page = $(this).data('page');
         if (page) {

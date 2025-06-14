@@ -53,14 +53,14 @@ class UserController extends Controller
             return response()->json([
                 'success' => true,
                 'html' => view('admin.users.partials.table', compact('users'))->render(),
+                'pagination_html' => view('admin.users.partials.pagination', compact('users'))->render(),
                 'pagination' => [
                     'current_page' => $users->currentPage(),
                     'last_page' => $users->lastPage(),
                     'per_page' => $users->perPage(),
                     'total' => $users->total(),
                     'from' => $users->firstItem(),
-                    'to' => $users->lastItem(),
-                    'links' => $users->links()->render()
+                    'to' => $users->lastItem()
                 ]
             ]);
         }
