@@ -157,15 +157,15 @@
                     </div>
                     <div class="card-body">
                         <div class="d-grid gap-3">
-                            <a href="{{ route('topup.create') }}" class="btn btn-success">
+                            <a href="{{ route('isi-saldo.buat') }}" class="btn btn-success">
                                 <i class="fas fa-plus me-2"></i>
                                 Topup Saldo
                             </a>
-                            <a href="{{ route('balance.history') }}" class="btn btn-info">
+                            <a href="{{ route('saldo.riwayat') }}" class="btn btn-info">
                                 <i class="fas fa-history me-2"></i>
                                 Riwayat Transaksi
                             </a>
-                            <a href="{{ route('home') }}" class="btn btn-primary">
+                            <a href="{{ route('beranda') }}" class="btn btn-primary">
                                 <i class="fas fa-search me-2"></i>
                                 Pencarian Publik
                             </a>

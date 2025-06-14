@@ -468,10 +468,10 @@
                 <div class="col-lg-3">
                     <h5 class="fw-bold mb-3">Layanan</h5>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="{{ route('home') }}" class="text-light text-decoration-none">Cek Blacklist</a></li>
-                        <li class="mb-2"><a href="{{ route('rental.register') }}" class="text-light text-decoration-none">Daftar Rental</a></li>
-                        <li class="mb-2"><a href="{{ route('report.create') }}" class="text-light text-decoration-none">Lapor Masalah</a></li>
-                        <li class="mb-2"><a href="{{ route('api.docs') }}" class="text-light text-decoration-none">API Access</a></li>
+                        <li class="mb-2"><a href="{{ route('beranda') }}" class="text-light text-decoration-none">Cek Blacklist</a></li>
+                        <li class="mb-2"><a href="{{ route('rental.daftar') }}" class="text-light text-decoration-none">Daftar Rental</a></li>
+                        <li class="mb-2"><a href="{{ route('laporan.buat') }}" class="text-light text-decoration-none">Lapor Masalah</a></li>
+                        <li class="mb-2"><a href="{{ route('api.dokumentasi') }}" class="text-light text-decoration-none">API Access</a></li>
                     </ul>
                 </div>
 

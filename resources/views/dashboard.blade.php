@@ -26,11 +26,11 @@
                             </div>
                             <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
                                 <div class="d-flex flex-column flex-lg-row gap-2">
-                                    <a href="{{ route('dashboard.blacklist.create') }}" class="btn btn-danger">
+                                    <a href="{{ route('dasbor.daftar-hitam.buat') }}" class="btn btn-danger">
                                         <i class="fas fa-plus me-2"></i>
                                         Tambah Laporan
                                     </a>
-                                    <a href="{{ route('home') }}" class="btn btn-outline-secondary">
+                                    <a href="{{ route('beranda') }}" class="btn btn-outline-secondary">
                                         <i class="fas fa-search me-2"></i>
                                         Cari Publik
                                     </a>
@@ -163,19 +163,19 @@
                     </div>
                     <div class="card-body">
                         <div class="d-grid gap-3">
-                            <a href="{{ route('dashboard.blacklist.create') }}" class="btn btn-danger">
+                            <a href="{{ route('dasbor.daftar-hitam.buat') }}" class="btn btn-danger">
                                 <i class="fas fa-plus me-2"></i>
                                 Tambah Laporan
                             </a>
-                            <a href="{{ route('dashboard.blacklist.index') }}" class="btn btn-secondary">
+                            <a href="{{ route('dasbor.daftar-hitam.indeks') }}" class="btn btn-secondary">
                                 <i class="fas fa-list me-2"></i>
                                 Kelola Laporan
                             </a>
-                            <a href="{{ route('home') }}" class="btn btn-primary">
+                            <a href="{{ route('beranda') }}" class="btn btn-primary">
                                 <i class="fas fa-search me-2"></i>
                                 Cari Publik
                             </a>
-                            <a href="{{ route('api.docs') }}" class="btn btn-info">
+                            <a href="{{ route('api.dokumentasi') }}" class="btn btn-info">
                                 <i class="fas fa-code me-2"></i>
                                 API Documentation
                             </a>

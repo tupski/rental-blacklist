@@ -25,7 +25,7 @@
                                 </p>
                             </div>
                             <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                                <a href="{{ route('home') }}" class="btn btn-outline-primary">
+                                <a href="{{ route('beranda') }}" class="btn btn-outline-primary">
                                     <i class="fas fa-arrow-left me-2"></i>
                                     Kembali ke Beranda
                                 </a>
@@ -45,20 +45,20 @@
                             <div class="row g-3">
                                 <div class="col-md-3">
                                     <label for="search" class="form-label">Cari Rental</label>
-                                    <input type="text" 
-                                           class="form-control" 
-                                           id="search" 
-                                           name="search" 
-                                           value="{{ request('search') }}" 
+                                    <input type="text"
+                                           class="form-control"
+                                           id="search"
+                                           name="search"
+                                           value="{{ request('search') }}"
                                            placeholder="Nama rental...">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="location" class="form-label">Lokasi</label>
-                                    <input type="text" 
-                                           class="form-control" 
-                                           id="location" 
-                                           name="location" 
-                                           value="{{ request('location') }}" 
+                                    <input type="text"
+                                           class="form-control"
+                                           id="location"
+                                           name="location"
+                                           value="{{ request('location') }}"
                                            placeholder="Kota/Kabupaten...">
                                 </div>
                                 <div class="col-md-3">
@@ -104,12 +104,12 @@
                             <!-- Logo -->
                             <div class="text-center mb-3">
                                 @if($rental->logo)
-                                    <img src="{{ asset('storage/rentals/logos/' . $rental->logo) }}" 
-                                         alt="{{ $rental->company_name }}" 
+                                    <img src="{{ asset('storage/rentals/logos/' . $rental->logo) }}"
+                                         alt="{{ $rental->company_name }}"
                                          class="img-fluid rounded"
                                          style="max-height: 80px; max-width: 120px; object-fit: contain;">
                                 @else
-                                    <div class="bg-light d-flex align-items-center justify-content-center rounded" 
+                                    <div class="bg-light d-flex align-items-center justify-content-center rounded"
                                          style="height: 80px; width: 120px; margin: 0 auto;">
                                         <i class="fas fa-car fa-2x text-muted"></i>
                                     </div>
@@ -130,7 +130,7 @@
                                     <i class="fas fa-map-marker-alt me-2"></i>
                                     <span>{{ $rental->company_address ?? 'Lokasi tidak tersedia' }}</span>
                                 </div>
-                                
+
                                 @if($rental->company_phone)
                                     <div class="d-flex align-items-center text-muted mb-2">
                                         <i class="fas fa-phone me-2"></i>
@@ -149,9 +149,9 @@
                             <!-- Website -->
                             @if($rental->website)
                                 <div class="mt-auto">
-                                    <a href="{{ $rental->website }}" 
-                                       target="_blank" 
-                                       rel="nofollow noopener" 
+                                    <a href="{{ $rental->website }}"
+                                       target="_blank"
+                                       rel="nofollow noopener"
                                        class="btn btn-outline-primary btn-sm w-100">
                                         <i class="fas fa-external-link-alt me-2"></i>
                                         Kunjungi Website
@@ -182,7 +182,7 @@
                             <h5 class="text-muted">Tidak ada rental ditemukan</h5>
                             <p class="text-muted">
                                 @if(request()->hasAny(['search', 'location', 'entity_type']))
-                                    Coba ubah filter pencarian Anda atau 
+                                    Coba ubah filter pencarian Anda atau
                                     <a href="{{ route('rentals.index') }}" class="text-decoration-none">reset filter</a>
                                 @else
                                     Belum ada rental yang terdaftar di sistem
@@ -236,7 +236,7 @@ $(document).ready(function() {
     $('#entity_type').on('change', function() {
         $('#filterForm').submit();
     });
-    
+
     // Add loading state to search button
     $('#filterForm').on('submit', function() {
         const submitBtn = $(this).find('button[type="submit"]');

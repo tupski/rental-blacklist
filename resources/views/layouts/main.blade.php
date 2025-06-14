@@ -75,7 +75,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container">
             <!-- Brand -->
-            <a class="navbar-brand fw-bold text-dark" href="{{ route('home') }}">
+            <a class="navbar-brand fw-bold text-dark" href="{{ route('beranda') }}">
                 <i class="fas fa-shield-alt text-danger me-2"></i>
                 {{ $globalSettings['site_name'] ?? 'RentalGuard' }}
             </a>
@@ -89,7 +89,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('home') ? 'active fw-bold' : '' }}" href="{{ route('home') }}">
+                        <a class="nav-link {{ request()->routeIs('beranda') ? 'active fw-bold' : '' }}" href="{{ route('beranda') }}">
                             <i class="fas fa-search me-1"></i>
                             Cari Blacklist
                         </a>

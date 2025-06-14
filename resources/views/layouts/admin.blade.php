@@ -32,10 +32,10 @@
                 <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
             </li>
             <li class="nav-item d-none d-sm-inline-block">
-                <a href="{{ route('admin.dashboard') }}" class="nav-link">Dashboard</a>
+                <a href="{{ route('admin.dasbor') }}" class="nav-link">Dashboard</a>
             </li>
             <li class="nav-item d-none d-sm-inline-block">
-                <a href="{{ route('home') }}" class="nav-link" target="_blank">View Site</a>
+                <a href="{{ route('beranda') }}" class="nav-link" target="_blank">View Site</a>
             </li>
         </ul>
 
