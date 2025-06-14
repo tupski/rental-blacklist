@@ -15,7 +15,7 @@
             <div class="card-header">
                 <h3 class="card-title">Daftar Notifikasi</h3>
                 <div class="card-tools">
-                    <form action="{{ route('admin.notifications.mark-read') }}" method="POST" class="d-inline">
+                    <form action="{{ route('admin.notifikasi.baca') }}" method="POST" class="d-inline">
                         @csrf
                         <button type="submit" class="btn btn-secondary btn-sm">
                             <i class="fas fa-check-double"></i> Tandai Semua Dibaca
@@ -43,7 +43,7 @@
                         </div>
                         <div class="ml-3">
                             @if(!$notification->read_at)
-                            <form action="{{ route('admin.notifications.mark-read') }}" method="POST" class="d-inline">
+                            <form action="{{ route('admin.notifikasi.baca') }}" method="POST" class="d-inline">
                                 @csrf
                                 <input type="hidden" name="notification_id" value="{{ $notification->id }}">
                                 <button type="submit" class="btn btn-sm btn-outline-primary" title="Tandai Dibaca">
@@ -53,7 +53,7 @@
                             @endif
                         </div>
                     </div>
-                    
+
                     @if(isset($notification->data['details']))
                     <hr>
                     <div class="notification-details">
@@ -71,7 +71,7 @@
                 </div>
                 @endforelse
             </div>
-            
+
             @if($notifications->hasPages())
             <div class="card-footer">
                 {{ $notifications->links() }}
@@ -115,6 +115,10 @@ function getNotificationIcon($type) {
             return 'fas fa-user-plus text-success';
         case 'App\\Notifications\\TopupRequestNotification':
             return 'fas fa-credit-card text-info';
+        case 'App\\Notifications\\NewTopupNotification':
+            return 'fas fa-credit-card text-warning';
+        case 'App\\Notifications\\TopupStatusNotification':
+            return 'fas fa-check-circle text-success';
         case 'App\\Notifications\\BlacklistReportNotification':
             return 'fas fa-ban text-danger';
         default:
@@ -128,6 +132,10 @@ function getNotificationTitle($type) {
             return 'User Baru Terdaftar';
         case 'App\\Notifications\\TopupRequestNotification':
             return 'Permintaan Topup';
+        case 'App\\Notifications\\NewTopupNotification':
+            return 'Topup Baru';
+        case 'App\\Notifications\\TopupStatusNotification':
+            return 'Update Status Topup';
         case 'App\\Notifications\\BlacklistReportNotification':
             return 'Laporan Blacklist Baru';
         default:

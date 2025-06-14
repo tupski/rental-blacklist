@@ -78,7 +78,7 @@
                         </div>
                     </div>
                     <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item dropdown-footer">Lihat Semua Notifikasi</a>
+                    <a href="{{ route('admin.notifikasi.indeks') }}" class="dropdown-item dropdown-footer">Lihat Semua Notifikasi</a>
                 </div>
             </li>
 
@@ -470,6 +470,10 @@ $(document).ready(function() {
                 return 'fas fa-user-plus text-success';
             case 'App\\Notifications\\TopupRequestNotification':
                 return 'fas fa-credit-card text-info';
+            case 'App\\Notifications\\NewTopupNotification':
+                return 'fas fa-credit-card text-warning';
+            case 'App\\Notifications\\TopupStatusNotification':
+                return 'fas fa-check-circle text-success';
             case 'App\\Notifications\\BlacklistReportNotification':
                 return 'fas fa-ban text-danger';
             default:

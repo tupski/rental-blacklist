@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\TopupRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\TopupStatusNotification;
 
 class TopupController extends Controller
 {
@@ -42,6 +45,21 @@ class TopupController extends Controller
             $topup->id
         );
 
+        // Send notification to user about approval
+        try {
+            $topup->user->notify(new TopupStatusNotification($topup, 'approved'));
+        } catch (\Exception $e) {
+            \Log::warning('Failed to send topup approval notification: ' . $e->getMessage());
+        }
+
+        // Send notification to all admins about the approval
+        try {
+            $admins = User::where('role', 'admin')->where('id', '!=', auth()->id())->get();
+            Notification::send($admins, new TopupStatusNotification($topup, 'approved'));
+        } catch (\Exception $e) {
+            \Log::warning('Failed to send topup approval notification to admins: ' . $e->getMessage());
+        }
+
         return redirect()->back()
             ->with('success', 'Topup berhasil disetujui dan saldo user telah ditambahkan.');
     }
@@ -56,6 +74,21 @@ class TopupController extends Controller
             'status' => 'rejected',
             'admin_notes' => $request->admin_notes,
         ]);
+
+        // Send notification to user about rejection
+        try {
+            $topup->user->notify(new TopupStatusNotification($topup, 'rejected'));
+        } catch (\Exception $e) {
+            \Log::warning('Failed to send topup rejection notification: ' . $e->getMessage());
+        }
+
+        // Send notification to all admins about the rejection
+        try {
+            $admins = User::where('role', 'admin')->where('id', '!=', auth()->id())->get();
+            Notification::send($admins, new TopupStatusNotification($topup, 'rejected'));
+        } catch (\Exception $e) {
+            \Log::warning('Failed to send topup rejection notification to admins: ' . $e->getMessage());
+        }
 
         return redirect()->back()
             ->with('success', 'Topup berhasil ditolak.');

@@ -126,6 +126,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     // Notifications
     Route::get('notifikasi', [AdminNotificationController::class, 'getNotifications'])->name('notifikasi.ambil');
+    Route::get('notifikasi/semua', [AdminNotificationController::class, 'index'])->name('notifikasi.indeks');
     Route::post('notifikasi/baca', [AdminNotificationController::class, 'markAsRead'])->name('notifikasi.baca');
 
     // System Maintenance

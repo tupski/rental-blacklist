@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\TopupRequest;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use App\Notifications\TopupRequestNotification;
+use App\Notifications\NewTopupNotification;
 
 class TopupController extends Controller
 {
@@ -155,11 +158,19 @@ class TopupController extends Controller
             'expires_at' => now()->addHours(24), // 24 jam untuk pembayaran
         ]);
 
-        // Send notification
+        // Send notification to user
         try {
             $topupRequest->user->notify(new TopupRequestNotification($topupRequest, 'created'));
         } catch (\Exception $e) {
-            \Log::warning('Failed to send topup notification: ' . $e->getMessage());
+            \Log::warning('Failed to send topup notification to user: ' . $e->getMessage());
+        }
+
+        // Send notification to all admins
+        try {
+            $admins = User::where('role', 'admin')->get();
+            Notification::send($admins, new NewTopupNotification($topupRequest));
+        } catch (\Exception $e) {
+            \Log::warning('Failed to send topup notification to admins: ' . $e->getMessage());
         }
 
         // Always redirect to confirm page regardless of payment method
@@ -205,6 +216,21 @@ class TopupController extends Controller
             'notes' => $request->notes,
             'status' => 'pending_confirmation'
         ]);
+
+        // Send notification to user
+        try {
+            $topupRequest->user->notify(new TopupRequestNotification($topupRequest, 'proof_uploaded'));
+        } catch (\Exception $e) {
+            \Log::warning('Failed to send proof upload notification to user: ' . $e->getMessage());
+        }
+
+        // Send notification to all admins about proof upload
+        try {
+            $admins = User::where('role', 'admin')->get();
+            Notification::send($admins, new NewTopupNotification($topupRequest));
+        } catch (\Exception $e) {
+            \Log::warning('Failed to send proof upload notification to admins: ' . $e->getMessage());
+        }
 
         return redirect()->route('isi-saldo.indeks')->with('success', 'Bukti pembayaran berhasil diupload. Pembayaran akan dikonfirmasi dalam 1x24 jam.');
     }
