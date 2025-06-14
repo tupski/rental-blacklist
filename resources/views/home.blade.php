@@ -709,61 +709,135 @@ $(document).ready(function() {
                         jenisLaporanHtml = `<span class="badge bg-warning text-dark">${data.jenis_laporan}</span>`;
                     }
 
-                    $('#detailContent').html(`
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label fw-medium text-primary">Nama Lengkap</label>
-                                <p class="mb-0">${data.nama_lengkap}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-medium text-primary">NIK</label>
-                                <p class="mb-0">${data.nik}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-medium text-primary">Jenis Kelamin</label>
-                                <p class="mb-0">${data.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan'}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-medium text-primary">No HP</label>
-                                <p class="mb-0">${data.no_hp}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-medium text-primary">Jenis Rental</label>
-                                <p class="mb-0">${data.jenis_rental}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-medium text-primary">Jumlah Laporan</label>
-                                <p class="mb-0"><span class="badge bg-danger">${data.jumlah_laporan} Laporan</span></p>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label fw-medium text-primary">Alamat</label>
-                                <p class="mb-0">${data.alamat || 'Data tersensor'}</p>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label fw-medium text-primary">Jenis Laporan</label>
-                                <div>${jenisLaporanHtml}</div>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-medium text-primary">Tanggal Kejadian</label>
-                                <p class="mb-0">${data.tanggal_kejadian}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-medium text-primary">Pelapor</label>
-                                <p class="mb-0">
-                                    ${data.pelapor}
-                                    ${data.is_verified ? '<i class="fas fa-check-circle text-primary ms-2" title="Rental Terverifikasi"></i>' : ''}
-                                </p>
-                            </div>
-                            <div class="col-12">
-                                <div class="alert alert-info">
-                                    <i class="fas fa-info-circle me-2"></i>
-                                    <strong>Informasi:</strong> Beberapa data disensor untuk privasi.
-                                    <a href="{{ route('rental.daftar') }}" class="alert-link">Daftar sebagai rental</a>
-                                    untuk akses penuh atau beli kredit.
+                    // Cek apakah data lengkap atau sensor
+                    if (data.is_full_access) {
+                        // Tampilkan data lengkap untuk admin/pemilik rental
+                        $('#detailContent').html(`
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium text-primary">Nama Lengkap</label>
+                                    <p class="mb-0">${data.nama_lengkap}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium text-primary">NIK</label>
+                                    <p class="mb-0">${data.nik}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium text-primary">Jenis Kelamin</label>
+                                    <p class="mb-0">${data.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan'}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium text-primary">No HP</label>
+                                    <p class="mb-0">${data.no_hp}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium text-primary">Jenis Rental</label>
+                                    <p class="mb-0">${data.jenis_rental}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium text-primary">Jumlah Laporan</label>
+                                    <p class="mb-0"><span class="badge bg-danger">${data.jumlah_laporan} Laporan</span></p>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-medium text-primary">Alamat Lengkap</label>
+                                    <p class="mb-0">${data.alamat}</p>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-medium text-primary">Jenis Laporan</label>
+                                    <div>${jenisLaporanHtml}</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium text-primary">Tanggal Kejadian</label>
+                                    <p class="mb-0">${data.tanggal_kejadian}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium text-primary">Pelapor</label>
+                                    <p class="mb-0">
+                                        ${data.pelapor}
+                                        ${data.is_verified ? '<i class="fas fa-check-circle text-primary ms-2" title="Rental Terverifikasi"></i>' : ''}
+                                    </p>
+                                </div>
+                                ${data.kronologi ? `
+                                <div class="col-12">
+                                    <label class="form-label fw-medium text-primary">Kronologi Kejadian</label>
+                                    <div class="alert alert-warning">
+                                        ${data.kronologi}
+                                    </div>
+                                </div>
+                                ` : ''}
+                                <div class="col-12">
+                                    <div class="alert alert-success">
+                                        <i class="fas fa-check-circle me-2"></i>
+                                        <strong>Akses Penuh:</strong> Anda dapat melihat semua data tanpa sensor.
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    `);
+                        `);
+                    } else {
+                        // Tampilkan data sensor untuk user biasa
+                        $('#detailContent').html(`
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium text-primary">Nama Lengkap</label>
+                                    <p class="mb-0">${data.nama_lengkap}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium text-primary">NIK</label>
+                                    <p class="mb-0">${data.nik}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium text-primary">Jenis Kelamin</label>
+                                    <p class="mb-0">${data.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan'}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium text-primary">No HP</label>
+                                    <p class="mb-0">${data.no_hp}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium text-primary">Jenis Rental</label>
+                                    <p class="mb-0">${data.jenis_rental}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium text-primary">Jumlah Laporan</label>
+                                    <p class="mb-0"><span class="badge bg-danger">${data.jumlah_laporan} Laporan</span></p>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-medium text-primary">Alamat</label>
+                                    <p class="mb-0">${data.alamat || 'Data tersensor'}</p>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-medium text-primary">Jenis Laporan</label>
+                                    <div>${jenisLaporanHtml}</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium text-primary">Tanggal Kejadian</label>
+                                    <p class="mb-0">${data.tanggal_kejadian}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium text-primary">Pelapor</label>
+                                    <p class="mb-0">
+                                        ${data.pelapor}
+                                        ${data.is_verified ? '<i class="fas fa-check-circle text-primary ms-2" title="Rental Terverifikasi"></i>' : ''}
+                                    </p>
+                                </div>
+                                <div class="col-12">
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        <strong>Informasi:</strong> Beberapa data disensor untuk privasi.
+                                        <a href="{{ route('rental.daftar') }}" class="alert-link">Daftar sebagai rental</a>
+                                        untuk akses penuh atau beli kredit.
+                                    </div>
+                                </div>
+                            </div>
+                        `);
+                    }
+
+                    // Hide/show unlock button based on access level
+                    if (data.is_full_access) {
+                        $('#unlockDetailBtn').hide();
+                    } else {
+                        $('#unlockDetailBtn').show();
+                    }
 
                     const modal = new bootstrap.Modal(document.getElementById('detailModal'));
                     modal.show();

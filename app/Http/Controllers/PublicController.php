@@ -150,6 +150,42 @@ class PublicController extends Controller
     {
         $blacklist = RentalBlacklist::with('user')->findOrFail($id);
 
+        // Cek apakah user sudah login
+        $isAuthenticated = auth()->check();
+        $user = auth()->user();
+
+        // Cek apakah user adalah admin atau pemilik rental
+        $isAdmin = $isAuthenticated && $user->role === 'admin';
+        $isRentalOwner = $isAuthenticated && $user->role === 'pengusaha_rental';
+        $shouldShowFullData = $isAdmin || $isRentalOwner;
+
+        // Cek apakah user sudah unlock data ini (untuk user biasa)
+        $isUnlocked = $isAuthenticated && $user->hasUnlockedData($id);
+
+        // Jika admin, pemilik rental, atau sudah unlock, tampilkan data lengkap
+        if ($shouldShowFullData || $isUnlocked) {
+            return response()->json([
+                'success' => true,
+                'message' => $shouldShowFullData ? 'Data lengkap tersedia untuk admin/pemilik rental.' : 'Data lengkap karena sudah di-unlock.',
+                'data' => [
+                    'nama_lengkap' => $blacklist->nama_lengkap,
+                    'nik' => $blacklist->nik,
+                    'no_hp' => $blacklist->no_hp,
+                    'alamat' => $blacklist->alamat,
+                    'jenis_kelamin' => $blacklist->jenis_kelamin,
+                    'jenis_rental' => $blacklist->jenis_rental,
+                    'jenis_laporan' => $blacklist->jenis_laporan,
+                    'tanggal_kejadian' => $blacklist->tanggal_kejadian->format('d/m/Y'),
+                    'kronologi' => $blacklist->kronologi,
+                    'jumlah_laporan' => RentalBlacklist::countReportsByNik($blacklist->nik),
+                    'pelapor' => $blacklist->user->name,
+                    'is_verified' => true,
+                    'is_full_access' => true
+                ]
+            ]);
+        }
+
+        // Untuk user tidak login atau user biasa yang belum unlock, tampilkan data sensor
         return response()->json([
             'success' => true,
             'message' => 'Untuk melihat data lengkap, silakan login sebagai pengusaha rental (GRATIS) atau beli kredit untuk akses sekali lihat.',
@@ -158,11 +194,14 @@ class PublicController extends Controller
                 'nik' => $blacklist->sensored_nik,
                 'no_hp' => $blacklist->sensored_no_hp,
                 'alamat' => $blacklist->sensored_alamat,
+                'jenis_kelamin' => $blacklist->jenis_kelamin,
                 'jenis_rental' => $blacklist->jenis_rental,
                 'jenis_laporan' => $blacklist->jenis_laporan,
                 'tanggal_kejadian' => $blacklist->tanggal_kejadian->format('d/m/Y'),
                 'jumlah_laporan' => RentalBlacklist::countReportsByNik($blacklist->nik),
-                'pelapor' => $blacklist->user->name
+                'pelapor' => $blacklist->user->name,
+                'is_verified' => false,
+                'is_full_access' => false
             ]
         ]);
     }
