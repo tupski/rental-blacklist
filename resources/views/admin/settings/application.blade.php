@@ -23,7 +23,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <form id="applicationSettingsForm" action="{{ route('admin.settings.application.update') }}" method="POST">
+                <form id="applicationSettingsForm" action="{{ route('admin.pengaturan.aplikasi.perbarui') }}" method="POST">
                     @csrf
                     @method('PUT')
 
@@ -155,7 +155,7 @@ $(document).ready(function() {
     // Form validation
     $('#applicationSettingsForm').on('submit', function(e) {
         let isValid = true;
-        
+
         // Validate required fields
         $(this).find('input[required], textarea[required]').each(function() {
             if (!$(this).val().trim()) {
@@ -165,13 +165,13 @@ $(document).ready(function() {
                 $(this).removeClass('is-invalid');
             }
         });
-        
+
         if (!isValid) {
             e.preventDefault();
             toastr.error('Mohon lengkapi semua field yang wajib diisi');
         }
     });
-    
+
     // URL validation
     $('input[type="url"]').on('blur', function() {
         const url = $(this).val();
@@ -182,7 +182,7 @@ $(document).ready(function() {
             $(this).removeClass('is-invalid');
         }
     });
-    
+
     // Email validation
     $('input[type="email"]').on('blur', function() {
         const email = $(this).val();

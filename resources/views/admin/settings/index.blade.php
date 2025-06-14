@@ -16,7 +16,7 @@
                 <h3 class="card-title">Pengaturan Sistem</h3>
             </div>
             <div class="card-body">
-                    <form id="settingsForm" action="{{ route('admin.settings.update') }}" method="POST">
+                    <form id="settingsForm" action="{{ route('admin.pengaturan.perbarui') }}" method="POST">
                         @csrf
                         @method('PUT')
 
@@ -228,7 +228,7 @@ $(document).ready(function() {
 
         btn.html('<i class="fas fa-spinner fa-spin"></i> Testing...').prop('disabled', true);
 
-        $.post('{{ route("admin.settings.test-smtp") }}', {
+        $.post('{{ route("admin.pengaturan.tes-smtp") }}', {
             _token: '{{ csrf_token() }}',
             smtp_host: $('#setting_smtp_host').val(),
             smtp_port: $('#setting_smtp_port').val(),

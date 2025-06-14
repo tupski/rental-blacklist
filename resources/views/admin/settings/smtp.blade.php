@@ -25,7 +25,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <form id="smtpSettingsForm" action="{{ route('admin.settings.smtp.update') }}" method="POST">
+                <form id="smtpSettingsForm" action="{{ route('admin.pengaturan.smtp.perbarui') }}" method="POST">
                     @csrf
                     @method('PUT')
 
@@ -191,7 +191,7 @@
                 </div>
                 <div class="alert alert-warning mt-3">
                     <i class="fas fa-exclamation-triangle mr-2"></i>
-                    <strong>Catatan:</strong> Untuk Gmail dan Yahoo, Anda perlu menggunakan App Password, bukan password akun biasa. 
+                    <strong>Catatan:</strong> Untuk Gmail dan Yahoo, Anda perlu menggunakan App Password, bukan password akun biasa.
                     Pastikan juga 2-Factor Authentication sudah diaktifkan.
                 </div>
             </div>
@@ -210,7 +210,7 @@ $(document).ready(function() {
 
         btn.html('<i class="fas fa-spinner fa-spin"></i> Testing...').prop('disabled', true);
 
-        $.post('{{ route("admin.settings.smtp.test") }}', {
+        $.post('{{ route("admin.pengaturan.smtp.tes") }}', {
             _token: '{{ csrf_token() }}',
             smtp_host: $('#setting_smtp_host').val(),
             smtp_port: $('#setting_smtp_port').val(),
@@ -234,12 +234,12 @@ $(document).ready(function() {
             btn.html(originalText).prop('disabled', false);
         });
     });
-    
+
     // Auto-fill port based on encryption
     $('#setting_smtp_encryption').on('change', function() {
         const encryption = $(this).val();
         const portField = $('#setting_smtp_port');
-        
+
         if (encryption === 'ssl') {
             portField.val('465');
         } else if (encryption === 'tls') {

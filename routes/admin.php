@@ -97,44 +97,41 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::put('pengaturan', [AdminSettingController::class, 'update'])->name('pengaturan.perbarui');
     Route::post('pengaturan/tes-smtp', [AdminSettingController::class, 'testSmtp'])->name('pengaturan.tes-smtp');
 
+    // Settings - Application
+    Route::get('pengaturan/aplikasi', [AdminApplicationSettingController::class, 'index'])->name('pengaturan.aplikasi.indeks');
+    Route::put('pengaturan/aplikasi', [AdminApplicationSettingController::class, 'update'])->name('pengaturan.aplikasi.perbarui');
+
+    // Settings - System
+    Route::get('pengaturan/sistem', [AdminSystemSettingController::class, 'index'])->name('pengaturan.sistem.indeks');
+    Route::put('pengaturan/sistem', [AdminSystemSettingController::class, 'update'])->name('pengaturan.sistem.perbarui');
+
+    // Settings - SMTP
+    Route::get('pengaturan/smtp', [AdminSmtpSettingController::class, 'index'])->name('pengaturan.smtp.indeks');
+    Route::put('pengaturan/smtp', [AdminSmtpSettingController::class, 'update'])->name('pengaturan.smtp.perbarui');
+    Route::post('pengaturan/smtp/tes', [AdminSmtpSettingController::class, 'test'])->name('pengaturan.smtp.tes');
+
+    // Settings - Payment
+    Route::get('pengaturan/pembayaran', [AdminPaymentSettingController::class, 'index'])->name('pengaturan.pembayaran.indeks');
+    Route::put('pengaturan/pembayaran', [AdminPaymentSettingController::class, 'update'])->name('pengaturan.pembayaran.perbarui');
+
+    // Settings - Database
+    Route::get('pengaturan/database', [AdminDatabaseSettingController::class, 'index'])->name('pengaturan.database.indeks');
+    Route::post('pengaturan/database/bersihkan-cache', [AdminDatabaseSettingController::class, 'clearCache'])->name('pengaturan.database.bersihkan-cache');
+    Route::post('pengaturan/database/optimasi', [AdminDatabaseSettingController::class, 'optimize'])->name('pengaturan.database.optimasi');
+    Route::post('pengaturan/database/optimasi-db', [AdminDatabaseSettingController::class, 'optimizeDatabase'])->name('pengaturan.database.optimasi-db');
+
     // Reports & Analytics (placeholder routes)
     Route::get('laporan', function() { return view('admin.reports.index'); })->name('laporan');
     Route::get('analitik', function() { return view('admin.analytics.index'); })->name('analitik');
 
-    // Settings Categories
-    Route::get('pengaturan/aplikasi', [AdminSettingController::class, 'application'])->name('pengaturan.aplikasi.indeks');
-    Route::get('pengaturan/sistem', [AdminSettingController::class, 'system'])->name('pengaturan.sistem.indeks');
-    Route::get('pengaturan/smtp', [AdminSettingController::class, 'smtp'])->name('pengaturan.smtp.indeks');
-    Route::get('pengaturan/pembayaran', [AdminSettingController::class, 'payment'])->name('pengaturan.pembayaran.indeks');
-    Route::get('pengaturan/database', [AdminSettingController::class, 'database'])->name('pengaturan.database.indeks');
+    // Maintenance
     Route::get('maintenance', [AdminSettingController::class, 'maintenance'])->name('maintenance');
 
     // Notifications
     Route::get('notifikasi', [AdminNotificationController::class, 'get'])->name('notifikasi.ambil');
     Route::post('notifikasi/baca', [AdminNotificationController::class, 'markRead'])->name('notifikasi.baca');
 
-    // Settings - Application
-    Route::get('settings/application', [AdminApplicationSettingController::class, 'index'])->name('settings.application.index');
-    Route::put('settings/application', [AdminApplicationSettingController::class, 'update'])->name('settings.application.update');
 
-    // Settings - System
-    Route::get('settings/system', [AdminSystemSettingController::class, 'index'])->name('settings.system.index');
-    Route::put('settings/system', [AdminSystemSettingController::class, 'update'])->name('settings.system.update');
-
-    // Settings - SMTP
-    Route::get('settings/smtp', [AdminSmtpSettingController::class, 'index'])->name('settings.smtp.index');
-    Route::put('settings/smtp', [AdminSmtpSettingController::class, 'update'])->name('settings.smtp.update');
-    Route::post('settings/smtp/test', [AdminSmtpSettingController::class, 'testSmtp'])->name('settings.smtp.test');
-
-    // Settings - Payment
-    Route::get('settings/payment', [AdminPaymentSettingController::class, 'index'])->name('settings.payment.index');
-    Route::put('settings/payment', [AdminPaymentSettingController::class, 'update'])->name('settings.payment.update');
-
-    // Settings - Database
-    Route::get('settings/database', [AdminDatabaseSettingController::class, 'index'])->name('settings.database.index');
-    Route::post('settings/database/clear-cache', [AdminDatabaseSettingController::class, 'clearCache'])->name('settings.database.clear-cache');
-    Route::post('settings/database/optimize', [AdminDatabaseSettingController::class, 'optimize'])->name('settings.database.optimize');
-    Route::post('settings/database/optimize-db', [AdminDatabaseSettingController::class, 'optimizeDatabase'])->name('settings.database.optimize-db');
 
     // System Maintenance
     Route::get('maintenance', [AdminDashboardController::class, 'maintenance'])->name('maintenance');

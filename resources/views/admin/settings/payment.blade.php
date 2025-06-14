@@ -23,7 +23,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <form id="paymentSettingsForm" action="{{ route('admin.settings.payment.update') }}" method="POST">
+                <form id="paymentSettingsForm" action="{{ route('admin.pengaturan.pembayaran.perbarui') }}" method="POST">
                     @csrf
                     @method('PUT')
 
@@ -256,31 +256,31 @@ $(document).ready(function() {
     $('#setting_bank_bca_number').on('input', function() {
         $('#preview-bca-number').text($(this).val());
     });
-    
+
     $('#setting_bank_bca_name').on('input', function() {
         $('#preview-bca-name').text($(this).val());
     });
-    
+
     $('#setting_bank_bri_number').on('input', function() {
         $('#preview-bri-number').text($(this).val());
     });
-    
+
     $('#setting_bank_bri_name').on('input', function() {
         $('#preview-bri-name').text($(this).val());
     });
-    
+
     $('#setting_gopay_number').on('input', function() {
         $('#preview-gopay-number').text($(this).val());
     });
-    
+
     $('#setting_dana_number').on('input', function() {
         $('#preview-dana-number').text($(this).val());
     });
-    
+
     $('#setting_ovo_number').on('input', function() {
         $('#preview-ovo-number').text($(this).val());
     });
-    
+
     // Format phone numbers
     $('input[id*="number"]:not([id*="bank"])').on('input', function() {
         let value = $(this).val().replace(/[^0-9]/g, '');
@@ -289,7 +289,7 @@ $(document).ready(function() {
         }
         $(this).val(value);
     });
-    
+
     // Validate pricing
     $('input[id*="price"]').on('input', function() {
         const value = parseInt($(this).val());

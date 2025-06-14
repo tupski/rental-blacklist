@@ -23,7 +23,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <form id="systemSettingsForm" action="{{ route('admin.settings.system.update') }}" method="POST">
+                <form id="systemSettingsForm" action="{{ route('admin.pengaturan.sistem.perbarui') }}" method="POST">
                     @csrf
                     @method('PUT')
 
@@ -207,53 +207,53 @@ $(document).ready(function() {
     $('#setting_date_format').on('change', function() {
         updateDatePreview();
     });
-    
+
     $('#setting_time_format').on('change', function() {
         updateTimePreview();
     });
-    
+
     $('#setting_currency_symbol, #setting_currency_position').on('change', function() {
         updateCurrencyPreview();
     });
-    
+
     function updateDatePreview() {
         const format = $('#setting_date_format').val();
         const now = new Date();
         let preview = '';
-        
+
         switch(format) {
             case 'd/m/Y':
-                preview = now.getDate().toString().padStart(2, '0') + '/' + 
-                         (now.getMonth() + 1).toString().padStart(2, '0') + '/' + 
+                preview = now.getDate().toString().padStart(2, '0') + '/' +
+                         (now.getMonth() + 1).toString().padStart(2, '0') + '/' +
                          now.getFullYear();
                 break;
             case 'Y-m-d':
-                preview = now.getFullYear() + '-' + 
-                         (now.getMonth() + 1).toString().padStart(2, '0') + '-' + 
+                preview = now.getFullYear() + '-' +
+                         (now.getMonth() + 1).toString().padStart(2, '0') + '-' +
                          now.getDate().toString().padStart(2, '0');
                 break;
             case 'm/d/Y':
-                preview = (now.getMonth() + 1).toString().padStart(2, '0') + '/' + 
-                         now.getDate().toString().padStart(2, '0') + '/' + 
+                preview = (now.getMonth() + 1).toString().padStart(2, '0') + '/' +
+                         now.getDate().toString().padStart(2, '0') + '/' +
                          now.getFullYear();
                 break;
             case 'd-m-Y':
-                preview = now.getDate().toString().padStart(2, '0') + '-' + 
-                         (now.getMonth() + 1).toString().padStart(2, '0') + '-' + 
+                preview = now.getDate().toString().padStart(2, '0') + '-' +
+                         (now.getMonth() + 1).toString().padStart(2, '0') + '-' +
                          now.getFullYear();
                 break;
         }
-        
+
         $('#preview-date').text(preview);
     }
-    
+
     function updateTimePreview() {
         const format = $('#setting_time_format').val();
         const now = new Date();
         let preview = '';
-        
+
         if (format === 'H:i') {
-            preview = now.getHours().toString().padStart(2, '0') + ':' + 
+            preview = now.getHours().toString().padStart(2, '0') + ':' +
                      now.getMinutes().toString().padStart(2, '0');
         } else {
             let hours = now.getHours();
@@ -263,21 +263,21 @@ $(document).ready(function() {
             hours = hours ? hours : 12;
             preview = hours.toString().padStart(2, '0') + ':' + minutes + ' ' + ampm;
         }
-        
+
         $('#preview-time').text(preview);
     }
-    
+
     function updateCurrencyPreview() {
         const symbol = $('#setting_currency_symbol').val() || 'Rp';
         const position = $('#setting_currency_position').val() || 'before';
-        
+
         let preview = '';
         if (position === 'before') {
             preview = symbol + ' 1.000';
         } else {
             preview = '1.000 ' + symbol;
         }
-        
+
         $('#preview-currency').text(preview);
     }
 });

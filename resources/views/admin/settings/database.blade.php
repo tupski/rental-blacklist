@@ -129,7 +129,7 @@
                                 <p class="card-text">
                                     Hapus semua cache aplikasi, config, route, dan view.
                                 </p>
-                                <form action="{{ route('admin.settings.database.clear-cache') }}" method="POST" class="d-inline">
+                                <form action="{{ route('admin.pengaturan.database.bersihkan-cache') }}" method="POST" class="d-inline">
                                     @csrf
                                     <button type="submit" class="btn btn-warning" onclick="return confirm('Yakin ingin membersihkan cache?')">
                                         <i class="fas fa-trash"></i> Bersihkan Cache
@@ -150,7 +150,7 @@
                                 <p class="card-text">
                                     Optimasi aplikasi dengan cache config dan route.
                                 </p>
-                                <form action="{{ route('admin.settings.database.optimize') }}" method="POST" class="d-inline">
+                                <form action="{{ route('admin.pengaturan.database.optimasi') }}" method="POST" class="d-inline">
                                     @csrf
                                     <button type="submit" class="btn btn-success" onclick="return confirm('Yakin ingin mengoptimasi sistem?')">
                                         <i class="fas fa-cog"></i> Optimasi Sistem
@@ -171,7 +171,7 @@
                                 <p class="card-text">
                                     Optimasi semua tabel database untuk performa lebih baik.
                                 </p>
-                                <form action="{{ route('admin.settings.database.optimize-db') }}" method="POST" class="d-inline">
+                                <form action="{{ route('admin.pengaturan.database.optimasi-db') }}" method="POST" class="d-inline">
                                     @csrf
                                     <button type="submit" class="btn btn-info" onclick="return confirm('Yakin ingin mengoptimasi database?')">
                                         <i class="fas fa-database"></i> Optimasi Database
@@ -282,12 +282,12 @@ $(document).ready(function() {
     setInterval(function() {
         location.reload();
     }, 30000);
-    
+
     // Confirmation dialogs with more details
     $('form').on('submit', function(e) {
         const action = $(this).attr('action');
         let message = '';
-        
+
         if (action.includes('clear-cache')) {
             message = 'Membersihkan cache akan menghapus semua cache aplikasi. Aplikasi mungkin akan lebih lambat sementara waktu. Lanjutkan?';
         } else if (action.includes('optimize-db')) {
@@ -295,7 +295,7 @@ $(document).ready(function() {
         } else if (action.includes('optimize')) {
             message = 'Optimasi sistem akan membuat cache baru untuk mempercepat aplikasi. Lanjutkan?';
         }
-        
+
         if (message && !confirm(message)) {
             e.preventDefault();
         }

@@ -269,7 +269,7 @@
                         </a>
                     </div>
                     <div class="col-6 mt-2">
-                        <a href="{{ route('admin.settings.index') }}" class="btn btn-warning btn-block">
+                        <a href="{{ route('admin.pengaturan.indeks') }}" class="btn btn-warning btn-block">
                             <i class="fas fa-cog"></i> Settings
                         </a>
                     </div>
