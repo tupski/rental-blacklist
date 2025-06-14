@@ -26,7 +26,7 @@
                     <div class="row">
                         <div class="col-md-3 col-sm-6 mb-3">
                             <label for="search">Cari (Nama/NIK/HP)</label>
-                            <input type="text" class="form-control" id="search" name="cari"
+                            <input type="text" class="form-control" id="search" name="search"
                                    value="{{ request('search') }}" placeholder="Masukkan kata kunci...">
                         </div>
                         <div class="col-md-3 col-sm-6 mb-3">
