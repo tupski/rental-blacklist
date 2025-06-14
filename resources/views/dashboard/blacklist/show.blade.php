@@ -191,11 +191,11 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-medium text-muted">Tanggal Sewa</label>
-                            <p class="mb-0">{{ $blacklist->tanggal_sewa ? $blacklist->tanggal_sewa->format('d F Y') : 'N/A' }}</p>
+                            <p class="mb-0">{{ $blacklist->tanggal_sewa ? \App\Helpers\DateHelper::formatIndonesian($blacklist->tanggal_sewa) : 'N/A' }}</p>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-medium text-muted">Tanggal Kejadian</label>
-                            <p class="mb-0">{{ $blacklist->tanggal_kejadian ? $blacklist->tanggal_kejadian->format('d F Y') : 'N/A' }}</p>
+                            <p class="mb-0">{{ $blacklist->tanggal_kejadian ? \App\Helpers\DateHelper::formatIndonesian($blacklist->tanggal_kejadian) : 'N/A' }}</p>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-medium text-muted">Jenis Kendaraan/Barang</label>
@@ -350,12 +350,12 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label fw-medium text-muted">Tanggal Laporan</label>
-                            <p class="mb-0">{{ $blacklist->created_at->format('d F Y, H:i') }} WIB</p>
+                            <p class="mb-0">{{ \App\Helpers\DateHelper::formatDenganWaktu($blacklist->created_at) }}</p>
                         </div>
                         @if($blacklist->updated_at != $blacklist->created_at)
                         <div class="col-md-6">
                             <label class="form-label fw-medium text-muted">Terakhir Diupdate</label>
-                            <p class="mb-0">{{ $blacklist->updated_at->format('d F Y, H:i') }} WIB</p>
+                            <p class="mb-0">{{ \App\Helpers\DateHelper::formatDenganWaktu($blacklist->updated_at) }}</p>
                         </div>
                         @endif
                         <div class="col-md-6">

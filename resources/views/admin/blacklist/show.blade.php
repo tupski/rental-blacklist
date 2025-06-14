@@ -138,15 +138,15 @@
                             </tr>
                             <tr>
                                 <td><strong>Tanggal Dibuat:</strong></td>
-                                <td>{{ $blacklist->created_at->format('d/m/Y H:i:s') }}</td>
+                                <td>{{ \App\Helpers\DateHelper::formatDenganWaktu($blacklist->created_at) }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Terakhir Update:</strong></td>
-                                <td>{{ $blacklist->updated_at->format('d/m/Y H:i:s') }}</td>
+                                <td>{{ \App\Helpers\DateHelper::formatDenganWaktu($blacklist->updated_at) }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Tanggal Pelaporan:</strong></td>
-                                <td>{{ $blacklist->tanggal_pelaporan ? $blacklist->tanggal_pelaporan->format('d/m/Y H:i:s') : 'N/A' }}</td>
+                                <td>{{ $blacklist->tanggal_pelaporan ? \App\Helpers\DateHelper::formatDenganWaktu($blacklist->tanggal_pelaporan) : 'N/A' }}</td>
                             </tr>
                         </table>
                     </div>
@@ -226,11 +226,11 @@
                             </tr>
                             <tr>
                                 <td><strong>Tanggal Sewa:</strong></td>
-                                <td>{{ $blacklist->tanggal_sewa ? $blacklist->tanggal_sewa->format('d/m/Y') : 'N/A' }}</td>
+                                <td>{{ $blacklist->tanggal_sewa ? \App\Helpers\DateHelper::formatIndonesian($blacklist->tanggal_sewa) : 'N/A' }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Tanggal Kejadian:</strong></td>
-                                <td>{{ $blacklist->tanggal_kejadian ? $blacklist->tanggal_kejadian->format('d/m/Y') : 'N/A' }}</td>
+                                <td>{{ $blacklist->tanggal_kejadian ? \App\Helpers\DateHelper::formatIndonesian($blacklist->tanggal_kejadian) : 'N/A' }}</td>
                             </tr>
                         </table>
                     </div>
@@ -401,7 +401,7 @@
                     <div class="timeline">
                         @foreach($relatedReports as $report)
                         <div class="time-label">
-                            <span class="bg-primary">{{ $report->created_at->format('d M Y') }}</span>
+                            <span class="bg-primary">{{ \App\Helpers\DateHelper::formatSingkat($report->created_at) }}</span>
                         </div>
                         <div>
                             <i class="fas fa-flag bg-{{ $report->status_validitas === 'Valid' ? 'success' : ($report->status_validitas === 'Invalid' ? 'danger' : 'warning') }}"></i>
@@ -442,7 +442,7 @@
                     <div class="timeline">
                         @foreach($guestReports as $guestReport)
                         <div class="time-label">
-                            <span class="bg-success">{{ $guestReport->created_at->format('d M Y') }}</span>
+                            <span class="bg-success">{{ \App\Helpers\DateHelper::formatSingkat($guestReport->created_at) }}</span>
                         </div>
                         <div>
                             <i class="fas fa-user bg-{{ $guestReport->status === 'approved' ? 'success' : ($guestReport->status === 'rejected' ? 'danger' : 'warning') }}"></i>

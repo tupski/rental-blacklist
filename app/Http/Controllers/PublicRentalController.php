@@ -69,6 +69,14 @@ class PublicRentalController extends Controller
         $terlapor = $reports->first();
         $totalReports = $reports->count();
 
+        // Cek apakah user memiliki akses uncensored
+        $showUncensored = false;
+        if (auth()->check()) {
+            $user = auth()->user();
+            // Admin dan rental owner dapat melihat data tanpa sensor
+            $showUncensored = in_array($user->role, ['admin', 'rental_owner']);
+        }
+
         // Statistik berdasarkan jenis rental
         $reportsByType = $reports->groupBy('jenis_rental')->map(function ($group) {
             return $group->count();
@@ -79,12 +87,22 @@ class PublicRentalController extends Controller
             return is_array($report->jenis_laporan) ? $report->jenis_laporan : [$report->jenis_laporan];
         })->countBy();
 
+        // Tentukan tingkat bahaya berdasarkan jumlah laporan
+        $dangerLevel = 'low';
+        if ($totalReports >= 5) {
+            $dangerLevel = 'high';
+        } elseif ($totalReports >= 3) {
+            $dangerLevel = 'medium';
+        }
+
         return view('public.report-timeline', compact(
             'reports',
             'terlapor',
             'totalReports',
             'reportsByType',
-            'reportsByCategory'
+            'reportsByCategory',
+            'dangerLevel',
+            'showUncensored'
         ));
     }
 }
