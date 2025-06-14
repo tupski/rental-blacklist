@@ -16,7 +16,7 @@
             <div class="card-header">
                 <h3 class="card-title">Edit User: {{ $user->name }}</h3>
                 <div class="card-tools">
-                    <a href="{{ route('admin.pengguna.tampil', $user->id) }}" class="btn btn-info btn-sm">
+                    <a href="{{ route('admin.pengguna.tampil', $user) }}" class="btn btn-info btn-sm">
                         <i class="fas fa-eye"></i> Lihat Detail
                     </a>
                     <a href="{{ route('admin.pengguna.indeks') }}" class="btn btn-secondary btn-sm">
@@ -24,7 +24,7 @@
                     </a>
                 </div>
             </div>
-            <form action="{{ route('admin.pengguna.perbarui', $user->id) }}" method="POST">
+            <form action="{{ route('admin.pengguna.perbarui', $user) }}" method="POST">
                 @csrf
                 @method('PUT')
                 <div class="card-body">
@@ -124,7 +124,7 @@
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i> Simpan Perubahan
                     </button>
-                    <a href="{{ route('admin.pengguna.tampil', $user->id) }}" class="btn btn-secondary">
+                    <a href="{{ route('admin.pengguna.tampil', $user) }}" class="btn btn-secondary">
                         <i class="fas fa-times"></i> Batal
                     </a>
                 </div>

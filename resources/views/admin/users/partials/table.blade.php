@@ -56,14 +56,14 @@
                             <i class="fas fa-cog"></i>
                         </button>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item text-dark font-weight-medium" href="{{ route('admin.pengguna.tampil', $user->id) }}">
+                            <a class="dropdown-item text-dark font-weight-medium" href="{{ route('admin.pengguna.tampil', $user) }}">
                                 <i class="fas fa-eye text-info"></i> Lihat Detail
                             </a>
-                            <a class="dropdown-item text-dark font-weight-medium" href="{{ route('admin.pengguna.edit', $user->id) }}">
+                            <a class="dropdown-item text-dark font-weight-medium" href="{{ route('admin.pengguna.edit', $user) }}">
                                 <i class="fas fa-edit text-warning"></i> Edit Data
                             </a>
                             <div class="dropdown-divider"></div>
-                            <form action="{{ route('admin.pengguna.reset-kata-sandi', $user->id) }}"
+                            <form action="{{ route('admin.pengguna.reset-kata-sandi', $user) }}"
                                   method="POST" class="d-inline">
                                 @csrf
                                 <button type="submit" class="dropdown-item text-dark font-weight-medium"
@@ -73,7 +73,7 @@
                             </form>
                             @if($user->role !== 'admin')
                                 <div class="dropdown-divider"></div>
-                                <form action="{{ route('admin.pengguna.hapus', $user->id) }}"
+                                <form action="{{ route('admin.pengguna.hapus', $user) }}"
                                       method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
@@ -146,14 +146,14 @@
                             <i class="fas fa-cog"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item text-dark font-weight-medium" href="{{ route('admin.pengguna.tampil', $user->id) }}">
+                            <a class="dropdown-item text-dark font-weight-medium" href="{{ route('admin.pengguna.tampil', $user) }}">
                                 <i class="fas fa-eye text-info"></i> Lihat Detail
                             </a>
-                            <a class="dropdown-item text-dark font-weight-medium" href="{{ route('admin.pengguna.edit', $user->id) }}">
+                            <a class="dropdown-item text-dark font-weight-medium" href="{{ route('admin.pengguna.edit', $user) }}">
                                 <i class="fas fa-edit text-warning"></i> Edit Data
                             </a>
                             <div class="dropdown-divider"></div>
-                            <form action="{{ route('admin.pengguna.reset-kata-sandi', $user->id) }}"
+                            <form action="{{ route('admin.pengguna.reset-kata-sandi', $user) }}"
                                   method="POST" class="d-inline">
                                 @csrf
                                 <button type="submit" class="dropdown-item text-dark font-weight-medium"
@@ -163,7 +163,7 @@
                             </form>
                             @if($user->role !== 'admin')
                                 <div class="dropdown-divider"></div>
-                                <form action="{{ route('admin.pengguna.hapus', $user->id) }}"
+                                <form action="{{ route('admin.pengguna.hapus', $user) }}"
                                       method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')

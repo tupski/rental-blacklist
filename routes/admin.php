@@ -47,7 +47,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('daftar-hitam/{blacklist}/batalkan', [AdminBlacklistController::class, 'invalidateBlacklist'])->name('daftar-hitam.batalkan');
 
     // User Management
-    Route::resource('pengguna', AdminUserController::class)->names([
+    Route::resource('pengguna', AdminUserController::class)->parameters([
+        'pengguna' => 'user'
+    ])->names([
         'index' => 'pengguna.indeks',
         'create' => 'pengguna.buat',
         'store' => 'pengguna.simpan',

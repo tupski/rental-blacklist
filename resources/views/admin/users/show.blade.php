@@ -16,7 +16,7 @@
             <div class="card-header">
                 <h3 class="card-title">Informasi User</h3>
                 <div class="card-tools">
-                    <a href="{{ route('admin.pengguna.edit', $user->id) }}" class="btn btn-warning btn-sm">
+                    <a href="{{ route('admin.pengguna.edit', $user) }}" class="btn btn-warning btn-sm">
                         <i class="fas fa-edit"></i> Edit
                     </a>
                     <a href="{{ route('admin.pengguna.indeks') }}" class="btn btn-secondary btn-sm">

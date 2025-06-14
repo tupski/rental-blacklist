@@ -141,7 +141,7 @@ class UserController extends Controller
 
         $user->update($updateData);
 
-        return redirect()->route('admin.pengguna.tampil', $user->id)
+        return redirect()->route('admin.pengguna.tampil', $user)
             ->with('success', 'Data user berhasil diperbarui.');
     }
 
