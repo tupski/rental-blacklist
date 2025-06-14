@@ -81,7 +81,7 @@
                                 <div class="mb-3">
                                     <label class="form-label text-muted">Posisi Tampil</label>
                                     <p>
-                                        <span class="badge 
+                                        <span class="badge
                                             @if($sponsor->position === 'home_top') bg-primary
                                             @elseif($sponsor->position === 'home_bottom') bg-success
                                             @else bg-secondary @endif">
@@ -175,8 +175,8 @@
                                 @if($sponsor->position !== 'home_bottom')
                                     <small class="text-muted d-block mb-2">Didukung oleh:</small>
                                 @endif
-                                <img src="{{ $sponsor->logo_url }}" alt="{{ $sponsor->name }}" 
-                                     class="img-fluid" 
+                                <img src="{{ $sponsor->logo_url }}" alt="{{ $sponsor->name }}"
+                                     class="img-fluid"
                                      style="max-height: {{ $sponsor->position === 'footer' ? '40px' : '50px' }}; max-width: {{ $sponsor->position === 'footer' ? '120px' : '150px' }};">
                             </div>
                         </div>
@@ -195,7 +195,7 @@
                         </h6>
                     </div>
                     <div class="card-body text-center">
-                        <img src="{{ $sponsor->logo_url }}" alt="{{ $sponsor->name }}" 
+                        <img src="{{ $sponsor->logo_url }}" alt="{{ $sponsor->name }}"
                              class="img-fluid mb-3" style="max-height: 150px; max-width: 250px;">
                         <p class="text-muted small mb-0">{{ $sponsor->name }}</p>
                     </div>
@@ -215,7 +215,7 @@
                                 <i class="fas fa-external-link-alt me-2"></i>
                                 Kunjungi Website
                             </a>
-                            <a href="{{ route('admin.sponsors.edit', $sponsor) }}" class="btn btn-success">
+                            <a href="{{ route('admin.sponsor.edit', $sponsor) }}" class="btn btn-success">
                                 <i class="fas fa-edit me-2"></i>
                                 Edit Sponsor
                             </a>

@@ -19,7 +19,7 @@
                     Pengaturan Aplikasi
                 </h3>
                 <div class="card-tools">
-                    <small class="text-muted">SEO, Media Sosial, dan Pengaturan Umum</small>
+                    <small class="text-muted">SEO, Media Sosial, Footer, Kontak, Captcha, dan Pengaturan Umum</small>
                 </div>
             </div>
             <div class="card-body">
@@ -44,6 +44,18 @@
                                             @case('social')
                                                 <i class="fas fa-share-alt mr-2"></i>
                                                 Media Sosial
+                                                @break
+                                            @case('footer')
+                                                <i class="fas fa-window-minimize mr-2"></i>
+                                                Pengaturan Footer
+                                                @break
+                                            @case('contact')
+                                                <i class="fas fa-address-book mr-2"></i>
+                                                Informasi Kontak
+                                                @break
+                                            @case('captcha')
+                                                <i class="fas fa-shield-alt mr-2"></i>
+                                                Pengaturan Captcha
                                                 @break
                                             @default
                                                 {{ ucfirst($group) }}
@@ -108,6 +120,20 @@
                                                                 placeholder="https://..."
                                                                 class="form-control"
                                                             >
+                                                            @break
+
+                                                        @case('select')
+                                                            <select
+                                                                name="settings[{{ $setting->key }}]"
+                                                                id="setting_{{ $setting->key }}"
+                                                                class="form-control"
+                                                            >
+                                                                @if($setting->key === 'captcha_type')
+                                                                    <option value="recaptcha" {{ $setting->value === 'recaptcha' ? 'selected' : '' }}>Google reCAPTCHA</option>
+                                                                    <option value="hcaptcha" {{ $setting->value === 'hcaptcha' ? 'selected' : '' }}>hCaptcha</option>
+                                                                    <option value="simple" {{ $setting->value === 'simple' ? 'selected' : '' }}>Simple Math Captcha</option>
+                                                                @endif
+                                                            </select>
                                                             @break
 
                                                         @default
