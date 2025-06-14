@@ -680,10 +680,52 @@ $(document).ready(function() {
 
         $('#resultsList').html(`<div class="row">${html}</div>`);
         $('#results').removeClass('d-none');
+
+        // Auto-scroll ke hasil pencarian dengan smooth animation
+        setTimeout(function() {
+            scrollToResults();
+        }, 100);
     }
 
     function showNoResults() {
         $('#noResults').removeClass('d-none');
+
+        // Auto-scroll ke no results dengan smooth animation
+        setTimeout(function() {
+            scrollToResults();
+        }, 100);
+    }
+
+    function scrollToResults() {
+        const resultsSection = document.getElementById('results');
+        const noResultsSection = document.getElementById('noResults');
+        const targetElement = resultsSection && !resultsSection.classList.contains('d-none') ? resultsSection : noResultsSection;
+
+        if (targetElement) {
+            // Calculate offset untuk berbagai device
+            let offset = 100; // Default offset
+
+            // Responsive offset berdasarkan screen size
+            if (window.innerWidth <= 576) {
+                // Mobile
+                offset = 80;
+            } else if (window.innerWidth <= 768) {
+                // Tablet
+                offset = 90;
+            } else {
+                // Desktop
+                offset = 100;
+            }
+
+            const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+            const offsetPosition = elementPosition - offset;
+
+            // Smooth scroll dengan behavior yang kompatibel
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
     }
 
     function updateURL(search) {

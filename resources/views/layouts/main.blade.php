@@ -400,29 +400,46 @@
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
                                 <i class="fas fa-user me-1"></i>
                                 {{ Auth::user()->name }}
-                                <span class="badge bg-success ms-2">{{ Auth::user()->getFormattedBalance() }}</span>
+                                @if(Auth::user()->role === 'user')
+                                    <span class="badge bg-success ms-2">{{ Auth::user()->getFormattedBalance() }}</span>
+                                @endif
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li><a class="dropdown-item" href="{{ route('profil.edit') }}">
                                     <i class="fas fa-user-edit me-2"></i>Profile
                                 </a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><h6 class="dropdown-header">Saldo & Kredit</h6></li>
-                                <li><a class="dropdown-item" href="{{ route('isi-saldo.indeks') }}">
-                                    <i class="fas fa-plus-circle me-2"></i>Topup Saldo
-                                </a></li>
-                                <li><a class="dropdown-item" href="{{ route('saldo.riwayat') }}">
-                                    <i class="fas fa-history me-2"></i>Riwayat Saldo
-                                </a></li>
-                                @if(Auth::user()->email === 'admin@example.com') {{-- Ganti dengan logic admin yang sesuai --}}
-                                <li><hr class="dropdown-divider"></li>
-                                <li><h6 class="dropdown-header">Admin</h6></li>
-                                <li><a class="dropdown-item" href="{{ route('admin.sponsor.indeks') }}">
-                                    <i class="fas fa-handshake me-2"></i>Kelola Sponsor
-                                </a></li>
-                                <li><a class="dropdown-item" href="{{ route('admin.isi-saldo.indeks') }}">
-                                    <i class="fas fa-credit-card me-2"></i>Kelola Topup
-                                </a></li>
+
+                                @if(Auth::user()->role === 'user')
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><h6 class="dropdown-header">Saldo & Kredit</h6></li>
+                                    <li><a class="dropdown-item" href="{{ route('isi-saldo.indeks') }}">
+                                        <i class="fas fa-plus-circle me-2"></i>Topup Saldo
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{{ route('saldo.riwayat') }}">
+                                        <i class="fas fa-history me-2"></i>Riwayat Saldo
+                                    </a></li>
+                                @endif
+                                @if(Auth::user()->role === 'admin')
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><h6 class="dropdown-header">Admin</h6></li>
+                                    <li><a class="dropdown-item" href="{{ route('admin.dasbor') }}">
+                                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard Admin
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{{ route('admin.sponsor.indeks') }}">
+                                        <i class="fas fa-handshake me-2"></i>Kelola Sponsor
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{{ route('admin.isi-saldo.indeks') }}">
+                                        <i class="fas fa-credit-card me-2"></i>Kelola Topup
+                                    </a></li>
+                                @elseif(Auth::user()->role === 'pengusaha_rental')
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><h6 class="dropdown-header">Rental</h6></li>
+                                    <li><a class="dropdown-item" href="{{ route('rental.dasbor') }}">
+                                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard Rental
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{{ route('kunci-api.tampil') }}">
+                                        <i class="fas fa-key me-2"></i>API Key
+                                    </a></li>
                                 @endif
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
