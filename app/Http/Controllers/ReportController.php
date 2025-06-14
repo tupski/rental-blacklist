@@ -2,54 +2,84 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\GuestReport;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use App\Models\RentalBlacklist;
+use App\Http\Requests\StoreBlacklistReportRequest;
+use App\Traits\HandlesFileWatermark;
+use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
 {
+    use HandlesFileWatermark;
+
     public function create()
     {
-        return view('report.create');
+        return view('report.create-new');
     }
 
-    public function store(Request $request)
+    public function store(StoreBlacklistReportRequest $request)
     {
-        $request->validate([
-            'nik' => 'required|string|size:16',
-            'nama_lengkap' => 'required|string|max:255',
-            'jenis_kelamin' => 'required|in:L,P',
-            'no_hp' => 'required|string|max:20',
-            'alamat' => 'required|string',
-            'jenis_rental' => 'required|string|max:100',
-            'jenis_laporan' => 'required|array|min:1',
-            'jenis_laporan.*' => 'string|in:Tidak Mengembalikan,Merusak Barang,Tidak Bayar,Kabur,Lainnya',
-            'kronologi' => 'required|string',
-            'tanggal_kejadian' => 'required|date|before_or_equal:today',
-            'email_pelapor' => 'required|email|max:255',
-            'nama_pelapor' => 'required|string|max:255',
-            'no_hp_pelapor' => 'required|string|max:20',
-            'bukti.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048'
-        ]);
+        $validated = $request->validated();
 
-        $data = $request->all();
-        $data['status'] = GuestReport::STATUS_PENDING;
+        // Handle file uploads with watermarking
+        $allFiles = [];
 
-        // Handle file uploads
+        // Process foto penyewa
+        if ($request->hasFile('foto_penyewa')) {
+            $fotoPenyewaFiles = [];
+            foreach ($request->file('foto_penyewa') as $file) {
+                $path = $file->store('foto-penyewa', 'public');
+                $fotoPenyewaFiles[] = $path;
+                $allFiles[] = $path;
+            }
+            $validated['foto_penyewa'] = $fotoPenyewaFiles;
+        }
+
+        // Process foto KTP/SIM
+        if ($request->hasFile('foto_ktp_sim')) {
+            $fotoKtpFiles = [];
+            foreach ($request->file('foto_ktp_sim') as $file) {
+                $path = $file->store('foto-ktp-sim', 'public');
+                $fotoKtpFiles[] = $path;
+                $allFiles[] = $path;
+            }
+            $validated['foto_ktp_sim'] = $fotoKtpFiles;
+        }
+
+        // Process bukti pendukung
         if ($request->hasFile('bukti')) {
             $buktiFiles = [];
             foreach ($request->file('bukti') as $file) {
-                if ($file->isValid()) {
-                    $path = $file->store('guest-reports', 'public');
-                    $buktiFiles[] = $path;
-                }
+                $path = $file->store('bukti-pendukung', 'public');
+                $buktiFiles[] = $path;
+                $allFiles[] = $path;
             }
-            $data['bukti'] = $buktiFiles;
+            $validated['bukti'] = $buktiFiles;
         }
 
-        GuestReport::create($data);
+        // Set user_id if authenticated, otherwise null for guest reports
+        $validated['user_id'] = Auth::id();
+
+        // Set default status
+        $validated['status_validitas'] = 'Pending';
+
+        // Create blacklist record
+        $blacklist = RentalBlacklist::create($validated);
+
+        // Process files for watermarking
+        if (!empty($allFiles)) {
+            $this->processUploadedFiles($allFiles, $blacklist);
+        }
+
+        // Send email notification (if configured)
+        if ($validated['email_pelapor'] ?? null) {
+            try {
+                // Mail::to($validated['email_pelapor'])->send(new ReportConfirmationMail($blacklist));
+            } catch (\Exception $e) {
+                \Log::error('Failed to send report confirmation email: ' . $e->getMessage());
+            }
+        }
 
         return redirect()->route('report.create')
-            ->with('success', 'Laporan berhasil dikirim! Tim kami akan memverifikasi dalam 1-3 hari kerja.');
+            ->with('success', 'Laporan berhasil dikirim! Tim kami akan memverifikasi dalam 1-3 hari kerja. Anda akan menerima notifikasi email setelah verifikasi selesai.');
     }
 }

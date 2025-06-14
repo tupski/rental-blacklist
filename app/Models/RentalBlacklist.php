@@ -26,13 +26,43 @@ class RentalBlacklist extends Model
         'kronologi',
         'bukti',
         'tanggal_kejadian',
-        'user_id'
+        'user_id',
+        // Informasi Pelapor
+        'nama_perusahaan_rental',
+        'nama_penanggung_jawab',
+        'no_wa_pelapor',
+        'email_pelapor',
+        'alamat_usaha',
+        'website_usaha',
+        // Data Penyewa tambahan
+        'foto_penyewa',
+        'foto_ktp_sim',
+        // Detail Masalah tambahan
+        'tanggal_sewa',
+        'jenis_kendaraan',
+        'nomor_polisi',
+        'nilai_kerugian',
+        // Status Penanganan
+        'status_penanganan',
+        'status_lainnya',
+        // Persetujuan
+        'persetujuan',
+        'nama_pelapor_ttd',
+        'tanggal_pelaporan',
+        'tipe_pelapor'
     ];
 
     protected $casts = [
         'jenis_laporan' => 'array',
         'bukti' => 'array',
-        'tanggal_kejadian' => 'date'
+        'tanggal_kejadian' => 'date',
+        'foto_penyewa' => 'array',
+        'foto_ktp_sim' => 'array',
+        'tanggal_sewa' => 'date',
+        'status_penanganan' => 'array',
+        'persetujuan' => 'boolean',
+        'tanggal_pelaporan' => 'datetime',
+        'nilai_kerugian' => 'decimal:2'
     ];
 
     public function user(): BelongsTo
