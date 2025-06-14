@@ -25,7 +25,79 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="row">
+                <!-- 1. Informasi Pelapor -->
+                @if($blacklist->tipe_pelapor === 'guest')
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h5 class="text-primary border-bottom pb-2">
+                            <i class="fas fa-building me-2"></i>
+                            Informasi Pelapor (Rental)
+                        </h5>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-borderless">
+                            <tr>
+                                <td><strong>Nama Perusahaan:</strong></td>
+                                <td>{{ $blacklist->nama_perusahaan_rental ?: 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Penanggung Jawab:</strong></td>
+                                <td>{{ $blacklist->nama_penanggung_jawab ?: 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>No. WhatsApp:</strong></td>
+                                <td>{{ $blacklist->no_wa_pelapor ?: 'N/A' }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-borderless">
+                            <tr>
+                                <td><strong>Email:</strong></td>
+                                <td>{{ $blacklist->email_pelapor ?: 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Alamat Usaha:</strong></td>
+                                <td>{{ $blacklist->alamat_usaha ?: 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Website/Instagram:</strong></td>
+                                <td>
+                                    @if($blacklist->website_usaha)
+                                        <a href="{{ $blacklist->website_usaha }}" target="_blank">{{ $blacklist->website_usaha }}</a>
+                                    @else
+                                        N/A
+                                    @endif
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                @else
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h5 class="text-primary border-bottom pb-2">
+                            <i class="fas fa-building me-2"></i>
+                            Informasi Pelapor (Rental)
+                        </h5>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Pelapor:</strong> {{ $blacklist->user->name ?? 'N/A' }} ({{ $blacklist->user->email ?? 'N/A' }})
+                            <br>
+                            <small class="text-muted">Data pelapor dari akun yang terdaftar</small>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                <!-- 2. Data Penyewa -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h5 class="text-primary border-bottom pb-2">
+                            <i class="fas fa-user me-2"></i>
+                            Data Penyewa
+                        </h5>
+                    </div>
                     <div class="col-md-6">
                         <table class="table table-borderless">
                             <tr>
@@ -37,16 +109,16 @@
                                 <td>{{ $blacklist->nama_lengkap }}</td>
                             </tr>
                             <tr>
+                                <td><strong>Jenis Kelamin:</strong></td>
+                                <td>{{ $blacklist->jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
+                            </tr>
+                            <tr>
                                 <td><strong>NIK:</strong></td>
-                                <td>{{ $blacklist->nik }}</td>
+                                <td>{{ $blacklist->nik ?: 'Tidak ada' }}</td>
                             </tr>
                             <tr>
                                 <td><strong>No. HP:</strong></td>
                                 <td>{{ $blacklist->no_hp }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Jenis Rental:</strong></td>
-                                <td><span class="badge badge-info">{{ $blacklist->jenis_rental }}</span></td>
                             </tr>
                         </table>
                     </div>
@@ -65,10 +137,6 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td><strong>Pelapor:</strong></td>
-                                <td>{{ $blacklist->user->name ?? 'N/A' }}</td>
-                            </tr>
-                            <tr>
                                 <td><strong>Tanggal Dibuat:</strong></td>
                                 <td>{{ $blacklist->created_at->format('d/m/Y H:i:s') }}</td>
                             </tr>
@@ -76,53 +144,236 @@
                                 <td><strong>Terakhir Update:</strong></td>
                                 <td>{{ $blacklist->updated_at->format('d/m/Y H:i:s') }}</td>
                             </tr>
+                            <tr>
+                                <td><strong>Tanggal Pelaporan:</strong></td>
+                                <td>{{ $blacklist->tanggal_pelaporan ? $blacklist->tanggal_pelaporan->format('d/m/Y H:i:s') : 'N/A' }}</td>
+                            </tr>
                         </table>
                     </div>
                 </div>
 
-                <div class="row mt-3">
+                <!-- Alamat -->
+                <div class="row mb-4">
                     <div class="col-12">
-                        <h5>Alamat:</h5>
+                        <h5 class="text-primary">Alamat Lengkap:</h5>
                         <p>{{ $blacklist->alamat ?: 'Tidak ada alamat' }}</p>
                     </div>
                 </div>
 
-                <div class="row mt-3">
+                <!-- Foto Penyewa -->
+                @if($blacklist->foto_penyewa && count($blacklist->foto_penyewa) > 0)
+                <div class="row mb-4">
                     <div class="col-12">
-                        <h5>Kronologi Masalah:</h5>
-                        <p>{{ $blacklist->kronologi }}</p>
+                        <h5 class="text-primary">Foto Penyewa:</h5>
+                        <div class="row">
+                            @foreach($blacklist->foto_penyewa as $foto)
+                            <div class="col-md-3 mb-3">
+                                <img src="{{ asset('storage/' . $foto) }}"
+                                     class="img-fluid img-thumbnail"
+                                     style="max-height: 200px; cursor: pointer;"
+                                     onclick="showImageModal('{{ asset('storage/' . $foto) }}')">
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                <!-- Foto KTP/SIM -->
+                @if($blacklist->foto_ktp_sim && count($blacklist->foto_ktp_sim) > 0)
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h5 class="text-primary">Foto KTP/SIM:</h5>
+                        <div class="row">
+                            @foreach($blacklist->foto_ktp_sim as $foto)
+                            <div class="col-md-3 mb-3">
+                                <img src="{{ asset('storage/' . $foto) }}"
+                                     class="img-fluid img-thumbnail"
+                                     style="max-height: 200px; cursor: pointer;"
+                                     onclick="showImageModal('{{ asset('storage/' . $foto) }}')">
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                <!-- 3. Detail Masalah -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h5 class="text-primary border-bottom pb-2">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            Detail Masalah
+                        </h5>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-borderless">
+                            <tr>
+                                <td><strong>Kategori Rental:</strong></td>
+                                <td><span class="badge badge-info">{{ $blacklist->jenis_rental }}</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Jenis Masalah:</strong></td>
+                                <td>
+                                    @if($blacklist->jenis_laporan && is_array($blacklist->jenis_laporan))
+                                        @foreach($blacklist->jenis_laporan as $jenis)
+                                            <span class="badge badge-warning mr-1">{{ $jenis }}</span>
+                                        @endforeach
+                                    @else
+                                        <span class="text-muted">Tidak ada data</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Tanggal Sewa:</strong></td>
+                                <td>{{ $blacklist->tanggal_sewa ? $blacklist->tanggal_sewa->format('d/m/Y') : 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Tanggal Kejadian:</strong></td>
+                                <td>{{ $blacklist->tanggal_kejadian ? $blacklist->tanggal_kejadian->format('d/m/Y') : 'N/A' }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-borderless">
+                            <tr>
+                                <td><strong>Jenis Kendaraan/Barang:</strong></td>
+                                <td>{{ $blacklist->jenis_kendaraan ?: 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Nomor Polisi:</strong></td>
+                                <td>{{ $blacklist->nomor_polisi ?: 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Nilai Kerugian:</strong></td>
+                                <td>
+                                    @if($blacklist->nilai_kerugian)
+                                        <span class="text-danger font-weight-bold">Rp {{ number_format($blacklist->nilai_kerugian, 0, ',', '.') }}</span>
+                                    @else
+                                        N/A
+                                    @endif
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-12">
+                        <h6 class="text-primary mt-3">Kronologi Kejadian:</h6>
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="mb-0">{{ $blacklist->kronologi }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Status Penanganan -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h5 class="text-primary border-bottom pb-2">
+                            <i class="fas fa-tasks me-2"></i>
+                            Status Penanganan
+                        </h5>
+                        @if($blacklist->status_penanganan && is_array($blacklist->status_penanganan))
+                            <div class="mb-3">
+                                @foreach($blacklist->status_penanganan as $status)
+                                    @if($status === 'dilaporkan_polisi')
+                                        <span class="badge badge-danger mr-2"><i class="fas fa-shield-alt me-1"></i> Sudah dilaporkan ke polisi</span>
+                                    @elseif($status === 'tidak_ada_respon')
+                                        <span class="badge badge-warning mr-2"><i class="fas fa-phone-slash me-1"></i> Tidak ada respon</span>
+                                    @elseif($status === 'proses_penyelesaian')
+                                        <span class="badge badge-info mr-2"><i class="fas fa-hourglass-half me-1"></i> Proses penyelesaian</span>
+                                    @elseif($status === 'lainnya')
+                                        <span class="badge badge-secondary mr-2"><i class="fas fa-ellipsis-h me-1"></i> Lainnya</span>
+                                    @endif
+                                @endforeach
+                            </div>
+                        @endif
+
+                        @if($blacklist->status_lainnya)
+                            <div class="alert alert-light">
+                                <strong>Keterangan Lainnya:</strong> {{ $blacklist->status_lainnya }}
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- 5. Persetujuan dan Pernyataan -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h5 class="text-primary border-bottom pb-2">
+                            <i class="fas fa-file-signature me-2"></i>
+                            Persetujuan dan Pernyataan
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td><strong>Persetujuan:</strong></td>
+                                        <td>
+                                            @if($blacklist->persetujuan)
+                                                <span class="badge badge-success"><i class="fas fa-check"></i> Disetujui</span>
+                                            @else
+                                                <span class="badge badge-danger"><i class="fas fa-times"></i> Tidak disetujui</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Nama Pelapor (TTD):</strong></td>
+                                        <td>{{ $blacklist->nama_pelapor_ttd ?: 'N/A' }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 @if($blacklist->catatan_admin)
-                <div class="row mt-3">
+                <div class="row mb-4">
                     <div class="col-12">
-                        <h5>Catatan Admin:</h5>
+                        <h5 class="text-primary">Catatan Admin:</h5>
                         <div class="alert alert-info">
+                            <i class="fas fa-sticky-note me-2"></i>
                             {{ $blacklist->catatan_admin }}
                         </div>
                     </div>
                 </div>
                 @endif
 
+                <!-- Bukti Pendukung -->
                 @if($blacklist->bukti && count($blacklist->bukti) > 0)
-                <div class="row mt-3">
+                <div class="row mb-4">
                     <div class="col-12">
-                        <h5>Bukti:</h5>
+                        <h5 class="text-primary border-bottom pb-2">
+                            <i class="fas fa-paperclip me-2"></i>
+                            Bukti Pendukung
+                        </h5>
                         <div class="row">
                             @foreach($blacklist->bukti as $bukti)
                             <div class="col-md-3 mb-3">
-                                @if(in_array(pathinfo($bukti, PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png']))
-                                    <img src="{{ asset('storage/bukti/' . $bukti) }}"
-                                         class="img-fluid img-thumbnail"
-                                         style="max-height: 200px; cursor: pointer;"
-                                         onclick="showImageModal('{{ asset('storage/bukti/' . $bukti) }}')">
+                                @if(in_array(pathinfo($bukti, PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png', 'gif']))
+                                    <div class="card">
+                                        <img src="{{ asset('storage/' . $bukti) }}"
+                                             class="card-img-top"
+                                             style="height: 200px; object-fit: cover; cursor: pointer;"
+                                             onclick="showImageModal('{{ asset('storage/' . $bukti) }}')">
+                                        <div class="card-body p-2">
+                                            <small class="text-muted">{{ basename($bukti) }}</small>
+                                        </div>
+                                    </div>
                                 @else
                                     <div class="card">
                                         <div class="card-body text-center">
-                                            <i class="fas fa-file fa-3x text-muted"></i>
-                                            <p class="mt-2">{{ $bukti }}</p>
-                                            <a href="{{ asset('storage/bukti/' . $bukti) }}"
+                                            @if(in_array(pathinfo($bukti, PATHINFO_EXTENSION), ['pdf']))
+                                                <i class="fas fa-file-pdf fa-3x text-danger"></i>
+                                            @elseif(in_array(pathinfo($bukti, PATHINFO_EXTENSION), ['doc', 'docx']))
+                                                <i class="fas fa-file-word fa-3x text-primary"></i>
+                                            @elseif(in_array(pathinfo($bukti, PATHINFO_EXTENSION), ['mp4', 'avi', 'mov']))
+                                                <i class="fas fa-file-video fa-3x text-info"></i>
+                                            @else
+                                                <i class="fas fa-file fa-3x text-muted"></i>
+                                            @endif
+                                            <p class="mt-2 small">{{ basename($bukti) }}</p>
+                                            <a href="{{ asset('storage/' . $bukti) }}"
                                                class="btn btn-sm btn-primary" target="_blank">
                                                 <i class="fas fa-download"></i> Download
                                             </a>
@@ -300,6 +551,37 @@
         </div>
     </div>
 </div>
+
+<!-- Image Modal -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel">Lihat Gambar</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" class="img-fluid" alt="Gambar">
+            </div>
+            <div class="modal-footer">
+                <a id="downloadLink" href="" class="btn btn-primary" download>
+                    <i class="fas fa-download"></i> Download
+                </a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showImageModal(imageSrc) {
+    document.getElementById('modalImage').src = imageSrc;
+    document.getElementById('downloadLink').href = imageSrc;
+
+    const modal = new bootstrap.Modal(document.getElementById('imageModal'));
+    modal.show();
+}
+</script>
 @endsection
 
 @push('scripts')

@@ -46,6 +46,8 @@
             box-shadow: 0 2px 20px rgba(218, 53, 68, 0.1);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding: 0.75rem 0;
+            z-index: 1050 !important;
+            position: relative;
         }
 
         .navbar-modern .navbar-brand {
@@ -144,6 +146,8 @@
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
             padding: 0.5rem 0;
             margin-top: 0.5rem;
+            z-index: 9999 !important;
+            position: absolute !important;
         }
 
         .navbar-modern .dropdown-item {
