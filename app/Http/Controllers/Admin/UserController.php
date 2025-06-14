@@ -9,13 +9,63 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::where('role', '!=', 'admin')
-            ->latest()
-            ->paginate(20);
+        $query = User::where('role', '!=', 'admin');
 
-        return view('admin.users.index', compact('users'));
+        // Apply filters
+        if ($request->filled('search')) {
+            $search = $request->get('search');
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('nik', 'like', "%{$search}%")
+                  ->orWhere('no_hp', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('role')) {
+            $query->where('role', $request->get('role'));
+        }
+
+        if ($request->filled('email_status')) {
+            if ($request->get('email_status') === 'verified') {
+                $query->whereNotNull('email_verified_at');
+            } else {
+                $query->whereNull('email_verified_at');
+            }
+        }
+
+        $users = $query->latest()->paginate(10)->appends($request->query());
+
+        // Get statistics for all users (not just filtered)
+        $allUsers = User::where('role', '!=', 'admin')->get();
+        $statistics = [
+            'total' => $allUsers->count(),
+            'user_biasa' => $allUsers->where('role', 'user')->count(),
+            'pengusaha_rental' => $allUsers->where('role', 'pengusaha_rental')->count(),
+            'email_verified' => $allUsers->whereNotNull('email_verified_at')->count(),
+            'email_unverified' => $allUsers->whereNull('email_verified_at')->count(),
+        ];
+
+        // Handle AJAX request
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'html' => view('admin.users.partials.table', compact('users'))->render(),
+                'pagination' => [
+                    'current_page' => $users->currentPage(),
+                    'last_page' => $users->lastPage(),
+                    'per_page' => $users->perPage(),
+                    'total' => $users->total(),
+                    'from' => $users->firstItem(),
+                    'to' => $users->lastItem(),
+                    'links' => $users->links()->render()
+                ]
+            ]);
+        }
+
+        return view('admin.users.index', compact('users', 'statistics'));
     }
 
     public function create()
