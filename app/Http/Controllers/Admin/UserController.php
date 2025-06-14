@@ -50,7 +50,7 @@ class UserController extends Controller
             $user->notify(new \App\Notifications\UserRegisteredNotification($user, $request->password));
         }
 
-        return redirect()->route('admin.users.index')
+        return redirect()->route('admin.pengguna.indeks')
             ->with('success', 'User berhasil ditambahkan.');
     }
 
@@ -91,7 +91,7 @@ class UserController extends Controller
 
         $user->update($updateData);
 
-        return redirect()->route('admin.users.show', $user->id)
+        return redirect()->route('admin.pengguna.tampil', $user->id)
             ->with('success', 'Data user berhasil diperbarui.');
     }
 
@@ -104,7 +104,7 @@ class UserController extends Controller
 
         $user->delete();
 
-        return redirect()->route('admin.users.index')
+        return redirect()->route('admin.pengguna.indeks')
             ->with('success', 'User berhasil dihapus.');
     }
 

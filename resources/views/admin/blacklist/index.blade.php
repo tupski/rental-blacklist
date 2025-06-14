@@ -22,7 +22,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <form method="GET" action="{{ route('admin.blacklist.index') }}" id="filterForm">
+                <form method="GET" action="{{ route('admin.daftar-hitam.indeks') }}" id="filterForm">
                     <div class="row">
                         <div class="col-md-3 col-sm-6 mb-3">
                             <label for="search">Cari (Nama/NIK/HP)</label>
@@ -60,7 +60,7 @@
                     @if(request()->hasAny(['search', 'jenis_rental', 'status_validitas']))
                         <div class="row">
                             <div class="col-12">
-                                <a href="{{ route('admin.blacklist.index') }}" class="btn btn-outline-secondary btn-sm">
+                                <a href="{{ route('admin.daftar-hitam.indeks') }}" class="btn btn-outline-secondary btn-sm">
                                     <i class="fas fa-times"></i> Reset Filter
                                 </a>
                             </div>
@@ -79,7 +79,7 @@
             <div class="card-header">
                 <h3 class="card-title">Daftar Blacklist ({{ $blacklists->total() }} data)</h3>
                 <div class="card-tools">
-                    <a href="{{ route('admin.blacklist.create') }}" class="btn btn-primary btn-sm">
+                    <a href="{{ route('admin.daftar-hitam.buat') }}" class="btn btn-primary btn-sm">
                         <i class="fas fa-plus"></i> <span class="d-none d-sm-inline">Tambah Blacklist</span>
                     </a>
                 </div>
@@ -137,15 +137,15 @@
                                             <i class="fas fa-cog"></i>
                                         </button>
                                         <div class="dropdown-menu">
-                                            <a class="dropdown-item" href="{{ route('admin.blacklist.show', $blacklist->id) }}">
+                                            <a class="dropdown-item" href="{{ route('admin.daftar-hitam.tampil', $blacklist->id) }}">
                                                 <i class="fas fa-eye text-info"></i> Lihat
                                             </a>
-                                            <a class="dropdown-item" href="{{ route('admin.blacklist.edit', $blacklist->id) }}">
+                                            <a class="dropdown-item" href="{{ route('admin.daftar-hitam.edit', $blacklist->id) }}">
                                                 <i class="fas fa-edit text-warning"></i> Edit
                                             </a>
                                             @if($blacklist->status_validitas === 'Pending')
                                                 <div class="dropdown-divider"></div>
-                                                <form action="{{ route('admin.blacklist.validate', $blacklist->id) }}"
+                                                <form action="{{ route('admin.daftar-hitam.validasi', $blacklist->id) }}"
                                                       method="POST" class="d-inline">
                                                     @csrf
                                                     <button type="submit" class="dropdown-item"
@@ -153,7 +153,7 @@
                                                         <i class="fas fa-check text-success"></i> Valid
                                                     </button>
                                                 </form>
-                                                <form action="{{ route('admin.blacklist.invalidate', $blacklist->id) }}"
+                                                <form action="{{ route('admin.daftar-hitam.batalkan', $blacklist->id) }}"
                                                       method="POST" class="d-inline">
                                                     @csrf
                                                     <button type="submit" class="dropdown-item"
@@ -163,7 +163,7 @@
                                                 </form>
                                             @endif
                                             <div class="dropdown-divider"></div>
-                                            <form action="{{ route('admin.blacklist.destroy', $blacklist->id) }}"
+                                            <form action="{{ route('admin.daftar-hitam.hapus', $blacklist->id) }}"
                                                   method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
@@ -220,15 +220,15 @@
                                             <i class="fas fa-cog"></i>
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-right">
-                                            <a class="dropdown-item" href="{{ route('admin.blacklist.show', $blacklist->id) }}">
+                                            <a class="dropdown-item" href="{{ route('admin.daftar-hitam.tampil', $blacklist->id) }}">
                                                 <i class="fas fa-eye text-info"></i> Lihat
                                             </a>
-                                            <a class="dropdown-item" href="{{ route('admin.blacklist.edit', $blacklist->id) }}">
+                                            <a class="dropdown-item" href="{{ route('admin.daftar-hitam.edit', $blacklist->id) }}">
                                                 <i class="fas fa-edit text-warning"></i> Edit
                                             </a>
                                             @if($blacklist->status_validitas === 'Pending')
                                                 <div class="dropdown-divider"></div>
-                                                <form action="{{ route('admin.blacklist.validate', $blacklist->id) }}"
+                                                <form action="{{ route('admin.daftar-hitam.validasi', $blacklist->id) }}"
                                                       method="POST" class="d-inline">
                                                     @csrf
                                                     <button type="submit" class="dropdown-item"
@@ -236,7 +236,7 @@
                                                         <i class="fas fa-check text-success"></i> Valid
                                                     </button>
                                                 </form>
-                                                <form action="{{ route('admin.blacklist.invalidate', $blacklist->id) }}"
+                                                <form action="{{ route('admin.daftar-hitam.batalkan', $blacklist->id) }}"
                                                       method="POST" class="d-inline">
                                                     @csrf
                                                     <button type="submit" class="dropdown-item"
@@ -246,7 +246,7 @@
                                                 </form>
                                             @endif
                                             <div class="dropdown-divider"></div>
-                                            <form action="{{ route('admin.blacklist.destroy', $blacklist->id) }}"
+                                            <form action="{{ route('admin.daftar-hitam.hapus', $blacklist->id) }}"
                                                   method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')

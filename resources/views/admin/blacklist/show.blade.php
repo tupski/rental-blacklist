@@ -241,14 +241,14 @@
             </div>
             <div class="card-body">
                 @if($blacklist->status_validitas === 'Pending')
-                <form action="{{ route('admin.blacklist.validate', $blacklist->id) }}" method="POST" class="mb-2">
+                <form action="{{ route('admin.daftar-hitam.validasi', $blacklist->id) }}" method="POST" class="mb-2">
                     @csrf
                     <button type="submit" class="btn btn-success btn-block"
                             onclick="return confirm('Validasi data blacklist ini?')">
                         <i class="fas fa-check"></i> Validasi
                     </button>
                 </form>
-                <form action="{{ route('admin.blacklist.invalidate', $blacklist->id) }}" method="POST" class="mb-2">
+                <form action="{{ route('admin.daftar-hitam.batalkan', $blacklist->id) }}" method="POST" class="mb-2">
                     @csrf
                     <button type="submit" class="btn btn-danger btn-block"
                             onclick="return confirm('Tolak data blacklist ini?')">

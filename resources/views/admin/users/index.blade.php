@@ -15,7 +15,7 @@
             <div class="card-header">
                 <h3 class="card-title">Daftar User</h3>
                 <div class="card-tools">
-                    <a href="{{ route('admin.users.create') }}" class="btn btn-primary btn-sm">
+                    <a href="{{ route('admin.pengguna.buat') }}" class="btn btn-primary btn-sm">
                         <i class="fas fa-plus"></i> Tambah User
                     </a>
                 </div>
@@ -59,28 +59,28 @@
                                 <td>{{ $user->created_at->format('d/m/Y H:i') }}</td>
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <a href="{{ route('admin.users.show', $user->id) }}" 
+                                        <a href="{{ route('admin.pengguna.tampil', $user->id) }}"
                                            class="btn btn-info btn-sm" title="Lihat Detail">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{{ route('admin.users.edit', $user->id) }}" 
+                                        <a href="{{ route('admin.pengguna.edit', $user->id) }}"
                                            class="btn btn-warning btn-sm" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <form action="{{ route('admin.users.reset-password', $user->id) }}" 
+                                        <form action="{{ route('admin.pengguna.reset-kata-sandi', $user->id) }}"
                                               method="POST" class="d-inline">
                                             @csrf
-                                            <button type="submit" class="btn btn-secondary btn-sm" 
+                                            <button type="submit" class="btn btn-secondary btn-sm"
                                                     title="Reset Password" onclick="return confirm('Reset password user ini?')">
                                                 <i class="fas fa-key"></i>
                                             </button>
                                         </form>
                                         @if($user->role !== 'admin')
-                                        <form action="{{ route('admin.users.destroy', $user->id) }}" 
+                                        <form action="{{ route('admin.pengguna.hapus', $user->id) }}"
                                               method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm" 
+                                            <button type="submit" class="btn btn-danger btn-sm"
                                                     title="Hapus" onclick="return confirm('Hapus user ini?')">
                                                 <i class="fas fa-trash"></i>
                                             </button>

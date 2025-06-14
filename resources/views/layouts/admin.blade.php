@@ -163,8 +163,8 @@
                     </li>
 
                     <!-- Manajemen Blacklist -->
-                    <li class="nav-item {{ request()->routeIs('admin.blacklist*') ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ request()->routeIs('admin.blacklist*') ? 'active' : '' }}">
+                    <li class="nav-item {{ request()->routeIs('admin.daftar-hitam*') ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ request()->routeIs('admin.daftar-hitam*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-ban"></i>
                             <p>
                                 Manajemen Blacklist
@@ -188,8 +188,8 @@
                     </li>
 
                     <!-- Manajemen User -->
-                    <li class="nav-item {{ request()->routeIs('admin.users*') ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ request()->routeIs('admin.users*') ? 'active' : '' }}">
+                    <li class="nav-item {{ request()->routeIs('admin.pengguna*') ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ request()->routeIs('admin.pengguna*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-users"></i>
                             <p>
                                 Manajemen User

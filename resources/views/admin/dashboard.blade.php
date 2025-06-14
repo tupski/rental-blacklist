@@ -254,17 +254,17 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-6">
-                        <a href="{{ route('admin.blacklist.create') }}" class="btn btn-primary btn-block">
+                        <a href="{{ route('admin.daftar-hitam.buat') }}" class="btn btn-primary btn-block">
                             <i class="fas fa-plus"></i> Add Blacklist
                         </a>
                     </div>
                     <div class="col-6">
-                        <a href="{{ route('admin.users.create') }}" class="btn btn-success btn-block">
+                        <a href="{{ route('admin.pengguna.buat') }}" class="btn btn-success btn-block">
                             <i class="fas fa-user-plus"></i> Add User
                         </a>
                     </div>
                     <div class="col-6 mt-2">
-                        <a href="{{ route('admin.sponsors.create') }}" class="btn btn-info btn-block">
+                        <a href="{{ route('admin.sponsor.buat') }}" class="btn btn-info btn-block">
                             <i class="fas fa-handshake"></i> Add Sponsor
                         </a>
                     </div>

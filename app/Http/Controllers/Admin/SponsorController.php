@@ -49,7 +49,7 @@ class SponsorController extends Controller
 
         Sponsor::create($data);
 
-        return redirect()->route('admin.sponsors.index')
+        return redirect()->route('admin.sponsor.indeks')
                         ->with('success', 'Sponsor berhasil ditambahkan');
     }
 
@@ -93,7 +93,7 @@ class SponsorController extends Controller
 
         $sponsor->update($data);
 
-        return redirect()->route('admin.sponsors.index')
+        return redirect()->route('admin.sponsor.indeks')
                         ->with('success', 'Sponsor berhasil diperbarui');
     }
 
@@ -106,7 +106,7 @@ class SponsorController extends Controller
 
         $sponsor->delete();
 
-        return redirect()->route('admin.sponsors.index')
+        return redirect()->route('admin.sponsor.indeks')
                         ->with('success', 'Sponsor berhasil dihapus');
     }
 }

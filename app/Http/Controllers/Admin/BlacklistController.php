@@ -157,7 +157,7 @@ class BlacklistController extends Controller
 
         $blacklist->update($data);
 
-        return redirect()->route('admin.blacklist.show', $blacklist->id)
+        return redirect()->route('admin.daftar-hitam.tampil', $blacklist->id)
             ->with('success', 'Data blacklist berhasil diperbarui.');
     }
 
@@ -165,7 +165,7 @@ class BlacklistController extends Controller
     {
         $blacklist->delete();
 
-        return redirect()->route('admin.blacklist.index')
+        return redirect()->route('admin.daftar-hitam.indeks')
             ->with('success', 'Data blacklist berhasil dihapus.');
     }
 
