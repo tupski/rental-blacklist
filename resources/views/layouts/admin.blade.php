@@ -565,25 +565,25 @@
     </div>
 
     <!-- Modern Footer -->
-    <footer class="main-footer bg-dark text-white">
+    <footer class="main-footer" style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white;">
         <div class="container-fluid">
             <div class="row py-3">
                 <div class="col-md-6">
-                    <strong>
+                    <strong class="text-white">
                         <i class="fas fa-shield-alt text-danger me-2"></i>
                         Copyright &copy; {{ date('Y') }}
-                        <a href="{{ route('beranda') }}" class="text-danger">{{ config('app.name') }}</a>
+                        <a href="{{ route('beranda') }}" class="text-danger font-weight-bold">{{ config('app.name') }}</a>
                     </strong>
                     <br>
-                    <small class="text-muted">Semua hak dilindungi undang-undang.</small>
+                    <small class="text-light">Semua hak dilindungi undang-undang.</small>
                 </div>
                 <div class="col-md-6 text-md-right">
                     <div class="mb-2">
-                        <small class="text-muted">Admin Panel</small>
-                        <span class="badge badge-danger ml-2">v1.0.0</span>
+                        <small class="text-light font-weight-medium">Admin Panel</small>
+                        <span class="badge badge-danger ml-2 px-2 py-1">v1.0.0</span>
                     </div>
                     <div>
-                        <small class="text-muted">
+                        <small class="text-light">
                             Dibuat dengan <i class="fas fa-heart text-danger"></i> untuk komunitas rental Indonesia
                         </small>
                     </div>

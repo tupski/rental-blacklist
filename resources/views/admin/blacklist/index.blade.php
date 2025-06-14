@@ -61,6 +61,27 @@
         justify-content: center;
         z-index: 1000;
     }
+    .pagination .page-link {
+        color: #da3544;
+        border-color: #dee2e6;
+        font-weight: 500;
+        padding: 0.5rem 0.75rem;
+    }
+    .pagination .page-link:hover {
+        color: #b02a37;
+        background-color: #f8f9fa;
+        border-color: #da3544;
+    }
+    .pagination .page-item.active .page-link {
+        background-color: #da3544;
+        border-color: #da3544;
+        color: white;
+    }
+    .pagination .page-item.disabled .page-link {
+        color: #6c757d;
+        background-color: #fff;
+        border-color: #dee2e6;
+    }
 </style>
 @endpush
 
@@ -232,12 +253,21 @@ $(document).ready(function() {
 
             // Previous button
             if (pagination.current_page > 1) {
-                paginationHtml += '<li class="page-item"><a class="page-link" href="#" data-page="' + (pagination.current_page - 1) + '">‹ Sebelumnya</a></li>';
+                paginationHtml += '<li class="page-item"><a class="page-link" href="#" data-page="' + (pagination.current_page - 1) + '"><i class="fas fa-chevron-left"></i> Sebelumnya</a></li>';
+            } else {
+                paginationHtml += '<li class="page-item disabled"><span class="page-link"><i class="fas fa-chevron-left"></i> Sebelumnya</span></li>';
             }
 
             // Page numbers
             let startPage = Math.max(1, pagination.current_page - 2);
             let endPage = Math.min(pagination.last_page, pagination.current_page + 2);
+
+            if (startPage > 1) {
+                paginationHtml += '<li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>';
+                if (startPage > 2) {
+                    paginationHtml += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                }
+            }
 
             for (let i = startPage; i <= endPage; i++) {
                 if (i === pagination.current_page) {
@@ -247,9 +277,18 @@ $(document).ready(function() {
                 }
             }
 
+            if (endPage < pagination.last_page) {
+                if (endPage < pagination.last_page - 1) {
+                    paginationHtml += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                }
+                paginationHtml += '<li class="page-item"><a class="page-link" href="#" data-page="' + pagination.last_page + '">' + pagination.last_page + '</a></li>';
+            }
+
             // Next button
             if (pagination.current_page < pagination.last_page) {
-                paginationHtml += '<li class="page-item"><a class="page-link" href="#" data-page="' + (pagination.current_page + 1) + '">Selanjutnya ›</a></li>';
+                paginationHtml += '<li class="page-item"><a class="page-link" href="#" data-page="' + (pagination.current_page + 1) + '">Selanjutnya <i class="fas fa-chevron-right"></i></a></li>';
+            } else {
+                paginationHtml += '<li class="page-item disabled"><span class="page-link">Selanjutnya <i class="fas fa-chevron-right"></i></span></li>';
             }
 
             paginationHtml += '</ul></nav></div></div>';

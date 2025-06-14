@@ -5,7 +5,7 @@
 
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('admin.dasbor') }}">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('admin.guest-reports.index') }}">Laporan Guest</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.laporan-tamu.indeks') }}">Laporan Guest</a></li>
     <li class="breadcrumb-item active">Detail Laporan</li>
 @endsection
 
@@ -16,7 +16,7 @@
             <div class="card-header">
                 <h3 class="card-title">Detail Laporan Guest</h3>
                 <div class="card-tools">
-                    <a href="{{ route('admin.guest-reports.index') }}" class="btn btn-secondary btn-sm">
+                    <a href="{{ route('admin.laporan-tamu.indeks') }}" class="btn btn-secondary btn-sm">
                         <i class="fas fa-arrow-left"></i> Kembali
                     </a>
                 </div>
@@ -202,7 +202,7 @@
                 </div>
 
                 @if($guestReport->status === 'pending')
-                <form action="{{ route('admin.guest-reports.approve', $guestReport->id) }}" method="POST" class="mb-2">
+                <form action="{{ route('admin.laporan-tamu.setujui', $guestReport->id) }}" method="POST" class="mb-2">
                     @csrf
                     <button type="submit" class="btn btn-success btn-block"
                             onclick="return confirm('Approve laporan ini? Data akan ditambahkan ke blacklist.')">
@@ -215,7 +215,7 @@
                 </button>
                 @endif
 
-                <a href="{{ route('admin.guest-reports.edit', $guestReport->id) }}"
+                <a href="{{ route('admin.laporan-tamu.edit', $guestReport->id) }}"
                    class="btn btn-warning btn-block">
                     <i class="fas fa-edit"></i> Edit Laporan
                 </a>
@@ -302,7 +302,7 @@
                     <span>&times;</span>
                 </button>
             </div>
-            <form action="{{ route('admin.guest-reports.reject', $guestReport->id) }}" method="POST">
+            <form action="{{ route('admin.laporan-tamu.tolak', $guestReport->id) }}" method="POST">
                 @csrf
                 <div class="modal-body">
                     <div class="form-group">

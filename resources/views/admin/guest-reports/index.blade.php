@@ -20,10 +20,10 @@
                             <i class="fas fa-filter"></i> Filter Status
                         </button>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="{{ route('admin.guest-reports.index') }}">Semua</a>
-                            <a class="dropdown-item" href="{{ route('admin.guest-reports.index', ['status' => 'pending']) }}">Pending</a>
-                            <a class="dropdown-item" href="{{ route('admin.guest-reports.index', ['status' => 'approved']) }}">Approved</a>
-                            <a class="dropdown-item" href="{{ route('admin.guest-reports.index', ['status' => 'rejected']) }}">Rejected</a>
+                            <a class="dropdown-item" href="{{ route('admin.laporan-tamu.indeks') }}">Semua</a>
+                            <a class="dropdown-item" href="{{ route('admin.laporan-tamu.indeks', ['status' => 'pending']) }}">Pending</a>
+                            <a class="dropdown-item" href="{{ route('admin.laporan-tamu.indeks', ['status' => 'approved']) }}">Approved</a>
+                            <a class="dropdown-item" href="{{ route('admin.laporan-tamu.indeks', ['status' => 'rejected']) }}">Rejected</a>
                         </div>
                     </div>
                 </div>
@@ -69,7 +69,7 @@
                                 <td>{{ $report->created_at->format('d/m/Y H:i') }}</td>
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <a href="{{ route('admin.guest-reports.show', $report->id) }}"
+                                        <a href="{{ route('admin.laporan-tamu.tampil', $report->id) }}"
                                            class="btn btn-info btn-sm" title="Lihat Detail">
                                             <i class="fas fa-eye"></i>
                                         </a>
@@ -85,12 +85,12 @@
                                             </button>
                                         @endif
 
-                                        <a href="{{ route('admin.guest-reports.edit', $report->id) }}"
+                                        <a href="{{ route('admin.laporan-tamu.edit', $report->id) }}"
                                            class="btn btn-warning btn-sm" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
 
-                                        <form action="{{ route('admin.guest-reports.destroy', $report->id) }}"
+                                        <form action="{{ route('admin.laporan-tamu.hapus', $report->id) }}"
                                               method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
@@ -245,12 +245,12 @@ $(document).ready(function() {
 });
 
 function approveReport(reportId) {
-    $('#approveForm').attr('action', '/admin/guest-reports/' + reportId + '/approve');
+    $('#approveForm').attr('action', '/admin/laporan-tamu/' + reportId + '/setujui');
     $('#approveModal').modal('show');
 }
 
 function rejectReport(reportId) {
-    $('#rejectForm').attr('action', '/admin/guest-reports/' + reportId + '/reject');
+    $('#rejectForm').attr('action', '/admin/laporan-tamu/' + reportId + '/tolak');
     $('#rejectModal').modal('show');
 }
 </script>
