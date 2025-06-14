@@ -20,10 +20,10 @@
                             <i class="fas fa-filter"></i> Filter Status
                         </button>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="{{ route('admin.topup.index') }}">Semua</a>
-                            <a class="dropdown-item" href="{{ route('admin.topup.index', ['status' => 'pending']) }}">Pending</a>
-                            <a class="dropdown-item" href="{{ route('admin.topup.index', ['status' => 'confirmed']) }}">Confirmed</a>
-                            <a class="dropdown-item" href="{{ route('admin.topup.index', ['status' => 'rejected']) }}">Rejected</a>
+                            <a class="dropdown-item" href="{{ route('admin.isi-saldo.indeks') }}">Semua</a>
+                            <a class="dropdown-item" href="{{ route('admin.isi-saldo.indeks', ['status' => 'pending']) }}">Pending</a>
+                            <a class="dropdown-item" href="{{ route('admin.isi-saldo.indeks', ['status' => 'confirmed']) }}">Confirmed</a>
+                            <a class="dropdown-item" href="{{ route('admin.isi-saldo.indeks', ['status' => 'rejected']) }}">Rejected</a>
                         </div>
                     </div>
                 </div>
@@ -60,7 +60,7 @@
                                 <td>{{ $topup->created_at->format('d/m/Y H:i') }}</td>
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <a href="{{ route('admin.topup.show', $topup->id) }}"
+                                        <a href="{{ route('admin.isi-saldo.tampil', $topup->id) }}"
                                            class="btn btn-info btn-sm" title="Lihat Detail">
                                             <i class="fas fa-eye"></i>
                                         </a>
@@ -76,7 +76,7 @@
                                             </button>
                                         @endif
 
-                                        <form action="{{ route('admin.topup.destroy', $topup->id) }}"
+                                        <form action="{{ route('admin.isi-saldo.hapus', $topup->id) }}"
                                               method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')

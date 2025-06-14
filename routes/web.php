@@ -75,6 +75,18 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profil', [ProfileController::class, 'update'])->name('profil.perbarui');
     Route::delete('/profil', [ProfileController::class, 'destroy'])->name('profil.hapus');
 
+    // Blacklist management (accessible by all authenticated users)
+    Route::prefix('dasbor/daftar-hitam')->name('dasbor.daftar-hitam.')->group(function () {
+        Route::get('/', [BlacklistController::class, 'index'])->name('indeks');
+        Route::get('/buat', [BlacklistController::class, 'create'])->name('buat');
+        Route::post('/', [BlacklistController::class, 'store'])->name('simpan');
+        Route::get('/{id}', [BlacklistController::class, 'show'])->name('tampil');
+        Route::get('/{id}/edit', [BlacklistController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [BlacklistController::class, 'update'])->name('perbarui');
+        Route::delete('/{id}', [BlacklistController::class, 'destroy'])->name('hapus');
+        Route::post('/cari', [BlacklistController::class, 'searchForDashboard'])->name('cari');
+    });
+
     // Invoice routes
     Route::get('/faktur/{id}', [InvoiceController::class, 'show'])->name('faktur.tampil');
     Route::get('/faktur/{id}/unduh', [InvoiceController::class, 'download'])->name('faktur.unduh');
@@ -90,18 +102,6 @@ Route::middleware(['auth', 'verified', 'role:pengusaha_rental'])->group(function
 
     // Dashboard
     Route::get('/rental/dasbor', [DashboardController::class, 'index'])->name('rental.dasbor');
-
-    // Blacklist management
-    Route::prefix('dasbor/daftar-hitam')->name('dasbor.daftar-hitam.')->group(function () {
-        Route::get('/', [BlacklistController::class, 'index'])->name('indeks');
-        Route::get('/buat', [BlacklistController::class, 'create'])->name('buat');
-        Route::post('/', [BlacklistController::class, 'store'])->name('simpan');
-        Route::get('/{id}', [BlacklistController::class, 'show'])->name('tampil');
-        Route::get('/{id}/edit', [BlacklistController::class, 'edit'])->name('edit');
-        Route::put('/{id}', [BlacklistController::class, 'update'])->name('perbarui');
-        Route::delete('/{id}', [BlacklistController::class, 'destroy'])->name('hapus');
-        Route::post('/cari', [BlacklistController::class, 'searchForDashboard'])->name('cari');
-    });
 
     // API Key management
     Route::prefix('kunci-api')->name('kunci-api.')->group(function () {

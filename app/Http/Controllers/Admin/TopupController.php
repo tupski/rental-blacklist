@@ -65,7 +65,7 @@ class TopupController extends Controller
     {
         $topup->delete();
 
-        return redirect()->route('admin.topup.index')
+        return redirect()->route('admin.isi-saldo.indeks')
             ->with('success', 'Data topup berhasil dihapus.');
     }
 }

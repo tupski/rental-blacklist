@@ -5,7 +5,7 @@
 
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('admin.dasbor') }}">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('admin.topup.index') }}">Manajemen Topup</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.isi-saldo.indeks') }}">Manajemen Topup</a></li>
     <li class="breadcrumb-item active">Detail Topup</li>
 @endsection
 
@@ -16,7 +16,7 @@
             <div class="card-header">
                 <h3 class="card-title">Detail Permintaan Topup</h3>
                 <div class="card-tools">
-                    <a href="{{ route('admin.topup.index') }}" class="btn btn-secondary btn-sm">
+                    <a href="{{ route('admin.isi-saldo.indeks') }}" class="btn btn-secondary btn-sm">
                         <i class="fas fa-arrow-left"></i> Kembali
                     </a>
                 </div>
@@ -163,7 +163,7 @@
             </div>
             <div class="card-body">
                 @if(in_array($topup->status, ['pending', 'pending_confirmation']))
-                <form action="{{ route('admin.topup.approve', $topup->id) }}" method="POST" class="mb-2">
+                <form action="{{ route('admin.isi-saldo.setujui', $topup->id) }}" method="POST" class="mb-2">
                     @csrf
                     <button type="submit" class="btn btn-success btn-block"
                             onclick="return confirm('Approve permintaan topup ini? Saldo akan ditambahkan ke akun user.')">
@@ -176,7 +176,7 @@
                 </button>
                 @endif
 
-                <form action="{{ route('admin.topup.destroy', $topup->id) }}" method="POST" class="mt-2">
+                <form action="{{ route('admin.isi-saldo.hapus', $topup->id) }}" method="POST" class="mt-2">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger btn-block"
@@ -216,7 +216,7 @@
                     <span>&times;</span>
                 </button>
             </div>
-            <form action="{{ route('admin.topup.reject', $topup->id) }}" method="POST">
+            <form action="{{ route('admin.isi-saldo.tolak', $topup->id) }}" method="POST">
                 @csrf
                 <div class="modal-body">
                     <div class="form-group">
