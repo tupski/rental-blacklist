@@ -128,6 +128,17 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Jenis Kelamin <span class="text-danger">*</span></label>
+                                    <select class="form-select @error('jenis_kelamin') is-invalid @enderror" name="jenis_kelamin">
+                                        <option value="">Pilih jenis kelamin</option>
+                                        <option value="L" {{ old('jenis_kelamin') == 'L' ? 'selected' : '' }}>Laki-laki</option>
+                                        <option value="P" {{ old('jenis_kelamin') == 'P' ? 'selected' : '' }}>Perempuan</option>
+                                    </select>
+                                    @error('jenis_kelamin')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6">
                                     <label class="form-label fw-semibold">Nomor KTP <span class="text-muted">(opsional)</span></label>
                                     <input type="text" class="form-control @error('nik') is-invalid @enderror"
                                            name="nik" value="{{ old('nik') }}"
@@ -199,12 +210,49 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Kategori Rental <span class="text-danger">*</span></label>
+                                    <select class="form-select @error('jenis_rental') is-invalid @enderror" name="jenis_rental">
+                                        <option value="">Pilih kategori rental</option>
+                                        <option value="Rental Mobil" {{ old('jenis_rental') == 'Rental Mobil' ? 'selected' : '' }}>Rental Mobil</option>
+                                        <option value="Rental Motor" {{ old('jenis_rental') == 'Rental Motor' ? 'selected' : '' }}>Rental Motor</option>
+                                        <option value="Kamera" {{ old('jenis_rental') == 'Kamera' ? 'selected' : '' }}>Kamera</option>
+                                        <option value="Lainnya" {{ old('jenis_rental') == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
+                                    </select>
+                                    @error('jenis_rental')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6">
                                     <label class="form-label fw-semibold">Jenis Kendaraan/Barang yang Disewa <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control @error('jenis_kendaraan') is-invalid @enderror"
                                            name="jenis_kendaraan" value="{{ old('jenis_kendaraan') }}"
                                            placeholder="Honda Beat 2020, Toyota Avanza 2019, Kamera Canon EOS, dll">
                                     @error('jenis_kendaraan')
                                         <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">Jenis Masalah <span class="text-danger">*</span></label>
+                                    <div class="row g-2">
+                                        @php
+                                            $jenisLaporan = ['Tidak Mengembalikan', 'Merusak Barang', 'Tidak Bayar', 'Kabur', 'Lainnya'];
+                                        @endphp
+                                        @foreach($jenisLaporan as $jenis)
+                                        <div class="col-md-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input @error('jenis_laporan') is-invalid @enderror"
+                                                       type="checkbox" name="jenis_laporan[]" value="{{ $jenis }}"
+                                                       id="jenis_{{ $loop->index }}"
+                                                       {{ in_array($jenis, old('jenis_laporan', [])) ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="jenis_{{ $loop->index }}">
+                                                    {{ $jenis }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                    @error('jenis_laporan')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
@@ -426,6 +474,12 @@ $(document).ready(function() {
     // Form validation
     $('#reportForm').on('submit', function(e) {
         let isValid = true;
+
+        // Check if at least one jenis masalah is selected
+        if ($('input[name="jenis_laporan[]"]:checked').length === 0) {
+            alert('Pilih minimal satu jenis masalah.');
+            isValid = false;
+        }
 
         // Check if at least one status penanganan is selected
         if ($('input[name="status_penanganan[]"]:checked').length === 0) {

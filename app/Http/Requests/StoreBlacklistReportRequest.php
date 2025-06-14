@@ -23,13 +23,17 @@ class StoreBlacklistReportRequest extends FormRequest
         $rules = [
             // Data Penyewa
             'nama_lengkap' => 'required|string|max:255',
+            'jenis_kelamin' => 'required|in:L,P',
             'nik' => 'nullable|string|size:16',
             'no_hp' => 'required|string|max:20',
             'alamat' => 'nullable|string|max:1000',
             'foto_penyewa.*' => ['nullable', 'file', new BuktiFileRule()],
             'foto_ktp_sim.*' => ['nullable', 'file', new BuktiFileRule()],
-            
+
             // Detail Masalah
+            'jenis_rental' => 'required|in:Rental Mobil,Rental Motor,Kamera,Lainnya',
+            'jenis_laporan' => 'required|array|min:1',
+            'jenis_laporan.*' => 'in:Tidak Mengembalikan,Merusak Barang,Tidak Bayar,Kabur,Lainnya',
             'tanggal_sewa' => 'required|date|before_or_equal:today',
             'tanggal_kejadian' => 'required|date|before_or_equal:today|after_or_equal:tanggal_sewa',
             'jenis_kendaraan' => 'required|string|max:255',
@@ -37,12 +41,12 @@ class StoreBlacklistReportRequest extends FormRequest
             'nilai_kerugian' => 'nullable|numeric|min:0|max:999999999999.99',
             'kronologi' => 'required|string|min:50',
             'bukti.*' => ['nullable', 'file', new BuktiFileRule()],
-            
+
             // Status Penanganan
             'status_penanganan' => 'required|array|min:1',
             'status_penanganan.*' => 'in:dilaporkan_polisi,tidak_ada_respon,proses_penyelesaian,lainnya',
             'status_lainnya' => 'required_if:status_penanganan.*,lainnya|nullable|string|max:255',
-            
+
             // Persetujuan
             'persetujuan' => 'required|accepted',
             'nama_pelapor_ttd' => 'required|string|max:255',
@@ -70,8 +74,14 @@ class StoreBlacklistReportRequest extends FormRequest
     {
         return [
             'nama_lengkap.required' => 'Nama lengkap penyewa wajib diisi.',
+            'jenis_kelamin.required' => 'Jenis kelamin wajib dipilih.',
+            'jenis_kelamin.in' => 'Jenis kelamin tidak valid.',
             'nik.size' => 'NIK harus terdiri dari 16 digit.',
             'no_hp.required' => 'Nomor telepon/WhatsApp penyewa wajib diisi.',
+            'jenis_rental.required' => 'Kategori rental wajib dipilih.',
+            'jenis_rental.in' => 'Kategori rental tidak valid.',
+            'jenis_laporan.required' => 'Jenis masalah wajib dipilih.',
+            'jenis_laporan.min' => 'Pilih minimal satu jenis masalah.',
             'tanggal_sewa.required' => 'Tanggal sewa wajib diisi.',
             'tanggal_sewa.before_or_equal' => 'Tanggal sewa tidak boleh lebih dari hari ini.',
             'tanggal_kejadian.required' => 'Tanggal kejadian masalah wajib diisi.',
@@ -87,7 +97,7 @@ class StoreBlacklistReportRequest extends FormRequest
             'persetujuan.required' => 'Persetujuan wajib dicentang.',
             'persetujuan.accepted' => 'Anda harus menyetujui pernyataan untuk melanjutkan.',
             'nama_pelapor_ttd.required' => 'Nama lengkap pelapor untuk tanda tangan wajib diisi.',
-            
+
             // Guest reporter validation messages
             'nama_perusahaan_rental.required' => 'Nama perusahaan rental wajib diisi.',
             'nama_penanggung_jawab.required' => 'Nama penanggung jawab wajib diisi.',
@@ -105,10 +115,13 @@ class StoreBlacklistReportRequest extends FormRequest
     {
         return [
             'nama_lengkap' => 'nama lengkap penyewa',
+            'jenis_kelamin' => 'jenis kelamin',
             'nik' => 'nomor KTP',
             'no_hp' => 'nomor telepon/WhatsApp',
             'foto_penyewa.*' => 'foto penyewa',
             'foto_ktp_sim.*' => 'foto KTP/SIM',
+            'jenis_rental' => 'kategori rental',
+            'jenis_laporan' => 'jenis masalah',
             'tanggal_sewa' => 'tanggal sewa',
             'tanggal_kejadian' => 'tanggal kejadian',
             'jenis_kendaraan' => 'jenis kendaraan/barang',
