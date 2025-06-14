@@ -25,11 +25,11 @@
                                 </p>
                             </div>
                             <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                                <a href="{{ route('balance.history') }}" class="btn btn-outline-primary me-2">
+                                <a href="{{ route('saldo.riwayat') }}" class="btn btn-outline-primary me-2">
                                     <i class="fas fa-history me-2"></i>
                                     Riwayat Saldo
                                 </a>
-                                <a href="{{ route('topup.create') }}" class="btn btn-success">
+                                <a href="{{ route('isi-saldo.buat') }}" class="btn btn-success">
                                     <i class="fas fa-plus me-2"></i>
                                     Topup Sekarang
                                 </a>
@@ -146,7 +146,7 @@
                                             <div class="h5 text-success">Total: Rp {{ number_format($package['total'], 0, ',', '.') }}</div>
                                             <small class="text-muted">{{ $package['description'] }}</small>
                                         </div>
-                                        <a href="{{ route('topup.create', ['amount' => $package['total']]) }}" 
+                                        <a href="{{ route('isi-saldo.buat', ['amount' => $package['total']]) }}" 
                                            class="btn {{ $package['popular'] ? 'btn-warning' : 'btn-outline-primary' }} w-100">
                                             <i class="fas fa-shopping-cart me-2"></i>
                                             Pilih Paket
@@ -158,7 +158,7 @@
                         </div>
 
                         <div class="text-center mt-4">
-                            <a href="{{ route('topup.create') }}" class="btn btn-primary">
+                            <a href="{{ route('isi-saldo.buat') }}" class="btn btn-primary">
                                 <i class="fas fa-plus me-2"></i>
                                 Topup Jumlah Custom
                             </a>
@@ -217,7 +217,7 @@
                                         </td>
                                         <td>
                                             @if($topup->canBePaid())
-                                                <a href="{{ route('topup.confirm', $topup->invoice_number) }}" 
+                                                <a href="{{ route('isi-saldo.konfirmasi', $topup->invoice_number) }}" 
                                                    class="btn btn-sm btn-primary">
                                                     <i class="fas fa-credit-card me-1"></i>
                                                     Bayar

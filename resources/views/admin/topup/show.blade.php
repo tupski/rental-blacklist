@@ -4,7 +4,7 @@
 @section('page-title', 'Detail Topup')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.dasbor') }}">Dashboard</a></li>
     <li class="breadcrumb-item"><a href="{{ route('admin.topup.index') }}">Manajemen Topup</a></li>
     <li class="breadcrumb-item active">Detail Topup</li>
 @endsection

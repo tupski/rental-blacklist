@@ -25,7 +25,7 @@
                                 </p>
                             </div>
                             <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                                <a href="{{ route('topup.index') }}" class="btn btn-success">
+                                <a href="{{ route('isi-saldo.indeks') }}" class="btn btn-success">
                                     <i class="fas fa-plus me-2"></i>
                                     Topup Saldo
                                 </a>
@@ -92,7 +92,7 @@
                         <form method="GET" class="row g-3">
                             <div class="col-md-3">
                                 <label class="form-label">Tipe Transaksi</label>
-                                <select name="type" class="form-select">
+                                <select name="jenis" class="form-select">
                                     <option value="">Semua</option>
                                     <option value="topup" {{ request('type') == 'topup' ? 'selected' : '' }}>Topup</option>
                                     <option value="usage" {{ request('type') == 'usage' ? 'selected' : '' }}>Penggunaan</option>
@@ -185,7 +185,7 @@
                                                         <button type="button" class="btn btn-outline-primary" onclick="viewInvoice({{ $transaction->reference_id }})">
                                                             <i class="fas fa-eye"></i>
                                                         </button>
-                                                        <a href="{{ route('invoice.download', $transaction->reference_id) }}" class="btn btn-outline-success" target="_blank">
+                                                        <a href="{{ route('faktur.unduh', $transaction->reference_id) }}" class="btn btn-outline-success" target="_blank">
                                                             <i class="fas fa-download"></i>
                                                         </a>
                                                     </div>
@@ -212,7 +212,7 @@
                                 </div>
                                 <h5 class="text-muted">Belum Ada Transaksi</h5>
                                 <p class="text-muted">Mulai dengan topup saldo untuk melihat riwayat transaksi</p>
-                                <a href="{{ route('topup.index') }}" class="btn btn-primary">
+                                <a href="{{ route('isi-saldo.indeks') }}" class="btn btn-primary">
                                     <i class="fas fa-plus me-2"></i>
                                     Topup Sekarang
                                 </a>

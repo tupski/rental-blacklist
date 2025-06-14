@@ -418,7 +418,7 @@
                                 <i class="fas fa-tachometer-alt me-2"></i>
                                 Ke Dashboard
                             </a>
-                            <a href="{{ route('dashboard.blacklist.create') }}" class="btn btn-danger btn-lg">
+                            <a href="{{ route('dasbor.daftar-hitam.buat') }}" class="btn btn-danger btn-lg">
                                 <i class="fas fa-plus me-2"></i>
                                 Tambah Laporan
                             </a>
@@ -820,7 +820,7 @@ $(document).ready(function() {
                                 <div class="alert alert-info">
                                     <i class="fas fa-info-circle me-2"></i>
                                     <strong>Informasi:</strong> Beberapa data disensor untuk privasi.
-                                    <a href="{{ route('rental.register') }}" class="alert-link">Daftar sebagai rental</a>
+                                    <a href="{{ route('rental.daftar') }}" class="alert-link">Daftar sebagai rental</a>
                                     untuk akses penuh atau beli kredit.
                                 </div>
                             </div>

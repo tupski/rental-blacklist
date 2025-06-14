@@ -4,7 +4,7 @@
 @section('page-title', 'Tambah Blacklist')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.dasbor') }}">Dashboard</a></li>
     <li class="breadcrumb-item"><a href="{{ route('admin.blacklist.index') }}">Daftar Blacklist</a></li>
     <li class="breadcrumb-item active">Tambah Blacklist</li>
 @endsection

@@ -20,7 +20,7 @@ class BlacklistApiController extends Controller
             'limit' => 'nullable|integer|min:1|max:100'
         ]);
 
-        $search = $request->input('q');
+        $search = $request->input('cari');
         $limit = $request->input('limit', 10);
 
         $results = RentalBlacklist::search($search)
@@ -147,7 +147,7 @@ class BlacklistApiController extends Controller
             ->where('status_validitas', 'Valid');
 
         if ($request->has('search')) {
-            $query->search($request->input('search'));
+            $query->search($request->input('cari'));
         }
 
         $limit = $request->input('limit', 15);

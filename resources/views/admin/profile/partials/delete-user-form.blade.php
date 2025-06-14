@@ -22,7 +22,7 @@
                     <span>&times;</span>
                 </button>
             </div>
-            <form method="post" action="{{ route('profile.destroy') }}">
+            <form method="post" action="{{ route('profil.hapus') }}">
                 @csrf
                 @method('delete')
                 

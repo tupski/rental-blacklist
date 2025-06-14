@@ -25,11 +25,11 @@
                                 </p>
                             </div>
                             <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                                <a href="{{ route('topup.index') }}" class="btn btn-outline-primary me-2">
+                                <a href="{{ route('isi-saldo.indeks') }}" class="btn btn-outline-primary me-2">
                                     <i class="fas fa-arrow-left me-2"></i>
                                     Kembali
                                 </a>
-                                <a href="{{ route('balance.history') }}" class="btn btn-info">
+                                <a href="{{ route('saldo.riwayat') }}" class="btn btn-info">
                                     <i class="fas fa-history me-2"></i>
                                     Riwayat
                                 </a>
@@ -56,7 +56,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('topup.store') }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('isi-saldo.simpan') }}" enctype="multipart/form-data">
             @csrf
             <div class="row">
                 <!-- Left Column - Package Selection -->

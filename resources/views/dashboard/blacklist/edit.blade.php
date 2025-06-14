@@ -8,7 +8,7 @@
     <div class="row mb-4">
         <div class="col">
             <div class="d-flex align-items-center mb-3">
-                <a href="{{ route('dashboard.blacklist.index') }}" class="btn btn-outline-secondary me-3">
+                <a href="{{ route('dasbor.daftar-hitam.indeks') }}" class="btn btn-outline-secondary me-3">
                     <i class="fas fa-arrow-left"></i>
                 </a>
                 <div>
@@ -300,7 +300,7 @@
 
                 <!-- Submit Button -->
                 <div class="d-flex justify-content-between pt-4 border-top">
-                    <a href="{{ route('dashboard.blacklist.index') }}" class="btn btn-outline-secondary">
+                    <a href="{{ route('dasbor.daftar-hitam.indeks') }}" class="btn btn-outline-secondary">
                         <i class="fas fa-times me-2"></i>
                         Batal
                     </a>
@@ -362,7 +362,7 @@ $(document).ready(function() {
         $('#submitBtn').prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Mengupdate...');
 
         $.ajax({
-            url: '{{ route("dashboard.blacklist.update", $blacklist->id) }}',
+            url: '{{ route('dasbor.daftar-hitam.perbarui', $blacklist->id) }}',
             method: 'POST',
             data: formData,
             processData: false,
@@ -374,7 +374,7 @@ $(document).ready(function() {
                     toast.show();
 
                     setTimeout(function() {
-                        window.location.href = '{{ route("dashboard.blacklist.index") }}';
+                        window.location.href = '{{ route('dasbor.daftar-hitam.indeks') }}';
                     }, 1500);
                 }
             },

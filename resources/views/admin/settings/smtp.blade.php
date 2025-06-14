@@ -4,7 +4,7 @@
 @section('page-title', 'Pengaturan SMTP')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.dasbor') }}">Dashboard</a></li>
     <li class="breadcrumb-item">Pengaturan</li>
     <li class="breadcrumb-item active">SMTP</li>
 @endsection
@@ -138,7 +138,7 @@
                 <button type="submit" form="smtpSettingsForm" class="btn btn-primary">
                     <i class="fas fa-save"></i> Simpan Pengaturan
                 </button>
-                <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
+                <a href="{{ route('admin.dasbor') }}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Kembali
                 </a>
             </div>

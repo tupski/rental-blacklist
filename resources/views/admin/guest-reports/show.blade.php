@@ -4,7 +4,7 @@
 @section('page-title', 'Detail Laporan Guest')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.dasbor') }}">Dashboard</a></li>
     <li class="breadcrumb-item"><a href="{{ route('admin.guest-reports.index') }}">Laporan Guest</a></li>
     <li class="breadcrumb-item active">Detail Laporan</li>
 @endsection

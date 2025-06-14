@@ -50,7 +50,7 @@ class UserDashboardController extends Controller
             'search' => 'required|string|min:3'
         ]);
 
-        $search = $request->input('search');
+        $search = $request->input('cari');
 
         $results = RentalBlacklist::search($search)
             ->where('status_validitas', 'Valid')

@@ -206,7 +206,7 @@
                         <i class="fas fa-clock text-success me-2"></i>
                         Laporan Terbaru
                     </h5>
-                    <a href="{{ route('dashboard.blacklist.index') }}" class="mt-2 mt-sm-0 text-decoration-none">
+                    <a href="{{ route('dasbor.daftar-hitam.indeks') }}" class="mt-2 mt-sm-0 text-decoration-none">
                         Lihat semua
                         <i class="fas fa-arrow-right ms-1"></i>
                     </a>
@@ -324,7 +324,7 @@ $(document).ready(function() {
         $('#dashboardSearchBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Mencari...');
 
         $.ajax({
-            url: '{{ route("dashboard.blacklist.search") }}',
+            url: '{{ route('dasbor.daftar-hitam.cari') }}',
             method: 'POST',
             data: {
                 search: search,

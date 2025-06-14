@@ -40,7 +40,7 @@
                         </h4>
                     </div>
                     <div class="card-body p-4">
-                        <form action="{{ route('rental.store') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('rental.simpan') }}" method="POST" enctype="multipart/form-data">
                             @csrf
 
                             <!-- Data Rental -->
@@ -270,7 +270,7 @@
 
                             <!-- Submit Button -->
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                <a href="{{ route('home') }}" class="btn btn-secondary btn-lg me-md-2">
+                                <a href="{{ route('beranda') }}" class="btn btn-secondary btn-lg me-md-2">
                                     <i class="fas fa-arrow-left me-2"></i>
                                     Kembali
                                 </a>

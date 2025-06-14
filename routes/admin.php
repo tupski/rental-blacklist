@@ -30,40 +30,88 @@ use App\Http\Controllers\Admin\ReportController as AdminReportController;
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
 
     // Dashboard
-    Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
-    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard.index');
+    Route::get('/', [AdminDashboardController::class, 'index'])->name('dasbor');
+    Route::get('/dasbor', [AdminDashboardController::class, 'index'])->name('dasbor.indeks');
 
     // Blacklist Management
-    Route::resource('blacklist', AdminBlacklistController::class);
-    Route::post('blacklist/{blacklist}/validate', [AdminBlacklistController::class, 'validateBlacklist'])->name('blacklist.validate');
-    Route::post('blacklist/{blacklist}/invalidate', [AdminBlacklistController::class, 'invalidateBlacklist'])->name('blacklist.invalidate');
+    Route::resource('daftar-hitam', AdminBlacklistController::class)->names([
+        'index' => 'daftar-hitam.indeks',
+        'create' => 'daftar-hitam.buat',
+        'store' => 'daftar-hitam.simpan',
+        'show' => 'daftar-hitam.tampil',
+        'edit' => 'daftar-hitam.edit',
+        'update' => 'daftar-hitam.perbarui',
+        'destroy' => 'daftar-hitam.hapus'
+    ]);
+    Route::post('daftar-hitam/{blacklist}/validasi', [AdminBlacklistController::class, 'validateBlacklist'])->name('daftar-hitam.validasi');
+    Route::post('daftar-hitam/{blacklist}/batalkan', [AdminBlacklistController::class, 'invalidateBlacklist'])->name('daftar-hitam.batalkan');
 
     // User Management
-    Route::resource('users', AdminUserController::class);
-    Route::post('users/check-email', [AdminUserController::class, 'checkEmail'])->name('users.check-email');
-    Route::post('users/{user}/toggle-status', [AdminUserController::class, 'toggleStatus'])->name('users.toggle-status');
-    Route::post('users/{user}/reset-password', [AdminUserController::class, 'resetPassword'])->name('users.reset-password');
+    Route::resource('pengguna', AdminUserController::class)->names([
+        'index' => 'pengguna.indeks',
+        'create' => 'pengguna.buat',
+        'store' => 'pengguna.simpan',
+        'show' => 'pengguna.tampil',
+        'edit' => 'pengguna.edit',
+        'update' => 'pengguna.perbarui',
+        'destroy' => 'pengguna.hapus'
+    ]);
+    Route::post('pengguna/cek-email', [AdminUserController::class, 'checkEmail'])->name('pengguna.cek-email');
+    Route::post('pengguna/{user}/ubah-status', [AdminUserController::class, 'toggleStatus'])->name('pengguna.ubah-status');
+    Route::post('pengguna/{user}/reset-kata-sandi', [AdminUserController::class, 'resetPassword'])->name('pengguna.reset-kata-sandi');
 
     // Guest Reports Management
-    Route::resource('guest-reports', AdminGuestReportController::class);
-    Route::post('guest-reports/{guestReport}/approve', [AdminGuestReportController::class, 'approve'])->name('guest-reports.approve');
-    Route::post('guest-reports/{guestReport}/reject', [AdminGuestReportController::class, 'reject'])->name('guest-reports.reject');
+    Route::resource('laporan-tamu', AdminGuestReportController::class)->names([
+        'index' => 'laporan-tamu.indeks',
+        'create' => 'laporan-tamu.buat',
+        'store' => 'laporan-tamu.simpan',
+        'show' => 'laporan-tamu.tampil',
+        'edit' => 'laporan-tamu.edit',
+        'update' => 'laporan-tamu.perbarui',
+        'destroy' => 'laporan-tamu.hapus'
+    ]);
+    Route::post('laporan-tamu/{guestReport}/setujui', [AdminGuestReportController::class, 'approve'])->name('laporan-tamu.setujui');
+    Route::post('laporan-tamu/{guestReport}/tolak', [AdminGuestReportController::class, 'reject'])->name('laporan-tamu.tolak');
 
     // Sponsor Management
-    Route::resource('sponsors', AdminSponsorController::class);
-    Route::post('sponsors/{sponsor}/toggle-status', [AdminSponsorController::class, 'toggleStatus'])->name('sponsors.toggle-status');
+    Route::resource('sponsor', AdminSponsorController::class)->names([
+        'index' => 'sponsor.indeks',
+        'create' => 'sponsor.buat',
+        'store' => 'sponsor.simpan',
+        'show' => 'sponsor.tampil',
+        'edit' => 'sponsor.edit',
+        'update' => 'sponsor.perbarui',
+        'destroy' => 'sponsor.hapus'
+    ]);
+    Route::post('sponsor/{sponsor}/ubah-status', [AdminSponsorController::class, 'toggleStatus'])->name('sponsor.ubah-status');
 
     // Topup Management
-    Route::get('topup', [AdminTopupController::class, 'index'])->name('topup.index');
-    Route::get('topup/{topup}', [AdminTopupController::class, 'show'])->name('topup.show');
-    Route::post('topup/{topup}/approve', [AdminTopupController::class, 'approve'])->name('topup.approve');
-    Route::post('topup/{topup}/reject', [AdminTopupController::class, 'reject'])->name('topup.reject');
-    Route::delete('topup/{topup}', [AdminTopupController::class, 'destroy'])->name('topup.destroy');
+    Route::get('isi-saldo', [AdminTopupController::class, 'index'])->name('isi-saldo.indeks');
+    Route::get('isi-saldo/{topup}', [AdminTopupController::class, 'show'])->name('isi-saldo.tampil');
+    Route::post('isi-saldo/{topup}/setujui', [AdminTopupController::class, 'approve'])->name('isi-saldo.setujui');
+    Route::post('isi-saldo/{topup}/tolak', [AdminTopupController::class, 'reject'])->name('isi-saldo.tolak');
+    Route::delete('isi-saldo/{topup}', [AdminTopupController::class, 'destroy'])->name('isi-saldo.hapus');
 
     // Settings - General (keep for backward compatibility)
-    Route::get('settings', [AdminSettingController::class, 'index'])->name('settings.index');
-    Route::put('settings', [AdminSettingController::class, 'update'])->name('settings.update');
-    Route::post('settings/test-smtp', [AdminSettingController::class, 'testSmtp'])->name('settings.test-smtp');
+    Route::get('pengaturan', [AdminSettingController::class, 'index'])->name('pengaturan.indeks');
+    Route::put('pengaturan', [AdminSettingController::class, 'update'])->name('pengaturan.perbarui');
+    Route::post('pengaturan/tes-smtp', [AdminSettingController::class, 'testSmtp'])->name('pengaturan.tes-smtp');
+
+    // Reports & Analytics (placeholder routes)
+    Route::get('laporan', function() { return view('admin.reports.index'); })->name('laporan');
+    Route::get('analitik', function() { return view('admin.analytics.index'); })->name('analitik');
+
+    // Settings Categories
+    Route::get('pengaturan/aplikasi', [AdminSettingController::class, 'application'])->name('pengaturan.aplikasi.indeks');
+    Route::get('pengaturan/sistem', [AdminSettingController::class, 'system'])->name('pengaturan.sistem.indeks');
+    Route::get('pengaturan/smtp', [AdminSettingController::class, 'smtp'])->name('pengaturan.smtp.indeks');
+    Route::get('pengaturan/pembayaran', [AdminSettingController::class, 'payment'])->name('pengaturan.pembayaran.indeks');
+    Route::get('pengaturan/database', [AdminSettingController::class, 'database'])->name('pengaturan.database.indeks');
+    Route::get('maintenance', [AdminSettingController::class, 'maintenance'])->name('maintenance');
+
+    // Notifications
+    Route::get('notifikasi', [AdminNotificationController::class, 'get'])->name('notifikasi.ambil');
+    Route::post('notifikasi/baca', [AdminNotificationController::class, 'markRead'])->name('notifikasi.baca');
 
     // Settings - Application
     Route::get('settings/application', [AdminApplicationSettingController::class, 'index'])->name('settings.application.index');

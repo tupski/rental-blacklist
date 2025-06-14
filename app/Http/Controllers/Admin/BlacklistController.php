@@ -32,7 +32,7 @@ class BlacklistController extends Controller
             $query->where('status_validitas', $request->get('status_validitas'));
         }
 
-        $blacklists = $query->latest()->paginate(20)->appends($request->query());
+        $blacklists = $query->latest()->paginate(20)->appends($request->kueri());
 
         // Get report counts for each blacklist (from guest reports)
         $reportCounts = GuestReport::whereIn('nik', $blacklists->pluck('nik'))

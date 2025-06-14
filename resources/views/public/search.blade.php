@@ -26,7 +26,7 @@
                                         <input
                                             type="text"
                                             id="searchInput"
-                                            name="search"
+                                            name="cari"
                                             placeholder="Masukkan NIK, Nama Lengkap, atau Nomor HP (min. 3 karakter)"
                                             class="form-control form-control-lg"
                                             required
@@ -234,7 +234,7 @@
                         </ul>
                         <div class="mt-4">
                             @auth
-                                <a href="{{ route('topup.index') }}" class="btn btn-success">
+                                <a href="{{ route('isi-saldo.indeks') }}" class="btn btn-success">
                                     <i class="fas fa-coins me-2"></i>
                                     Beli Kredit
                                 </a>
@@ -308,7 +308,7 @@ $(document).ready(function() {
 
         // Perform AJAX search
         $.ajax({
-            url: '{{ route("public.search") }}',
+            url: '{{ route('publik.cari') }}',
             method: 'POST',
             data: {
                 search: search,
@@ -561,7 +561,7 @@ $(document).ready(function() {
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                             @auth
-                                <a href="{{ route('topup.index') }}" class="btn btn-success">
+                                <a href="{{ route('isi-saldo.indeks') }}" class="btn btn-success">
                                     <i class="fas fa-unlock me-2"></i>
                                     Beli Kredit
                                 </a>

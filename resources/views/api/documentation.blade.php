@@ -469,7 +469,7 @@ $(document).ready(function() {
         $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Generating...');
 
         $.ajax({
-            url: '{{ route("api-key.generate") }}',
+            url: '{{ route('kunci-api.buat') }}',
             method: 'POST',
             data: {
                 _token: '{{ csrf_token() }}'
@@ -502,7 +502,7 @@ $(document).ready(function() {
         $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Resetting...');
 
         $.ajax({
-            url: '{{ route("api-key.reset") }}',
+            url: '{{ route('kunci-api.reset') }}',
             method: 'POST',
             data: {
                 _token: '{{ csrf_token() }}'
@@ -528,7 +528,7 @@ $(document).ready(function() {
 
     function loadApiKey() {
         $.ajax({
-            url: '{{ route("api-key.show") }}',
+            url: '{{ route('kunci-api.tampil') }}',
             method: 'GET',
             success: function(response) {
                 if (response.success && response.api_key) {

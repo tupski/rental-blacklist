@@ -17,8 +17,8 @@ class BlacklistController extends Controller
         // Filter hanya laporan dari user yang sedang login
         $query = RentalBlacklist::with('user')->where('user_id', Auth::id());
 
-        if ($request->has('search') && $request->search) {
-            $query->search($request->search);
+        if ($request->has('search') && $request->cari) {
+            $query->search($request->cari);
         }
 
         if ($request->has('jenis_rental') && $request->jenis_rental) {
@@ -104,7 +104,7 @@ class BlacklistController extends Controller
             ]);
         }
 
-        return redirect()->route('dashboard.blacklist.index')
+        return redirect()->route('dasbor.daftar-hitam.indeks')
             ->with('success', 'Laporan blacklist berhasil ditambahkan');
     }
 
@@ -214,7 +214,7 @@ class BlacklistController extends Controller
             ]);
         }
 
-        return redirect()->route('dashboard.blacklist.index')
+        return redirect()->route('dasbor.daftar-hitam.indeks')
             ->with('success', 'Laporan blacklist berhasil diperbarui');
     }
 
@@ -241,7 +241,7 @@ class BlacklistController extends Controller
             ]);
         }
 
-        return redirect()->route('dashboard.blacklist.index')
+        return redirect()->route('dasbor.daftar-hitam.indeks')
             ->with('success', 'Laporan blacklist berhasil dihapus');
     }
 
@@ -251,7 +251,7 @@ class BlacklistController extends Controller
             'search' => 'required|string|min:3'
         ]);
 
-        $search = $request->input('search');
+        $search = $request->input('cari');
 
         $results = RentalBlacklist::search($search)
             ->with('user')

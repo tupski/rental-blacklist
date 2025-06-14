@@ -25,7 +25,7 @@
                                 </p>
                             </div>
                             <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                                <a href="{{ route('sponsors.sponsorship') }}" class="btn btn-primary">
+                                <a href="{{ route('sponsor.kemitraan') }}" class="btn btn-primary">
                                     <i class="fas fa-plus me-2"></i>
                                     Jadi Sponsor
                                 </a>
@@ -77,7 +77,7 @@
                             <p class="lead mb-4">
                                 Bergabunglah dengan sponsor kami dan dukung sistem blacklist rental Indonesia
                             </p>
-                            <a href="{{ route('sponsors.sponsorship') }}" class="btn btn-light btn-lg">
+                            <a href="{{ route('sponsor.kemitraan') }}" class="btn btn-light btn-lg">
                                 <i class="fas fa-phone me-2"></i>
                                 Hubungi Kami Sekarang!
                             </a>
@@ -98,7 +98,7 @@
                             <p class="text-muted mb-4">
                                 Kami sedang mencari partner untuk mendukung sistem blacklist rental Indonesia
                             </p>
-                            <a href="{{ route('sponsors.sponsorship') }}" class="btn btn-primary btn-lg">
+                            <a href="{{ route('sponsor.kemitraan') }}" class="btn btn-primary btn-lg">
                                 <i class="fas fa-plus me-2"></i>
                                 Jadi Sponsor Pertama
                             </a>

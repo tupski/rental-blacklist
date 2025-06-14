@@ -41,14 +41,14 @@
             <div class="col-12">
                 <div class="card border-0 shadow-sm">
                     <div class="card-body">
-                        <form method="GET" action="{{ route('rentals.index') }}" id="filterForm">
+                        <form method="GET" action="{{ route('rental.indeks') }}" id="filterForm">
                             <div class="row g-3">
                                 <div class="col-md-3">
                                     <label for="search" class="form-label">Cari Rental</label>
                                     <input type="text"
                                            class="form-control"
                                            id="search"
-                                           name="search"
+                                           name="cari"
                                            value="{{ request('search') }}"
                                            placeholder="Nama rental...">
                                 </div>
@@ -83,7 +83,7 @@
                             @if(request()->hasAny(['search', 'location', 'entity_type']))
                                 <div class="row mt-3">
                                     <div class="col-12">
-                                        <a href="{{ route('rentals.index') }}" class="btn btn-outline-secondary btn-sm">
+                                        <a href="{{ route('rental.indeks') }}" class="btn btn-outline-secondary btn-sm">
                                             <i class="fas fa-times me-1"></i>Reset Filter
                                         </a>
                                     </div>
@@ -183,7 +183,7 @@
                             <p class="text-muted">
                                 @if(request()->hasAny(['search', 'location', 'entity_type']))
                                     Coba ubah filter pencarian Anda atau
-                                    <a href="{{ route('rentals.index') }}" class="text-decoration-none">reset filter</a>
+                                    <a href="{{ route('rental.indeks') }}" class="text-decoration-none">reset filter</a>
                                 @else
                                     Belum ada rental yang terdaftar di sistem
                                 @endif

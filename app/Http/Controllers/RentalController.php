@@ -34,7 +34,7 @@ class RentalController extends Controller
 
         $rentals = $query->orderBy('company_name')
                         ->paginate(9)
-                        ->appends($request->query());
+                        ->appends($request->kueri());
 
         return view('rentals.index', compact('rentals'));
     }
@@ -103,7 +103,7 @@ class RentalController extends Controller
 
         RentalRegistration::create($data);
 
-        return redirect()->route('rental.register')
+        return redirect()->route('rental.daftar')
             ->with('success', 'Pendaftaran berhasil dikirim! Tim kami akan memverifikasi dalam 1-3 hari kerja.');
     }
 }

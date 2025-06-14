@@ -14,7 +14,7 @@
             <p class="text-muted">Kelola semua laporan blacklist rental</p>
         </div>
         <div class="col-lg-4 text-lg-end">
-            <a href="{{ route('dashboard.blacklist.create') }}" class="btn btn-danger">
+            <a href="{{ route('dasbor.daftar-hitam.buat') }}" class="btn btn-danger">
                 <i class="fas fa-plus me-2"></i>
                 Tambah Laporan
             </a>
@@ -37,7 +37,7 @@
                         <input
                             type="text"
                             id="searchFilter"
-                            name="search"
+                            name="cari"
                             placeholder="NIK atau Nama"
                             class="form-control"
                         >
@@ -131,7 +131,7 @@
                                         <i class="fas fa-eye"></i>
                                     </button>
                                     @if($blacklist->user_id === Auth::id())
-                                        <a href="{{ route('dashboard.blacklist.edit', $blacklist->id) }}" class="btn btn-outline-success btn-sm" title="Edit">
+                                        <a href="{{ route('dasbor.daftar-hitam.edit', $blacklist->id) }}" class="btn btn-outline-success btn-sm" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <button onclick="deleteBlacklist({{ $blacklist->id }})" class="btn btn-outline-danger btn-sm" title="Hapus">
@@ -210,7 +210,7 @@ $(document).ready(function() {
         };
 
         $.ajax({
-            url: '{{ route("dashboard.blacklist.index") }}',
+            url: '{{ route('dasbor.daftar-hitam.indeks') }}',
             method: 'GET',
             data: formData,
             success: function(response) {

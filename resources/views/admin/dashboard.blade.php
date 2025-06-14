@@ -20,7 +20,7 @@
             <div class="icon">
                 <i class="fas fa-list"></i>
             </div>
-            <a href="{{ route('admin.blacklist.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="{{ route('admin.daftar-hitam.indeks') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
     <!-- ./col -->
@@ -34,7 +34,7 @@
             <div class="icon">
                 <i class="fas fa-users"></i>
             </div>
-            <a href="{{ route('admin.users.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="{{ route('admin.pengguna.indeks') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
     <!-- ./col -->
@@ -48,7 +48,7 @@
             <div class="icon">
                 <i class="fas fa-flag"></i>
             </div>
-            <a href="{{ route('admin.guest-reports.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="{{ route('admin.laporan-tamu.indeks') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
     <!-- ./col -->
@@ -62,7 +62,7 @@
             <div class="icon">
                 <i class="fas fa-credit-card"></i>
             </div>
-            <a href="{{ route('admin.topup.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="{{ route('admin.isi-saldo.indeks') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
     <!-- ./col -->

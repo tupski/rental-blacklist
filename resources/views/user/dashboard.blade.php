@@ -30,7 +30,7 @@
                                         <i class="fas fa-wallet me-2"></i>
                                         Saldo: {{ $stats['saldo_tersisa'] }}
                                     </div>
-                                    <a href="{{ route('topup.create') }}" class="btn btn-primary btn-sm">
+                                    <a href="{{ route('isi-saldo.buat') }}" class="btn btn-primary btn-sm">
                                         <i class="fas fa-plus me-2"></i>
                                         Topup Saldo
                                     </a>
@@ -386,7 +386,7 @@ $(document).ready(function() {
         $('#userSearchBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Mencari...');
 
         $.ajax({
-            url: '{{ route("user.search") }}',
+            url: '{{ route('pengguna.cari') }}',
             method: 'POST',
             data: {
                 search: search,

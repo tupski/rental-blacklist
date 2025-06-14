@@ -1,8 +1,8 @@
-<form id="send-verification" method="post" action="{{ route('verification.send') }}">
+<form id="send-verification" method="post" action="{{ route('verifikasi.kirim') }}">
     @csrf
 </form>
 
-<form method="post" action="{{ route('profile.update') }}">
+<form method="post" action="{{ route('profil.perbarui') }}">
     @csrf
     @method('patch')
 

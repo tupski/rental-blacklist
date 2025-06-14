@@ -3,7 +3,7 @@
         Pastikan akun Anda menggunakan password yang panjang dan acak untuk tetap aman.
     </p>
 
-    <form method="post" action="{{ route('password.update') }}">
+    <form method="post" action="{{ route('kata-sandi.perbarui') }}">
         @csrf
         @method('put')
 

@@ -8,7 +8,7 @@
     <div class="row mb-4">
         <div class="col">
             <div class="d-flex align-items-center mb-3">
-                <a href="{{ route('dashboard.blacklist.index') }}" class="btn btn-outline-secondary me-3">
+                <a href="{{ route('dasbor.daftar-hitam.indeks') }}" class="btn btn-outline-secondary me-3">
                     <i class="fas fa-arrow-left"></i>
                 </a>
                 <div>
@@ -207,14 +207,14 @@
         <!-- Actions -->
         <div class="card-footer bg-light border-0">
             <div class="d-flex justify-content-between">
-                <a href="{{ route('dashboard.blacklist.index') }}" class="btn btn-outline-secondary">
+                <a href="{{ route('dasbor.daftar-hitam.indeks') }}" class="btn btn-outline-secondary">
                     <i class="fas fa-arrow-left me-2"></i>
                     Kembali ke Daftar
                 </a>
                 
                 @if($blacklist->user_id === Auth::id())
                 <div class="d-flex gap-2">
-                    <a href="{{ route('dashboard.blacklist.edit', $blacklist->id) }}" class="btn btn-success">
+                    <a href="{{ route('dasbor.daftar-hitam.edit', $blacklist->id) }}" class="btn btn-success">
                         <i class="fas fa-edit me-2"></i>
                         Edit Laporan
                     </a>
@@ -243,7 +243,7 @@ function deleteBlacklist(id) {
             success: function(response) {
                 if (response.success) {
                     alert(response.message);
-                    window.location.href = '{{ route("dashboard.blacklist.index") }}';
+                    window.location.href = '{{ route('dasbor.daftar-hitam.indeks') }}';
                 }
             },
             error: function(xhr) {

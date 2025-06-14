@@ -124,7 +124,7 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('topup.upload-proof', $topupRequest->invoice_number) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('isi-saldo.unggah-bukti', $topupRequest->invoice_number) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="mb-3">
                             <label for="proof_of_payment" class="form-label">Bukti Pembayaran</label>
@@ -138,7 +138,7 @@
                                       placeholder="Tambahkan catatan jika diperlukan..."></textarea>
                         </div>
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="{{ route('topup.index') }}" class="btn btn-secondary">
+                            <a href="{{ route('isi-saldo.indeks') }}" class="btn btn-secondary">
                                 <i class="fas fa-arrow-left me-2"></i>Kembali
                             </a>
                             <button type="submit" class="btn btn-success">
@@ -163,7 +163,7 @@
                         <i class="fas fa-info-circle me-2"></i>
                         Fitur pembayaran otomatis akan segera tersedia
                     </div>
-                    <a href="{{ route('topup.index') }}" class="btn btn-primary">
+                    <a href="{{ route('isi-saldo.indeks') }}" class="btn btn-primary">
                         <i class="fas fa-arrow-left me-2"></i>Kembali ke Topup
                     </a>
                 </div>

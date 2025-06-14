@@ -94,14 +94,14 @@
                         <small class="text-muted">{{ auth()->user()->email }}</small>
                     </div>
                     <div class="dropdown-divider"></div>
-                    <a href="{{ route('profile.edit') }}" class="dropdown-item">
+                    <a href="{{ route('profil.edit') }}" class="dropdown-item">
                         <i class="fas fa-user mr-2"></i> Profile
                     </a>
-                    <a href="{{ route('admin.settings.index') }}" class="dropdown-item">
+                    <a href="{{ route('admin.pengaturan.indeks') }}" class="dropdown-item">
                         <i class="fas fa-cog mr-2"></i> Settings
                     </a>
                     <div class="dropdown-divider"></div>
-                    <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                    <form method="POST" action="{{ route('keluar') }}" class="d-inline">
                         @csrf
                         <button type="submit" class="dropdown-item">
                             <i class="fas fa-sign-out-alt mr-2"></i> Logout
@@ -121,7 +121,7 @@
     <!-- Main Sidebar Container -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <!-- Brand Logo -->
-        <a href="{{ route('admin.dashboard') }}" class="brand-link">
+        <a href="{{ route('admin.dasbor') }}" class="brand-link">
             <img src="{{ asset('images/logo.svg') }}" alt="Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
             <span class="brand-text font-weight-light">{{ config('app.name') }}</span>
         </a>
@@ -134,7 +134,7 @@
                     <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=007bff&color=fff" class="img-circle elevation-2" alt="User Image">
                 </div>
                 <div class="info">
-                    <a href="{{ route('profile.edit') }}" class="d-block">{{ auth()->user()->name }}</a>
+                    <a href="{{ route('profil.edit') }}" class="d-block">{{ auth()->user()->name }}</a>
                 </div>
             </div>
 
@@ -156,7 +156,7 @@
 
                     <!-- Dashboard -->
                     <li class="nav-item">
-                        <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.dasbor') }}" class="nav-link {{ request()->routeIs('admin.dasbor*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>Dashboard</p>
                         </a>
@@ -173,13 +173,13 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="{{ route('admin.blacklist.index') }}" class="nav-link {{ request()->routeIs('admin.blacklist.index') ? 'active' : '' }}">
+                                <a href="{{ route('admin.daftar-hitam.indeks') }}" class="nav-link {{ request()->routeIs('admin.daftar-hitam.indeks') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Daftar Blacklist</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.blacklist.create') }}" class="nav-link {{ request()->routeIs('admin.blacklist.create') ? 'active' : '' }}">
+                                <a href="{{ route('admin.daftar-hitam.buat') }}" class="nav-link {{ request()->routeIs('admin.daftar-hitam.buat') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Tambah Blacklist</p>
                                 </a>
@@ -198,13 +198,13 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->routeIs('admin.users.index') ? 'active' : '' }}">
+                                <a href="{{ route('admin.pengguna.indeks') }}" class="nav-link {{ request()->routeIs('admin.pengguna.indeks') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Daftar User</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.users.create') }}" class="nav-link {{ request()->routeIs('admin.users.create') ? 'active' : '' }}">
+                                <a href="{{ route('admin.pengguna.buat') }}" class="nav-link {{ request()->routeIs('admin.pengguna.buat') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Tambah User</p>
                                 </a>
@@ -214,7 +214,7 @@
 
                     <!-- Laporan Guest -->
                     <li class="nav-item">
-                        <a href="{{ route('admin.guest-reports.index') }}" class="nav-link {{ request()->routeIs('admin.guest-reports*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.laporan-tamu.indeks') }}" class="nav-link {{ request()->routeIs('admin.laporan-tamu*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-flag"></i>
                             <p>Laporan Guest</p>
                         </a>
@@ -231,13 +231,13 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="{{ route('admin.sponsors.index') }}" class="nav-link {{ request()->routeIs('admin.sponsors.index') ? 'active' : '' }}">
+                                <a href="{{ route('admin.sponsor.indeks') }}" class="nav-link {{ request()->routeIs('admin.sponsor.indeks') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Daftar Sponsor</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.sponsors.create') }}" class="nav-link {{ request()->routeIs('admin.sponsors.create') ? 'active' : '' }}">
+                                <a href="{{ route('admin.sponsor.buat') }}" class="nav-link {{ request()->routeIs('admin.sponsor.buat') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Tambah Sponsor</p>
                                 </a>
@@ -247,7 +247,7 @@
 
                     <!-- Manajemen Topup -->
                     <li class="nav-item">
-                        <a href="{{ route('admin.topup.index') }}" class="nav-link {{ request()->routeIs('admin.topup*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.isi-saldo.indeks') }}" class="nav-link {{ request()->routeIs('admin.isi-saldo*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-credit-card"></i>
                             <p>Manajemen Topup</p>
                         </a>
@@ -264,13 +264,13 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="{{ route('admin.reports') }}" class="nav-link {{ request()->routeIs('admin.reports') ? 'active' : '' }}">
+                                <a href="{{ route('admin.laporan') }}" class="nav-link {{ request()->routeIs('admin.laporan') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Laporan</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.analytics') }}" class="nav-link {{ request()->routeIs('admin.analytics') ? 'active' : '' }}">
+                                <a href="{{ route('admin.analitik') }}" class="nav-link {{ request()->routeIs('admin.analitik') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Analitik</p>
                                 </a>
@@ -289,31 +289,31 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="{{ route('admin.settings.application.index') }}" class="nav-link {{ request()->routeIs('admin.settings.application*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.pengaturan.aplikasi.indeks') }}" class="nav-link {{ request()->routeIs('admin.pengaturan.aplikasi*') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Aplikasi</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.settings.system.index') }}" class="nav-link {{ request()->routeIs('admin.settings.system*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.pengaturan.sistem.indeks') }}" class="nav-link {{ request()->routeIs('admin.pengaturan.sistem*') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Sistem</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.settings.smtp.index') }}" class="nav-link {{ request()->routeIs('admin.settings.smtp*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.pengaturan.smtp.indeks') }}" class="nav-link {{ request()->routeIs('admin.pengaturan.smtp*') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>SMTP</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.settings.payment.index') }}" class="nav-link {{ request()->routeIs('admin.settings.payment*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.pengaturan.pembayaran.indeks') }}" class="nav-link {{ request()->routeIs('admin.pengaturan.pembayaran*') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Pembayaran</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.settings.database.index') }}" class="nav-link {{ request()->routeIs('admin.settings.database*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.pengaturan.database.indeks') }}" class="nav-link {{ request()->routeIs('admin.pengaturan.database*') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Database</p>
                                 </a>
@@ -386,7 +386,7 @@
 
     <!-- Footer -->
     <footer class="main-footer">
-        <strong>Copyright &copy; {{ date('Y') }} <a href="{{ route('home') }}">{{ config('app.name') }}</a>.</strong>
+        <strong>Copyright &copy; {{ date('Y') }} <a href="{{ route('beranda') }}">{{ config('app.name') }}</a>.</strong>
         All rights reserved.
         <div class="float-right d-none d-sm-inline-block">
             <b>Version</b> 1.0.0
@@ -414,7 +414,7 @@ $(document).ready(function() {
 
     function loadNotifications() {
         $.ajax({
-            url: '{{ route("admin.notifications.get") }}',
+            url: '{{ route("admin.notifikasi.ambil") }}',
             method: 'GET',
             success: function(response) {
                 updateNotificationUI(response);
@@ -492,7 +492,7 @@ $(document).ready(function() {
     $(document).on('click', '.dropdown-item[data-notification-id]', function() {
         const notificationId = $(this).data('notification-id');
         $.ajax({
-            url: '{{ route("admin.notifications.mark-read") }}',
+            url: '{{ route("admin.notifikasi.baca") }}',
             method: 'POST',
             data: {
                 _token: '{{ csrf_token() }}',

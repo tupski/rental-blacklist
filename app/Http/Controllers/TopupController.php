@@ -163,7 +163,7 @@ class TopupController extends Controller
         }
 
         // Always redirect to confirm page regardless of payment method
-        return redirect()->route('topup.confirm', $topupRequest->invoice_number);
+        return redirect()->route('isi-saldo.konfirmasi', $topupRequest->invoice_number);
     }
 
     public function confirm($invoice)
@@ -173,7 +173,7 @@ class TopupController extends Controller
                                   ->firstOrFail();
 
         if (!$topupRequest->canBePaid()) {
-            return redirect()->route('topup.index')->with('error', 'Request topup sudah tidak valid');
+            return redirect()->route('isi-saldo.indeks')->with('error', 'Request topup sudah tidak valid');
         }
 
         return view('topup.confirm', compact('topupRequest'));
@@ -191,7 +191,7 @@ class TopupController extends Controller
                                   ->firstOrFail();
 
         if (!$topupRequest->canBePaid()) {
-            return redirect()->route('topup.index')->with('error', 'Request topup sudah tidak valid');
+            return redirect()->route('isi-saldo.indeks')->with('error', 'Request topup sudah tidak valid');
         }
 
         // Store the uploaded file
@@ -206,6 +206,6 @@ class TopupController extends Controller
             'status' => 'pending_confirmation'
         ]);
 
-        return redirect()->route('topup.index')->with('success', 'Bukti pembayaran berhasil diupload. Pembayaran akan dikonfirmasi dalam 1x24 jam.');
+        return redirect()->route('isi-saldo.indeks')->with('success', 'Bukti pembayaran berhasil diupload. Pembayaran akan dikonfirmasi dalam 1x24 jam.');
     }
 }

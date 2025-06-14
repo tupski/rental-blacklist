@@ -15,8 +15,8 @@ class BalanceController extends Controller
         $query = $user->balanceTransactions()->latest();
 
         // Filter by type
-        if ($request->has('type') && $request->type) {
-            $query->where('type', $request->type);
+        if ($request->has('type') && $request->jenis) {
+            $query->where('type', $request->jenis);
         }
 
         // Filter by date range

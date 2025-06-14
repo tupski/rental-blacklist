@@ -104,7 +104,7 @@
                                 </div>
 
                                 @if (Route::has('password.request'))
-                                    <a href="{{ route('password.request') }}" class="text-decoration-none text-danger">
+                                    <a href="{{ route('kata-sandi.permintaan') }}" class="text-decoration-none text-danger">
                                         Lupa kata sandi?
                                     </a>
                                 @endif
@@ -145,7 +145,7 @@
 
                         <!-- Back to Home -->
                         <div class="text-center">
-                            <a href="{{ route('home') }}" class="text-decoration-none text-muted">
+                            <a href="{{ route('beranda') }}" class="text-decoration-none text-muted">
                                 <i class="fas fa-arrow-left me-1"></i>
                                 Kembali ke beranda
                             </a>

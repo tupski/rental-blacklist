@@ -4,7 +4,7 @@
 @section('page-title', 'Tambah Sponsor')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.dasbor') }}">Dashboard</a></li>
     <li class="breadcrumb-item"><a href="{{ route('admin.sponsors.index') }}">Manajemen Sponsor</a></li>
     <li class="breadcrumb-item active">Tambah Sponsor</li>
 @endsection
