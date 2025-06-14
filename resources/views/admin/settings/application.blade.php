@@ -66,7 +66,10 @@
                                     <div class="row">
                                         @foreach($groupSettings as $setting)
                                             <div class="col-md-6">
-                                                <div class="form-group">
+                                                <div class="form-group
+                                                    @if($group === 'captcha' && $setting->key !== 'captcha_enabled' && $setting->key !== 'captcha_type') captcha-field @endif
+                                                    @if(str_contains($setting->key, '_site_key') || str_contains($setting->key, '_secret_key')) captcha-key-field @endif
+                                                ">
                                                     <label for="setting_{{ $setting->key }}">
                                                         {{ $setting->label }}
                                                         @if($setting->description)
@@ -127,11 +130,13 @@
                                                                 name="settings[{{ $setting->key }}]"
                                                                 id="setting_{{ $setting->key }}"
                                                                 class="form-control"
+                                                                @if($setting->key === 'captcha_type') onchange="toggleCaptchaFields(this.value)" @endif
                                                             >
                                                                 @if($setting->key === 'captcha_type')
-                                                                    <option value="recaptcha" {{ $setting->value === 'recaptcha' ? 'selected' : '' }}>Google reCAPTCHA</option>
+                                                                    <option value="recaptcha_v2" {{ $setting->value === 'recaptcha_v2' ? 'selected' : '' }}>Google reCAPTCHA v2</option>
+                                                                    <option value="recaptcha_v3" {{ $setting->value === 'recaptcha_v3' ? 'selected' : '' }}>Google reCAPTCHA v3</option>
                                                                     <option value="hcaptcha" {{ $setting->value === 'hcaptcha' ? 'selected' : '' }}>hCaptcha</option>
-                                                                    <option value="simple" {{ $setting->value === 'simple' ? 'selected' : '' }}>Simple Math Captcha</option>
+                                                                    <option value="turnstile" {{ $setting->value === 'turnstile' ? 'selected' : '' }}>Cloudflare Turnstile</option>
                                                                 @endif
                                                             </select>
                                                             @break
@@ -234,6 +239,44 @@ function isValidEmail(email) {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
 }
+
+// Captcha settings management
+function toggleCaptchaSettings() {
+    const captchaEnabled = $('#setting_captcha_enabled').is(':checked');
+    const captchaGroup = $('#setting_captcha_enabled').closest('.card').find('.form-group').not($('#setting_captcha_enabled').closest('.form-group'));
+
+    if (captchaEnabled) {
+        captchaGroup.show();
+        toggleCaptchaFields($('#setting_captcha_type').val());
+    } else {
+        captchaGroup.hide();
+    }
+}
+
+function toggleCaptchaFields(selectedType) {
+    // Hide all captcha key fields first
+    $('[id*="_site_key"], [id*="_secret_key"]').closest('.form-group').hide();
+
+    // Show fields based on selected type
+    if (selectedType) {
+        $(`[id*="${selectedType}_site_key"], [id*="${selectedType}_secret_key"]`).closest('.form-group').show();
+    }
+}
+
+$(document).ready(function() {
+    // Initialize captcha settings visibility
+    toggleCaptchaSettings();
+
+    // Handle captcha enabled checkbox change
+    $('#setting_captcha_enabled').on('change', function() {
+        toggleCaptchaSettings();
+    });
+
+    // Handle captcha type change
+    $('#setting_captcha_type').on('change', function() {
+        toggleCaptchaFields($(this).val());
+    });
+});
 </script>
 
 <!-- Toastr for notifications -->

@@ -64,6 +64,11 @@ class PublicController extends Controller
                 $isAuthenticated = auth()->check();
                 $user = auth()->user();
 
+                // Cek apakah user adalah admin atau pemilik rental
+                $isAdmin = $isAuthenticated && $user->role === 'admin';
+                $isRentalOwner = $isAuthenticated && $user->role === 'pengusaha_rental';
+                $shouldShowFullData = $isAdmin || $isRentalOwner;
+
                 // Normalisasi search untuk nomor HP
                 $normalizedSearch = PhoneHelper::normalize($search);
 
@@ -81,8 +86,8 @@ class PublicController extends Controller
                 // Cek apakah user sudah unlock data ini
                 $isUnlocked = $isAuthenticated && $user->hasUnlockedData($item->id);
 
-                // Jika user adalah pengusaha rental, sudah unlock, atau query lengkap cocok, tampilkan data lengkap
-                if (($isAuthenticated && ($user->role === 'pengusaha_rental' || $isUnlocked)) || $isExactMatch) {
+                // Jika user adalah admin, pengusaha rental, sudah unlock, atau query lengkap cocok, tampilkan data lengkap
+                if ($shouldShowFullData || ($isAuthenticated && $isUnlocked) || $isExactMatch) {
                     return [
                         'id' => $item->id,
                         'nama_lengkap' => $item->nama_lengkap,

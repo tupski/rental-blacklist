@@ -35,11 +35,15 @@ return new class extends Migration
 
             // Captcha Settings
             ['key' => 'captcha_enabled', 'value' => '1', 'type' => 'boolean', 'group' => 'captcha', 'label' => 'Aktifkan Captcha', 'description' => 'Aktifkan sistem captcha untuk keamanan'],
-            ['key' => 'captcha_type', 'value' => 'recaptcha', 'type' => 'select', 'group' => 'captcha', 'label' => 'Jenis Captcha', 'description' => 'Pilih jenis captcha yang digunakan'],
-            ['key' => 'recaptcha_site_key', 'value' => '', 'type' => 'text', 'group' => 'captcha', 'label' => 'reCAPTCHA Site Key', 'description' => 'Site key dari Google reCAPTCHA'],
-            ['key' => 'recaptcha_secret_key', 'value' => '', 'type' => 'text', 'group' => 'captcha', 'label' => 'reCAPTCHA Secret Key', 'description' => 'Secret key dari Google reCAPTCHA'],
+            ['key' => 'captcha_type', 'value' => 'recaptcha_v2', 'type' => 'select', 'group' => 'captcha', 'label' => 'Jenis Captcha', 'description' => 'Pilih jenis captcha yang digunakan'],
+            ['key' => 'recaptcha_v2_site_key', 'value' => '', 'type' => 'text', 'group' => 'captcha', 'label' => 'reCAPTCHA v2 Site Key', 'description' => 'Site key dari Google reCAPTCHA v2'],
+            ['key' => 'recaptcha_v2_secret_key', 'value' => '', 'type' => 'text', 'group' => 'captcha', 'label' => 'reCAPTCHA v2 Secret Key', 'description' => 'Secret key dari Google reCAPTCHA v2'],
+            ['key' => 'recaptcha_v3_site_key', 'value' => '', 'type' => 'text', 'group' => 'captcha', 'label' => 'reCAPTCHA v3 Site Key', 'description' => 'Site key dari Google reCAPTCHA v3'],
+            ['key' => 'recaptcha_v3_secret_key', 'value' => '', 'type' => 'text', 'group' => 'captcha', 'label' => 'reCAPTCHA v3 Secret Key', 'description' => 'Secret key dari Google reCAPTCHA v3'],
             ['key' => 'hcaptcha_site_key', 'value' => '', 'type' => 'text', 'group' => 'captcha', 'label' => 'hCaptcha Site Key', 'description' => 'Site key dari hCaptcha'],
             ['key' => 'hcaptcha_secret_key', 'value' => '', 'type' => 'text', 'group' => 'captcha', 'label' => 'hCaptcha Secret Key', 'description' => 'Secret key dari hCaptcha'],
+            ['key' => 'turnstile_site_key', 'value' => '', 'type' => 'text', 'group' => 'captcha', 'label' => 'Cloudflare Turnstile Site Key', 'description' => 'Site key dari Cloudflare Turnstile'],
+            ['key' => 'turnstile_secret_key', 'value' => '', 'type' => 'text', 'group' => 'captcha', 'label' => 'Cloudflare Turnstile Secret Key', 'description' => 'Secret key dari Cloudflare Turnstile'],
 
             // Captcha Form Settings
             ['key' => 'captcha_login', 'value' => '1', 'type' => 'boolean', 'group' => 'captcha', 'label' => 'Captcha Login', 'description' => 'Aktifkan captcha di form login'],
@@ -74,8 +78,9 @@ return new class extends Migration
             'footer_enabled', 'footer_description', 'footer_copyright', 'footer_links_enabled',
             'social_facebook', 'social_twitter', 'social_instagram', 'social_whatsapp', 'social_youtube',
             'contact_address', 'contact_phone', 'contact_email', 'contact_hours',
-            'captcha_enabled', 'captcha_type', 'recaptcha_site_key', 'recaptcha_secret_key',
-            'hcaptcha_site_key', 'hcaptcha_secret_key',
+            'captcha_enabled', 'captcha_type',
+            'recaptcha_v2_site_key', 'recaptcha_v2_secret_key', 'recaptcha_v3_site_key', 'recaptcha_v3_secret_key',
+            'hcaptcha_site_key', 'hcaptcha_secret_key', 'turnstile_site_key', 'turnstile_secret_key',
             'captcha_login', 'captcha_register', 'captcha_report', 'captcha_contact', 'captcha_reset_password'
         ];
 
