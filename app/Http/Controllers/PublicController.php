@@ -333,10 +333,11 @@ class PublicController extends Controller
         $user = auth()->user();
         $blacklist = RentalBlacklist::with('user')->findOrFail($id);
 
-        // Check if user has access (active account and unlocked data)
+        // Check if user has access (active account and unlocked data OR rental owner)
         $hasAccess = $user && (
             $user->canAccessData() ||
-            ($user->isActive() && ($user->hasUnlockedData($id) || $user->hasUnlockedNik($blacklist->nik)))
+            ($user->isActive() && ($user->hasUnlockedData($id) || $user->hasUnlockedNik($blacklist->nik))) ||
+            $user->role === 'pengusaha_rental'
         );
 
         if (!$hasAccess) {
@@ -351,10 +352,11 @@ class PublicController extends Controller
         $user = auth()->user();
         $blacklist = RentalBlacklist::with('user')->findOrFail($id);
 
-        // Check if user has access (active account and unlocked data)
+        // Check if user has access (active account and unlocked data OR rental owner)
         $hasAccess = $user && (
             $user->canAccessData() ||
-            ($user->isActive() && ($user->hasUnlockedData($id) || $user->hasUnlockedNik($blacklist->nik)))
+            ($user->isActive() && ($user->hasUnlockedData($id) || $user->hasUnlockedNik($blacklist->nik))) ||
+            $user->role === 'pengusaha_rental'
         );
 
         if (!$hasAccess) {

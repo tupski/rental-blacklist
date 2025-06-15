@@ -177,7 +177,51 @@
         </div>
     </div>
 
-    <!-- 2. Detail Masalah -->
+    <!-- 2. Foto Penyewa -->
+    <div class="section">
+        <h3>📷 Foto Penyewa</h3>
+        @if($blacklist->foto_penyewa && is_array($blacklist->foto_penyewa) && count($blacklist->foto_penyewa) > 0)
+            @foreach($blacklist->foto_penyewa as $foto)
+                <div class="media-info">
+                    📸 <strong>Foto Penyewa:</strong> {{ basename($foto) }}
+                    <br><small>Link: {{ asset('storage/' . $foto) }}</small>
+                </div>
+            @endforeach
+        @elseif($blacklist->foto_penyewa && is_string($blacklist->foto_penyewa) && count(json_decode($blacklist->foto_penyewa, true)) > 0)
+            @foreach(json_decode($blacklist->foto_penyewa, true) as $foto)
+                <div class="media-info">
+                    📸 <strong>Foto Penyewa:</strong> {{ basename($foto) }}
+                    <br><small>Link: {{ asset('storage/' . $foto) }}</small>
+                </div>
+            @endforeach
+        @else
+            <p><em>Tidak ada foto penyewa</em></p>
+        @endif
+    </div>
+
+    <!-- 3. Foto KTP/SIM -->
+    <div class="section">
+        <h3>🆔 Foto KTP/SIM</h3>
+        @if($blacklist->foto_ktp_sim && is_array($blacklist->foto_ktp_sim) && count($blacklist->foto_ktp_sim) > 0)
+            @foreach($blacklist->foto_ktp_sim as $foto)
+                <div class="media-info">
+                    🆔 <strong>Foto KTP/SIM:</strong> {{ basename($foto) }}
+                    <br><small>Link: {{ asset('storage/' . $foto) }}</small>
+                </div>
+            @endforeach
+        @elseif($blacklist->foto_ktp_sim && is_string($blacklist->foto_ktp_sim) && count(json_decode($blacklist->foto_ktp_sim, true)) > 0)
+            @foreach(json_decode($blacklist->foto_ktp_sim, true) as $foto)
+                <div class="media-info">
+                    🆔 <strong>Foto KTP/SIM:</strong> {{ basename($foto) }}
+                    <br><small>Link: {{ asset('storage/' . $foto) }}</small>
+                </div>
+            @endforeach
+        @else
+            <p><em>Tidak ada foto KTP/SIM</em></p>
+        @endif
+    </div>
+
+    <!-- 4. Detail Masalah -->
     <div class="section">
         <h3>🚨 Detail Masalah</h3>
         <div class="info-grid">
@@ -187,8 +231,28 @@
                     {{ $blacklist->jenis_rental ?: 'Tidak ada data' }}
                 </div>
                 <div class="info-item">
+                    <strong>Tanggal Sewa</strong>
+                    {{ $blacklist->tanggal_sewa ? $blacklist->tanggal_sewa->format('d/m/Y') : 'Tidak ada data' }}
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-item">
                     <strong>Tanggal Kejadian</strong>
                     {{ $blacklist->tanggal_kejadian ? $blacklist->tanggal_kejadian->format('d/m/Y') : 'Tidak ada data' }}
+                </div>
+                <div class="info-item">
+                    <strong>Jenis Kendaraan/Barang</strong>
+                    {{ $blacklist->jenis_kendaraan ?: 'Tidak ada data' }}
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-item">
+                    <strong>Nomor Polisi</strong>
+                    {{ $blacklist->nomor_polisi ?: 'Tidak ada data' }}
+                </div>
+                <div class="info-item">
+                    <strong>Nilai Kerugian</strong>
+                    {{ $blacklist->nilai_kerugian ? 'Rp ' . number_format($blacklist->nilai_kerugian, 0, ',', '.') : 'Tidak ada data' }}
                 </div>
             </div>
             <div class="info-row">
@@ -212,16 +276,17 @@
         </div>
     </div>
 
-    <!-- 3. Bukti Pendukung -->
+    <!-- 5. Bukti Pendukung -->
     <div class="section">
         <h3>📎 Bukti Pendukung</h3>
         @if($blacklist->bukti && is_array($blacklist->bukti) && count($blacklist->bukti) > 0)
             @foreach($blacklist->bukti as $bukti)
                 @php
                     $fileName = basename($bukti);
-                    $extension = strtolower(pathinfo($bukti, PATHINFO_EXTENSION));
+                    $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
                     $isImage = in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
-                    $isVideo = in_array($extension, ['mp4', 'avi', 'mov', 'wmv', 'flv']);
+                    $isVideo = in_array($extension, ['mp4', 'avi', 'mov', 'wmv', 'mkv']);
+                    $isPdf = $extension === 'pdf';
                 @endphp
                 <div class="media-info">
                     @if($isImage)
@@ -229,6 +294,34 @@
                         <br><small>Link: {{ asset('storage/' . $bukti) }}</small>
                     @elseif($isVideo)
                         🎥 <strong>Video:</strong> {{ $fileName }}
+                        <br><small>Link: {{ asset('storage/' . $bukti) }}</small>
+                    @elseif($isPdf)
+                        📄 <strong>PDF:</strong> {{ $fileName }}
+                        <br><small>Link: {{ asset('storage/' . $bukti) }}</small>
+                    @else
+                        📎 <strong>File:</strong> {{ $fileName }}
+                        <br><small>Link: {{ asset('storage/' . $bukti) }}</small>
+                    @endif
+                </div>
+            @endforeach
+        @elseif($blacklist->bukti && is_string($blacklist->bukti) && count(json_decode($blacklist->bukti, true)) > 0)
+            @foreach(json_decode($blacklist->bukti, true) as $bukti)
+                @php
+                    $fileName = basename($bukti);
+                    $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+                    $isImage = in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                    $isVideo = in_array($extension, ['mp4', 'avi', 'mov', 'wmv', 'mkv']);
+                    $isPdf = $extension === 'pdf';
+                @endphp
+                <div class="media-info">
+                    @if($isImage)
+                        📸 <strong>Gambar:</strong> {{ $fileName }}
+                        <br><small>Link: {{ asset('storage/' . $bukti) }}</small>
+                    @elseif($isVideo)
+                        🎥 <strong>Video:</strong> {{ $fileName }}
+                        <br><small>Link: {{ asset('storage/' . $bukti) }}</small>
+                    @elseif($isPdf)
+                        📄 <strong>PDF:</strong> {{ $fileName }}
                         <br><small>Link: {{ asset('storage/' . $bukti) }}</small>
                     @else
                         📎 <strong>File:</strong> {{ $fileName }}
