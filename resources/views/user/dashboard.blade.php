@@ -600,7 +600,7 @@ $(document).ready(function() {
     // Global function for showing user detail
     window.showUserDetail = function(id) {
         $.ajax({
-            url: `/full-detail/${id}`,
+            url: `/detail-lengkap/${id}`,
             method: 'GET',
             success: function(response) {
                 if (response.success) {
@@ -670,12 +670,12 @@ $(document).ready(function() {
 
     // Print function
     window.printDetail = function(id) {
-        window.open(`/print-detail/${id}`, '_blank');
+        window.open(`/cetak-detail/${id}`, '_blank');
     };
 
     // Download PDF function
     window.downloadPDF = function(id) {
-        window.open(`/download-pdf/${id}`, '_blank');
+        window.open(`/unduh-pdf/${id}`, '_blank');
     };
 
     function showAlert(type, message) {

@@ -21,7 +21,7 @@
                                 </p>
                                 <p class="text-muted small">
                                     <i class="fas fa-calendar me-1"></i>
-                                    {{ now()->format('l, d F Y') }}
+                                    {{ \App\Helpers\DateHelper::formatIndonesian(now(), 'l, d F Y') }}
                                 </p>
                             </div>
                             <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
