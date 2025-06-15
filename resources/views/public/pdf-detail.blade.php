@@ -191,19 +191,18 @@
     <div class="watermark">CEKPENYEWA.COM</div>
 
     <div class="header">
-        <div class="logo">CekPenyewa</div>
-        <div class="domain">cekpenyewa.com</div>
-        <div class="subtitle">Sistem Informasi Blacklist Rental Nasional</div>
-        <div class="company-info">
-            Dikembangkan oleh <strong>PT. Indo Web Solution</strong><br>
-            Platform Terpercaya untuk Verifikasi Penyewa Rental di Indonesia
-        </div>
+        <div class="logo">CEKPENYEWA.COM</div>
+        <div class="subtitle">Platform Terpercaya untuk Verifikasi Penyewa Rental di Indonesia</div>
         <div class="print-info">
-            <strong>Tanggal Cetak:</strong> {{ \App\Helpers\DateHelper::formatIndonesian(now(), 'l, d F Y') }} - {{ now()->format('H:i') }} WIB<br>
-            <strong>ID Laporan:</strong> #{{ $blacklist->id }} | <strong>Status:</strong>
-            <span class="badge badge-{{ $blacklist->status_validitas === 'Valid' ? 'success' : ($blacklist->status_validitas === 'Pending' ? 'warning' : 'danger') }}">
-                {{ $blacklist->status_validitas }}
-            </span>
+            <strong>Tanggal Print:</strong> {{ \App\Helpers\DateHelper::formatIndonesian(now(), 'l, d F Y') }} - {{ now()->format('H:i') }} |
+            <strong>Status:</strong>
+            @if($blacklist->status_validitas === 'Valid')
+                <span class="badge badge-success">Valid</span>
+            @elseif($blacklist->status_validitas === 'Pending')
+                <span class="badge badge-warning">Dalam Verifikasi</span>
+            @else
+                <span class="badge badge-danger">Invalid</span>
+            @endif
         </div>
     </div>
 
@@ -249,7 +248,11 @@
     <div class="section">
         <div class="section-title">📷 Foto Penyewa</div>
         <div class="media-list">
-            @if($blacklist->foto_penyewa && count(json_decode($blacklist->foto_penyewa, true)) > 0)
+            @if($blacklist->foto_penyewa && is_array($blacklist->foto_penyewa) && count($blacklist->foto_penyewa) > 0)
+                @foreach($blacklist->foto_penyewa as $foto)
+                    <span class="media-item image">📸 {{ basename($foto) }}</span>
+                @endforeach
+            @elseif($blacklist->foto_penyewa && is_string($blacklist->foto_penyewa) && count(json_decode($blacklist->foto_penyewa, true)) > 0)
                 @foreach(json_decode($blacklist->foto_penyewa, true) as $foto)
                     <span class="media-item image">📸 {{ basename($foto) }}</span>
                 @endforeach
@@ -263,7 +266,11 @@
     <div class="section">
         <div class="section-title">🆔 Foto KTP/SIM</div>
         <div class="media-list">
-            @if($blacklist->foto_ktp_sim && count(json_decode($blacklist->foto_ktp_sim, true)) > 0)
+            @if($blacklist->foto_ktp_sim && is_array($blacklist->foto_ktp_sim) && count($blacklist->foto_ktp_sim) > 0)
+                @foreach($blacklist->foto_ktp_sim as $foto)
+                    <span class="media-item image">🆔 {{ basename($foto) }}</span>
+                @endforeach
+            @elseif($blacklist->foto_ktp_sim && is_string($blacklist->foto_ktp_sim) && count(json_decode($blacklist->foto_ktp_sim, true)) > 0)
                 @foreach(json_decode($blacklist->foto_ktp_sim, true) as $foto)
                     <span class="media-item image">🆔 {{ basename($foto) }}</span>
                 @endforeach
@@ -352,7 +359,31 @@
                 <div class="info-item full-width">
                     <div class="info-label">Jenis Laporan</div>
                     <div class="info-value">
-                        @if($blacklist->jenis_laporan && count(json_decode($blacklist->jenis_laporan, true)) > 0)
+                        @if($blacklist->jenis_laporan && is_array($blacklist->jenis_laporan) && count($blacklist->jenis_laporan) > 0)
+                            @foreach($blacklist->jenis_laporan as $jenis)
+                                <span class="badge badge-warning">
+                                    @switch($jenis)
+                                        @case('tidak_mengembalikan')
+                                            Tidak Mengembalikan
+                                            @break
+                                        @case('merusak_barang')
+                                            Merusak Barang
+                                            @break
+                                        @case('tidak_membayar')
+                                            Tidak Membayar
+                                            @break
+                                        @case('menyalahgunakan')
+                                            Menyalahgunakan
+                                            @break
+                                        @case('lainnya')
+                                            Lainnya
+                                            @break
+                                        @default
+                                            {{ $jenis }}
+                                    @endswitch
+                                </span>
+                            @endforeach
+                        @elseif($blacklist->jenis_laporan && is_string($blacklist->jenis_laporan) && count(json_decode($blacklist->jenis_laporan, true)) > 0)
                             @foreach(json_decode($blacklist->jenis_laporan, true) as $jenis)
                                 <span class="badge badge-warning">
                                     @switch($jenis)
@@ -399,7 +430,31 @@
                 <div class="info-item">
                     <div class="info-label">Status Penanganan</div>
                     <div class="info-value">
-                        @if($blacklist->status_penanganan && count(json_decode($blacklist->status_penanganan, true)) > 0)
+                        @if($blacklist->status_penanganan && is_array($blacklist->status_penanganan) && count($blacklist->status_penanganan) > 0)
+                            @foreach($blacklist->status_penanganan as $status)
+                                <span class="badge badge-info">
+                                    @switch($status)
+                                        @case('laporan_polisi')
+                                            Laporan Polisi
+                                            @break
+                                        @case('mediasi')
+                                            Mediasi
+                                            @break
+                                        @case('tuntutan_hukum')
+                                            Tuntutan Hukum
+                                            @break
+                                        @case('blacklist_internal')
+                                            Blacklist Internal
+                                            @break
+                                        @case('tidak_ada_tindakan')
+                                            Tidak Ada Tindakan
+                                            @break
+                                        @default
+                                            {{ $status }}
+                                    @endswitch
+                                </span>
+                            @endforeach
+                        @elseif($blacklist->status_penanganan && is_string($blacklist->status_penanganan) && count(json_decode($blacklist->status_penanganan, true)) > 0)
                             @foreach(json_decode($blacklist->status_penanganan, true) as $status)
                                 <span class="badge badge-info">
                                     @switch($status)
@@ -440,7 +495,27 @@
     <div class="section">
         <div class="section-title">📎 Bukti Pendukung</div>
         <div class="media-list">
-            @if($blacklist->bukti && count(json_decode($blacklist->bukti, true)) > 0)
+            @if($blacklist->bukti && is_array($blacklist->bukti) && count($blacklist->bukti) > 0)
+                @foreach($blacklist->bukti as $bukti)
+                    @php
+                        $fileName = basename($bukti);
+                        $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+                        $isImage = in_array($extension, ['jpg', 'jpeg', 'png', 'gif']);
+                        $isVideo = in_array($extension, ['mp4', 'avi', 'mov', 'wmv']);
+                        $isPdf = $extension === 'pdf';
+                    @endphp
+
+                    @if($isImage)
+                        <span class="media-item image">📸 {{ $fileName }}</span>
+                    @elseif($isVideo)
+                        <span class="media-item video">🎥 {{ $fileName }} - <strong>Link Unduh:</strong> {{ url('/storage/' . $bukti) }}</span>
+                    @elseif($isPdf)
+                        <span class="media-item document">📄 {{ $fileName }} - <strong>Link Unduh:</strong> {{ url('/storage/' . $bukti) }}</span>
+                    @else
+                        <span class="media-item document">📁 {{ $fileName }} - <strong>Link Unduh:</strong> {{ url('/storage/' . $bukti) }}</span>
+                    @endif
+                @endforeach
+            @elseif($blacklist->bukti && is_string($blacklist->bukti) && count(json_decode($blacklist->bukti, true)) > 0)
                 @foreach(json_decode($blacklist->bukti, true) as $bukti)
                     @php
                         $fileName = basename($bukti);
@@ -528,17 +603,22 @@
 
     <div class="footer">
         <div style="margin-bottom: 15px;">
-            <strong style="color: #da3544; font-size: 14px;">CekPenyewa.com</strong><br>
-            <strong>Platform Terpercaya untuk Verifikasi Penyewa Rental</strong>
+            <p>
+                @if($blacklist->status_validitas === 'Valid')
+                    Data ini <strong>valid dan telah diverifikasi</strong> dan dapat digunakan sebagai referensi untuk keputusan rental
+                @elseif($blacklist->status_validitas === 'Pending')
+                    Data ini <strong>belum diverifikasi</strong> dan dapat digunakan sebagai referensi untuk keputusan rental
+                @else
+                    Data ini <strong>invalid</strong> dan dapat digunakan sebagai referensi untuk keputusan rental
+                @endif
+            </p>
         </div>
         <div style="margin-bottom: 10px;">
-            Dikembangkan oleh <strong>PT. Indo Web Solution</strong><br>
-            Solusi Digital Terdepan untuk Industri Rental Indonesia
+            Untuk informasi lebih lanjut, kunjungi website resmi kami:<br>
+            <a href="https://cekpenyewa.com" style="color: #da3544; text-decoration: none;">cekpenyewa.com</a>
         </div>
-        <div style="font-size: 9px; color: #999;">
-            Dokumen ini digenerate secara otomatis pada {{ \App\Helpers\DateHelper::formatIndonesian(now(), 'l, d F Y') }} pukul {{ now()->format('H:i') }} WIB<br>
-            Data telah diverifikasi dan dapat digunakan sebagai referensi untuk keputusan rental<br>
-            © {{ date('Y') }} PT. Indo Web Solution - Hak Cipta Dilindungi
+        <div style="margin-bottom: 10px;">
+            Platform Dikembangkan oleh <strong><a href="https://indowebsolution.com" style="color: #da3544; text-decoration: none;">PT. Indo Web Solution</a></strong>
         </div>
     </div>
 </body>

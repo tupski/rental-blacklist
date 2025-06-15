@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\RentalBlacklist;
 use App\Models\UserUnlock;
-use App\Helpers\PhoneHelper;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -33,9 +33,9 @@ class UserDashboardController extends Controller
 
                 return [
                     'id' => $report->id,
-                    'nama_lengkap' => $isUnlocked ? $report->nama_lengkap : $report->sensored_nama,
-                    'nik' => $isUnlocked ? $report->nik : $report->sensored_nik,
-                    'no_hp' => $isUnlocked ? $report->no_hp : $report->sensored_no_hp,
+                    'nama_lengkap' => $report->nama_lengkap, // Tampilkan tanpa sensor
+                    'nik' => $report->nik, // Tampilkan tanpa sensor
+                    'no_hp' => $report->no_hp, // Tampilkan tanpa sensor
                     'jenis_rental' => $report->jenis_rental,
                     'status_validitas' => $report->status_validitas,
                     'created_at' => $report->created_at,
@@ -71,47 +71,19 @@ class UserDashboardController extends Controller
         $results = $query->skip(($page - 1) * $perPage)
             ->take($perPage)
             ->get()
-            ->map(function ($item) use ($search) {
+            ->map(function ($item) {
                 $user = Auth::user();
-
-                // Normalisasi search untuk nomor HP
-                $normalizedSearch = PhoneHelper::normalize($search);
-
-                // Cek apakah query lengkap cocok (exact match)
-                $isExactNameMatch = strcasecmp($item->nama_lengkap, $search) === 0;
-                $isExactNikMatch = $item->nik === $search;
-                $isExactPhoneMatch = $item->no_hp === $search || $item->no_hp === $normalizedSearch;
-                $isExactMatch = $isExactNameMatch || $isExactNikMatch || $isExactPhoneMatch;
 
                 // Cek apakah user sudah unlock data ini atau NIK ini
                 $isUnlocked = $user->hasUnlockedData($item->id) || $user->hasUnlockedNik($item->nik);
 
-                // Jika user adalah pengusaha rental, sudah unlock, atau query lengkap cocok, tampilkan data lengkap
-                if (($user->role === 'pengusaha_rental') || $isUnlocked || $isExactMatch) {
-                    return [
-                        'id' => $item->id,
-                        'nama_lengkap' => $item->nama_lengkap,
-                        'nik' => $item->nik,
-                        'no_hp' => $item->no_hp,
-                        'alamat' => $item->alamat,
-                        'jenis_rental' => $item->jenis_rental,
-                        'jenis_laporan' => $item->jenis_laporan,
-                        'status_validitas' => $item->status_validitas,
-                        'tanggal_kejadian' => $item->tanggal_kejadian->format('d/m/Y'),
-                        'jumlah_laporan' => RentalBlacklist::countReportsByNik($item->nik),
-                        'pelapor' => $item->user->name,
-                        'price' => $this->getDetailPrice($item->jenis_rental),
-                        'is_unlocked' => true
-                    ];
-                }
-
-                // Untuk query parsial, gunakan logika sensor
+                // Tampilkan data tanpa sensor untuk semua user
                 return [
                     'id' => $item->id,
-                    'nama_lengkap' => $item->sensored_nama,
-                    'nik' => $item->sensored_nik,
-                    'no_hp' => $item->sensored_no_hp,
-                    'alamat' => $item->sensored_alamat,
+                    'nama_lengkap' => $item->nama_lengkap,
+                    'nik' => $item->nik,
+                    'no_hp' => $item->no_hp,
+                    'alamat' => $item->alamat,
                     'jenis_rental' => $item->jenis_rental,
                     'jenis_laporan' => $item->jenis_laporan,
                     'status_validitas' => $item->status_validitas,

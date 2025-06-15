@@ -197,7 +197,7 @@
                         Data Blacklist Terbaru (Sensor)
                     </h5>
                     <small class="text-muted mt-2 mt-sm-0">
-                        Data ditampilkan dalam bentuk sensor untuk privasi
+                        Klik "Lihat Detail" untuk melihat informasi lengkap
                     </small>
                 </div>
             </div>
@@ -248,9 +248,9 @@
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th class="border-0">Nama (Sensor)</th>
-                                <th class="border-0">NIK (Sensor)</th>
-                                <th class="border-0">HP (Sensor)</th>
+                                <th class="border-0">Nama</th>
+                                <th class="border-0">NIK</th>
+                                <th class="border-0">HP</th>
                                 <th class="border-0">Jenis Rental</th>
                                 <th class="border-0">Laporan</th>
                                 <th class="border-0">Aksi</th>

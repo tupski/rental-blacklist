@@ -59,83 +59,33 @@ class PublicController extends Controller
             ->where('status_validitas', 'Valid')
             ->with('user')
             ->get()
-            ->map(function ($item) use ($search) {
+            ->map(function ($item) {
                 // Cek apakah user sudah login (rental terverifikasi)
                 $isAuthenticated = auth()->check();
                 $user = auth()->user();
 
-                // Cek apakah user adalah admin atau pemilik rental
-                $isAdmin = $isAuthenticated && $user->role === 'admin';
-                $isRentalOwner = $isAuthenticated && $user->role === 'pengusaha_rental';
-                $shouldShowFullData = $isAdmin || $isRentalOwner;
 
-                // Normalisasi search untuk nomor HP
-                $normalizedSearch = PhoneHelper::normalize($search);
-
-                // Cek apakah search cocok dengan data
-                $isSearchingNik = $item->nik === $search;
-                $isSearchingName = stripos($item->nama_lengkap, $search) !== false;
-                $isSearchingPhone = $item->no_hp === $search || $item->no_hp === $normalizedSearch;
-
-                // Cek apakah query lengkap cocok (exact match)
-                $isExactNameMatch = strcasecmp($item->nama_lengkap, $search) === 0;
-                $isExactNikMatch = $item->nik === $search;
-                $isExactPhoneMatch = $item->no_hp === $search || $item->no_hp === $normalizedSearch;
-                $isExactMatch = $isExactNameMatch || $isExactNikMatch || $isExactPhoneMatch;
 
                 // Cek apakah user sudah unlock data ini
                 $isUnlocked = $isAuthenticated && $user->hasUnlockedData($item->id);
 
-                // Jika user adalah admin, pengusaha rental, sudah unlock, atau query lengkap cocok, tampilkan data lengkap
-                if ($shouldShowFullData || ($isAuthenticated && $isUnlocked) || $isExactMatch) {
-                    return [
-                        'id' => $item->id,
-                        'nama_lengkap' => $item->nama_lengkap,
-                        'nik' => $item->nik,
-                        'no_hp' => $item->no_hp,
-                        'alamat' => $item->alamat,
-                        'jenis_rental' => $item->jenis_rental,
-                        'jenis_laporan' => $item->jenis_laporan,
-                        'tanggal_kejadian' => $item->tanggal_kejadian->format('d/m/Y'),
-                        'jumlah_laporan' => RentalBlacklist::countReportsByNik($item->nik),
-                        'pelapor' => $item->user->name,
-                        'is_verified' => true // Menandakan data sudah terverifikasi/unlocked
-                    ];
-                }
+                // Cek apakah user sudah unlock data ini atau NIK ini
+                $isUnlocked = $isAuthenticated && ($user->hasUnlockedData($item->id) || $user->hasUnlockedNik($item->nik));
 
-                // Untuk user tidak login atau query parsial, gunakan logika sensor dengan highlighting
-                $displayNama = $item->sensored_nama;
-                $displayNik = $item->sensored_nik;
-                $displayPhone = $item->sensored_no_hp;
-                $displayAlamat = $item->sensored_alamat;
-
-                // Jika search cocok dengan nama, tampilkan bagian yang cocok
-                if ($isSearchingName) {
-                    $displayNama = $this->highlightSearchInName($item->nama_lengkap, $search);
-                }
-
-                // Jika search cocok dengan NIK, tampilkan bagian yang cocok
-                if ($isSearchingNik) {
-                    $displayNik = $this->highlightSearchInNik($item->nik, $search);
-                }
-
-                // Jika search cocok dengan nomor HP, tampilkan bagian yang cocok
-                if ($isSearchingPhone) {
-                    $displayPhone = $this->highlightSearchInPhone($item->no_hp, $search, $normalizedSearch);
-                }
-
+                // Tampilkan data tanpa sensor untuk semua user
                 return [
                     'id' => $item->id,
-                    'nama_lengkap' => $displayNama,
-                    'nik' => $displayNik,
-                    'no_hp' => $displayPhone,
-                    'alamat' => $displayAlamat,
+                    'nama_lengkap' => $item->nama_lengkap,
+                    'nik' => $item->nik,
+                    'no_hp' => $item->no_hp,
+                    'alamat' => $item->alamat,
                     'jenis_rental' => $item->jenis_rental,
                     'jenis_laporan' => $item->jenis_laporan,
                     'tanggal_kejadian' => $item->tanggal_kejadian->format('d/m/Y'),
                     'jumlah_laporan' => RentalBlacklist::countReportsByNik($item->nik),
                     'pelapor' => $item->user->name,
-                    'is_verified' => false
+                    'is_verified' => $item->user && $item->user->role === 'pengusaha_rental',
+                    'is_unlocked' => $isUnlocked
                 ];
             });
 
@@ -210,96 +160,7 @@ class PublicController extends Controller
         ]);
     }
 
-    /**
-     * Highlight search term in name while keeping other parts censored
-     */
-    private function highlightSearchInName($fullName, $search)
-    {
-        $words = explode(' ', $fullName);
-        $result = [];
 
-        foreach ($words as $word) {
-            if (stripos($word, $search) !== false) {
-                // Jika kata mengandung search term, tampilkan utuh
-                $result[] = $word;
-            } else {
-                // Sensor kata yang tidak mengandung search term
-                if (strlen($word) <= 2) {
-                    $result[] = $word;
-                } else {
-                    $first = substr($word, 0, 1);
-                    $last = substr($word, -1);
-                    $middle = str_repeat('*', strlen($word) - 2);
-                    $result[] = $first . $middle . $last;
-                }
-            }
-        }
-
-        return implode(' ', $result);
-    }
-
-    /**
-     * Highlight search term in NIK while keeping other parts censored
-     */
-    private function highlightSearchInNik($fullNik, $search)
-    {
-        $searchPos = strpos($fullNik, $search);
-        if ($searchPos !== false) {
-            $before = substr($fullNik, 0, $searchPos);
-            $after = substr($fullNik, $searchPos + strlen($search));
-
-            // Sensor bagian sebelum dan sesudah search
-            $sensoredBefore = str_repeat('*', strlen($before));
-            $sensoredAfter = str_repeat('*', strlen($after));
-
-            return $sensoredBefore . $search . $sensoredAfter;
-        }
-
-        // Fallback ke sensor biasa
-        if (strlen($fullNik) >= 8) {
-            $start = substr($fullNik, 0, 4);
-            $end = substr($fullNik, -4);
-            $middle = str_repeat('*', strlen($fullNik) - 8);
-            return $start . $middle . $end;
-        }
-        return $fullNik;
-    }
-
-    /**
-     * Highlight search term in phone while keeping other parts censored
-     */
-    private function highlightSearchInPhone($fullPhone, $originalSearch, $normalizedSearch)
-    {
-        // Cari posisi search term
-        $searchTerm = $originalSearch;
-        $searchPos = strpos($fullPhone, $searchTerm);
-
-        // Jika tidak ditemukan dengan original search, coba dengan normalized
-        if ($searchPos === false && $normalizedSearch !== $originalSearch) {
-            $searchTerm = $normalizedSearch;
-            $searchPos = strpos($fullPhone, $searchTerm);
-        }
-
-        if ($searchPos !== false) {
-            $before = substr($fullPhone, 0, $searchPos);
-            $after = substr($fullPhone, $searchPos + strlen($searchTerm));
-
-            // Sensor bagian sebelum dan sesudah search
-            $sensoredBefore = str_repeat('*', strlen($before));
-            $sensoredAfter = str_repeat('*', strlen($after));
-
-            return $sensoredBefore . $searchTerm . $sensoredAfter;
-        }
-
-        // Fallback ke sensor biasa
-        if (strlen($fullPhone) >= 6) {
-            $start = substr($fullPhone, 0, 4);
-            $end = substr($fullPhone, -2);
-            $middle = str_repeat('*', strlen($fullPhone) - 6);
-            return $start . $middle . $end;
-        }
-        return $fullPhone;
-    }
 
     /**
      * Unlock blacklist data for authenticated user

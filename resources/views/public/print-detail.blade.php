@@ -108,6 +108,33 @@
         .print-button:hover {
             background-color: #c82333;
         }
+        .section {
+            margin-bottom: 25px;
+            page-break-inside: avoid;
+        }
+        .section h3 {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            padding: 10px 15px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 4px;
+            font-size: 10px;
+            margin-right: 5px;
+            margin-bottom: 3px;
+            font-weight: 500;
+        }
+        .badge-success { background-color: #28a745; }
+        .badge-warning { background-color: #ffc107; color: #000; }
+        .badge-danger { background-color: #dc3545; }
     </style>
 </head>
 <body>
@@ -115,19 +142,18 @@
     <div class="watermark">CEKPENYEWA.COM</div>
 
     <div class="header">
-        <div class="logo">CekPenyewa</div>
-        <div class="domain">cekpenyewa.com</div>
-        <div class="subtitle">Sistem Informasi Blacklist Rental Nasional</div>
-        <div class="company-info">
-            Dikembangkan oleh <strong>PT. Indo Web Solution</strong><br>
-            Platform Terpercaya untuk Verifikasi Penyewa Rental di Indonesia
-        </div>
+        <div class="logo">CEKPENYEWA.COM</div>
+        <div class="subtitle">Platform Terpercaya untuk Verifikasi Penyewa Rental di Indonesia</div>
         <div class="print-info">
-            <strong>Tanggal Print:</strong> {{ \App\Helpers\DateHelper::formatIndonesian(now(), 'l, d F Y') }} - {{ now()->format('H:i') }} WIB<br>
-            <strong>ID Laporan:</strong> #{{ $blacklist->id }} | <strong>Status:</strong>
-            <span class="badge badge-{{ $blacklist->status_validitas === 'Valid' ? 'success' : ($blacklist->status_validitas === 'Pending' ? 'warning' : 'danger') }}">
-                {{ $blacklist->status_validitas }}
-            </span>
+            <strong>Tanggal Print:</strong> {{ \App\Helpers\DateHelper::formatIndonesian(now(), 'l, d F Y') }} - {{ now()->format('H:i') }} |
+            <strong>Status:</strong>
+            @if($blacklist->status_validitas === 'Valid')
+                <span class="badge badge-success">Valid</span>
+            @elseif($blacklist->status_validitas === 'Pending')
+                <span class="badge badge-warning">Dalam Verifikasi</span>
+            @else
+                <span class="badge badge-danger">Invalid</span>
+            @endif
         </div>
     </div>
 
@@ -136,91 +162,361 @@
             Dilarang menyebarluaskan atau menggunakan data ini untuk tujuan lain.
         </div>
 
-        <div class="info-grid">
-            <div class="info-item">
-                <strong>Nama Lengkap</strong>
-                {{ $blacklist->nama_lengkap }}
-            </div>
-            <div class="info-item">
-                <strong>NIK</strong>
-                {{ $blacklist->nik }}
-            </div>
-            <div class="info-item">
-                <strong>No HP</strong>
-                {{ $blacklist->no_hp }}
-            </div>
-            <div class="info-item">
-                <strong>Jenis Kelamin</strong>
-                {{ $blacklist->jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan' }}
-            </div>
-            <div class="info-item">
-                <strong>Jenis Rental</strong>
-                {{ $blacklist->jenis_rental }}
-            </div>
-            <div class="info-item">
-                <strong>Tanggal Kejadian</strong>
-                {{ $blacklist->tanggal_kejadian->format('d/m/Y') }}
-            </div>
-            <div class="info-item">
-                <strong>Status Validitas</strong>
-                {{ $blacklist->status_validitas }}
-            </div>
-            <div class="info-item">
-                <strong>Jumlah Laporan</strong>
-                {{ App\Models\RentalBlacklist::countReportsByNik($blacklist->nik) }} laporan
-            </div>
-            <div class="info-item full-width">
-                <strong>Alamat</strong>
-                {{ $blacklist->alamat }}
-            </div>
-            <div class="info-item full-width">
-                <strong>Jenis Laporan</strong>
-                <div class="badges">
-                    @foreach($blacklist->jenis_laporan as $laporan)
-                        <span class="badge">
-                            @switch($laporan)
-                                @case('percobaan_penipuan')
-                                    Percobaan Penipuan
-                                    @break
-                                @case('penipuan')
-                                    Penipuan
-                                    @break
-                                @case('tidak_mengembalikan_barang')
-                                    Tidak Mengembalikan Barang
-                                    @break
-                                @case('identitas_palsu')
-                                    Identitas Palsu
-                                    @break
-                                @case('sindikat')
-                                    Sindikat
-                                    @break
-                                @case('merusak_barang')
-                                    Merusak Barang
-                                    @break
-                                @default
-                                    {{ $laporan }}
-                            @endswitch
-                        </span>
-                    @endforeach
+        <!-- 1. Informasi Penyewa -->
+        <div class="section">
+            <h3>📋 Informasi Penyewa</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>Nama Lengkap</strong>
+                    {{ $blacklist->nama_lengkap ?: 'Tidak ada data' }}
+                </div>
+                <div class="info-item">
+                    <strong>NIK</strong>
+                    {{ $blacklist->nik ?: 'Tidak ada data' }}
+                </div>
+                <div class="info-item">
+                    <strong>Jenis Kelamin</strong>
+                    {{ $blacklist->jenis_kelamin ? ($blacklist->jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan') : 'Tidak ada data' }}
+                </div>
+                <div class="info-item">
+                    <strong>No. HP</strong>
+                    {{ $blacklist->no_hp ?: 'Tidak ada data' }}
+                </div>
+                <div class="info-item full-width">
+                    <strong>Alamat</strong>
+                    {{ $blacklist->alamat ?: 'Tidak ada data' }}
                 </div>
             </div>
-            <div class="info-item full-width">
-                <strong>Kronologi Kejadian</strong>
-                <div class="kronologi">
-                    {{ $blacklist->kronologi }}
+        </div>
+
+        <!-- 2. Foto Penyewa -->
+        <div class="section">
+            <h3>📷 Foto Penyewa</h3>
+            @if($blacklist->foto_penyewa && is_array($blacklist->foto_penyewa) && count($blacklist->foto_penyewa) > 0)
+                @foreach($blacklist->foto_penyewa as $foto)
+                    <p>📸 {{ basename($foto) }}</p>
+                @endforeach
+            @elseif($blacklist->foto_penyewa && is_string($blacklist->foto_penyewa) && count(json_decode($blacklist->foto_penyewa, true)) > 0)
+                @foreach(json_decode($blacklist->foto_penyewa, true) as $foto)
+                    <p>📸 {{ basename($foto) }}</p>
+                @endforeach
+            @else
+                <p><em>Tidak ada foto penyewa</em></p>
+            @endif
+        </div>
+
+        <!-- 3. Foto KTP/SIM -->
+        <div class="section">
+            <h3>🆔 Foto KTP/SIM</h3>
+            @if($blacklist->foto_ktp_sim && is_array($blacklist->foto_ktp_sim) && count($blacklist->foto_ktp_sim) > 0)
+                @foreach($blacklist->foto_ktp_sim as $foto)
+                    <p>🆔 {{ basename($foto) }}</p>
+                @endforeach
+            @elseif($blacklist->foto_ktp_sim && is_string($blacklist->foto_ktp_sim) && count(json_decode($blacklist->foto_ktp_sim, true)) > 0)
+                @foreach(json_decode($blacklist->foto_ktp_sim, true) as $foto)
+                    <p>🆔 {{ basename($foto) }}</p>
+                @endforeach
+            @else
+                <p><em>Tidak ada foto KTP/SIM</em></p>
+            @endif
+        </div>
+
+        <!-- 4. Informasi Pelapor -->
+        <div class="section">
+            <h3>🏢 Informasi Pelapor</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>Nama Perusahaan Rental</strong>
+                    {{ $blacklist->nama_perusahaan_rental ?: 'Tidak ada data' }}
+                </div>
+                <div class="info-item">
+                    <strong>Nama Penanggung Jawab</strong>
+                    {{ $blacklist->nama_penanggung_jawab ?: 'Tidak ada data' }}
+                </div>
+                <div class="info-item">
+                    <strong>No. WhatsApp</strong>
+                    {{ $blacklist->no_wa_pelapor ?: 'Tidak ada data' }}
+                </div>
+                <div class="info-item">
+                    <strong>Email</strong>
+                    {{ $blacklist->email_pelapor ?: 'Tidak ada data' }}
+                </div>
+                <div class="info-item full-width">
+                    <strong>Alamat Usaha</strong>
+                    {{ $blacklist->alamat_usaha ?: 'Tidak ada data' }}
+                </div>
+                <div class="info-item full-width">
+                    <strong>Website Usaha</strong>
+                    {{ $blacklist->website_usaha ?: 'Tidak ada data' }}
                 </div>
             </div>
-            <div class="info-item full-width">
-                <strong>Dilaporkan Oleh</strong>
-                {{ $blacklist->user->name }}
-                <br><small>Tanggal Laporan: {{ $blacklist->created_at->format('d/m/Y H:i:s') }}</small>
+        </div>
+
+        <!-- 5. Detail Masalah -->
+        <div class="section">
+            <h3>🚨 Detail Masalah</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>Kategori Rental</strong>
+                    {{ $blacklist->jenis_rental ?: 'Tidak ada data' }}
+                </div>
+                <div class="info-item">
+                    <strong>Tanggal Sewa</strong>
+                    {{ $blacklist->tanggal_sewa ? $blacklist->tanggal_sewa->format('d/m/Y') : 'Tidak ada data' }}
+                </div>
+                <div class="info-item">
+                    <strong>Tanggal Kejadian</strong>
+                    {{ $blacklist->tanggal_kejadian ? $blacklist->tanggal_kejadian->format('d/m/Y') : 'Tidak ada data' }}
+                </div>
+                <div class="info-item">
+                    <strong>Jenis Kendaraan/Barang</strong>
+                    {{ $blacklist->jenis_kendaraan ?: 'Tidak ada data' }}
+                </div>
+                <div class="info-item">
+                    <strong>Nomor Polisi</strong>
+                    {{ $blacklist->nomor_polisi ?: 'Tidak ada data' }}
+                </div>
+                <div class="info-item">
+                    <strong>Nilai Kerugian</strong>
+                    {{ $blacklist->nilai_kerugian ? 'Rp ' . number_format($blacklist->nilai_kerugian, 0, ',', '.') : 'Tidak ada data' }}
+                </div>
+                <div class="info-item full-width">
+                    <strong>Jenis Laporan</strong>
+                    @if($blacklist->jenis_laporan && is_array($blacklist->jenis_laporan) && count($blacklist->jenis_laporan) > 0)
+                        @foreach($blacklist->jenis_laporan as $jenis)
+                            <span class="badge">
+                                @switch($jenis)
+                                    @case('tidak_mengembalikan')
+                                        Tidak Mengembalikan
+                                        @break
+                                    @case('merusak_barang')
+                                        Merusak Barang
+                                        @break
+                                    @case('tidak_membayar')
+                                        Tidak Membayar
+                                        @break
+                                    @case('menyalahgunakan')
+                                        Menyalahgunakan
+                                        @break
+                                    @case('lainnya')
+                                        Lainnya
+                                        @break
+                                    @default
+                                        {{ $jenis }}
+                                @endswitch
+                            </span>
+                        @endforeach
+                    @elseif($blacklist->jenis_laporan && is_string($blacklist->jenis_laporan) && count(json_decode($blacklist->jenis_laporan, true)) > 0)
+                        @foreach(json_decode($blacklist->jenis_laporan, true) as $jenis)
+                            <span class="badge">
+                                @switch($jenis)
+                                    @case('tidak_mengembalikan')
+                                        Tidak Mengembalikan
+                                        @break
+                                    @case('merusak_barang')
+                                        Merusak Barang
+                                        @break
+                                    @case('tidak_membayar')
+                                        Tidak Membayar
+                                        @break
+                                    @case('menyalahgunakan')
+                                        Menyalahgunakan
+                                        @break
+                                    @case('lainnya')
+                                        Lainnya
+                                        @break
+                                    @default
+                                        {{ $jenis }}
+                                @endswitch
+                            </span>
+                        @endforeach
+                    @else
+                        Tidak ada data
+                    @endif
+                </div>
+                <div class="info-item full-width">
+                    <strong>Kronologi Kejadian</strong>
+                    {{ $blacklist->kronologi ?: 'Tidak ada data' }}
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. Status Penanganan -->
+        <div class="section">
+            <h3>⚖️ Status Penanganan</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>Status Penanganan</strong>
+                    @if($blacklist->status_penanganan && is_array($blacklist->status_penanganan) && count($blacklist->status_penanganan) > 0)
+                        @foreach($blacklist->status_penanganan as $status)
+                            <span class="badge">
+                                @switch($status)
+                                    @case('laporan_polisi')
+                                        Laporan Polisi
+                                        @break
+                                    @case('mediasi')
+                                        Mediasi
+                                        @break
+                                    @case('tuntutan_hukum')
+                                        Tuntutan Hukum
+                                        @break
+                                    @case('blacklist_internal')
+                                        Blacklist Internal
+                                        @break
+                                    @case('tidak_ada_tindakan')
+                                        Tidak Ada Tindakan
+                                        @break
+                                    @default
+                                        {{ $status }}
+                                @endswitch
+                            </span>
+                        @endforeach
+                    @elseif($blacklist->status_penanganan && is_string($blacklist->status_penanganan) && count(json_decode($blacklist->status_penanganan, true)) > 0)
+                        @foreach(json_decode($blacklist->status_penanganan, true) as $status)
+                            <span class="badge">
+                                @switch($status)
+                                    @case('laporan_polisi')
+                                        Laporan Polisi
+                                        @break
+                                    @case('mediasi')
+                                        Mediasi
+                                        @break
+                                    @case('tuntutan_hukum')
+                                        Tuntutan Hukum
+                                        @break
+                                    @case('blacklist_internal')
+                                        Blacklist Internal
+                                        @break
+                                    @case('tidak_ada_tindakan')
+                                        Tidak Ada Tindakan
+                                        @break
+                                    @default
+                                        {{ $status }}
+                                @endswitch
+                            </span>
+                        @endforeach
+                    @else
+                        Tidak ada data
+                    @endif
+                </div>
+                <div class="info-item">
+                    <strong>Status Lainnya</strong>
+                    {{ $blacklist->status_lainnya ?: 'Tidak ada data' }}
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. Bukti Pendukung -->
+        <div class="section">
+            <h3>📎 Bukti Pendukung</h3>
+            @if($blacklist->bukti && is_array($blacklist->bukti) && count($blacklist->bukti) > 0)
+                @foreach($blacklist->bukti as $bukti)
+                    @php
+                        $fileName = basename($bukti);
+                        $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+                        $isImage = in_array($extension, ['jpg', 'jpeg', 'png', 'gif']);
+                        $isVideo = in_array($extension, ['mp4', 'avi', 'mov', 'wmv']);
+                        $isPdf = $extension === 'pdf';
+                    @endphp
+
+                    @if($isImage)
+                        <p>📸 {{ $fileName }}</p>
+                    @elseif($isVideo)
+                        <p>🎥 {{ $fileName }} - Link: {{ url('/storage/' . $bukti) }}</p>
+                    @elseif($isPdf)
+                        <p>📄 {{ $fileName }} - Link: {{ url('/storage/' . $bukti) }}</p>
+                    @else
+                        <p>📁 {{ $fileName }} - Link: {{ url('/storage/' . $bukti) }}</p>
+                    @endif
+                @endforeach
+            @elseif($blacklist->bukti && is_string($blacklist->bukti) && count(json_decode($blacklist->bukti, true)) > 0)
+                @foreach(json_decode($blacklist->bukti, true) as $bukti)
+                    @php
+                        $fileName = basename($bukti);
+                        $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+                        $isImage = in_array($extension, ['jpg', 'jpeg', 'png', 'gif']);
+                        $isVideo = in_array($extension, ['mp4', 'avi', 'mov', 'wmv']);
+                        $isPdf = $extension === 'pdf';
+                    @endphp
+
+                    @if($isImage)
+                        <p>📸 {{ $fileName }}</p>
+                    @elseif($isVideo)
+                        <p>🎥 {{ $fileName }} - Link: {{ url('/storage/' . $bukti) }}</p>
+                    @elseif($isPdf)
+                        <p>📄 {{ $fileName }} - Link: {{ url('/storage/' . $bukti) }}</p>
+                    @else
+                        <p>📁 {{ $fileName }} - Link: {{ url('/storage/' . $bukti) }}</p>
+                    @endif
+                @endforeach
+            @else
+                <p><em>Tidak ada bukti pendukung</em></p>
+            @endif
+        </div>
+
+        <!-- 8. Persetujuan dan Tanda Tangan -->
+        <div class="section">
+            <h3>✍️ Persetujuan dan Tanda Tangan</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>Persetujuan</strong>
+                    {{ $blacklist->persetujuan ? 'Ya' : 'Tidak' }}
+                </div>
+                <div class="info-item">
+                    <strong>Nama Pelapor (TTD)</strong>
+                    {{ $blacklist->nama_pelapor_ttd ?: 'Tidak ada data' }}
+                </div>
+                <div class="info-item">
+                    <strong>Tanggal Pelaporan</strong>
+                    {{ $blacklist->tanggal_pelaporan ? $blacklist->tanggal_pelaporan->format('d/m/Y') : 'Tidak ada data' }}
+                </div>
+                <div class="info-item">
+                    <strong>Tipe Pelapor</strong>
+                    {{ $blacklist->tipe_pelapor === 'rental_owner' ? 'Pemilik Rental' : 'Tamu' }}
+                </div>
+            </div>
+        </div>
+
+        <!-- 9. Informasi Sistem -->
+        <div class="section">
+            <h3>💻 Informasi Sistem</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>Status Validitas</strong>
+                    {{ $blacklist->status_validitas }}
+                </div>
+                <div class="info-item">
+                    <strong>Jumlah Laporan (NIK ini)</strong>
+                    {{ App\Models\RentalBlacklist::countReportsByNik($blacklist->nik) }} laporan
+                </div>
+                <div class="info-item">
+                    <strong>Pelapor</strong>
+                    {{ $blacklist->user->name }}
+                </div>
+                <div class="info-item">
+                    <strong>Tanggal Dibuat</strong>
+                    {{ $blacklist->created_at->format('d/m/Y H:i') }}
+                </div>
             </div>
         </div>
 
         <div class="footer">
-            <p><strong>Sistem Blacklist Rental Indonesia</strong></p>
-            <p>Data ini telah diverifikasi dan dapat digunakan sebagai referensi untuk keputusan rental</p>
-            <p>Untuk informasi lebih lanjut, kunjungi website resmi kami</p>
+            <p>
+                @if($blacklist->status_validitas === 'Valid')
+                    Data ini <strong>valid dan telah diverifikasi</strong> dan dapat digunakan sebagai referensi untuk keputusan rental
+                @elseif($blacklist->status_validitas === 'Pending')
+                    Data ini <strong>belum diverifikasi</strong> dan dapat digunakan sebagai referensi untuk keputusan rental
+                @else
+                    Data ini <strong>invalid</strong> dan dapat digunakan sebagai referensi untuk keputusan rental
+                @endif
+            </p>
+            <p>
+                Untuk informasi lebih lanjut, kunjungi website resmi kami:<br>
+                <a href="https://cekpenyewa.com" style="color: #dc3545; text-decoration: none;">cekpenyewa.com</a>
+            </p>
+            <p>
+                Platform Dikembangkan oleh <strong><a href="https://indowebsolution.com" style="color: #dc3545; text-decoration: none;">PT. Indo Web Solution</a></strong>
+            </p>
         </div>
     </div>
 

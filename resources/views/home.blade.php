@@ -20,7 +20,7 @@
                 <div class="mb-3">
                     <span class="badge bg-danger fs-6 pulse">
                         <i class="fas fa-gift me-1"></i>
-                        100% GRATIS
+                        100% GRATIS Untuk Pemilik Rental
                     </span>
                 </div>
                 <h1 class="display-3 fw-bold text-dark mb-4 d-none d-md-block">
@@ -434,7 +434,7 @@
 
 <!-- Detail Modal -->
 <div class="modal fade" id="detailModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">
@@ -448,35 +448,34 @@
                     <!-- Detail content will be loaded here -->
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                @auth
-                    @if(Auth::user()->role === 'user')
-                        <div class="d-flex flex-column align-items-end">
+            <div class="modal-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Tutup
+                </button>
+
+                <div class="d-flex gap-2">
+                    @auth
+                        @if(Auth::user()->role === 'user')
                             <button type="button" class="btn btn-outline-danger" id="unlockDetailBtn" onclick="confirmUnlockDetail()">
                                 <i class="fas fa-eye me-2"></i>
                                 Lihat Detail Lengkap
                             </button>
-                            <div class="mt-2 text-end">
-                                <small class="text-danger fw-bold" id="unlockPrice">Rp 1.500</small>
-                                <i class="fas fa-exclamation-circle text-warning ms-1"
-                                   data-bs-toggle="tooltip"
-                                   data-bs-placement="top"
-                                   title="Data yang dibuka akan selamanya dapat diakses jika diperlukan tanpa perlu membayar lagi. Sekali buka, akses selamanya!"></i>
-                            </div>
-                        </div>
+                        @endif
                     @else
                         <button type="button" class="btn btn-success" onclick="showFullAccess()">
                             <i class="fas fa-unlock me-2"></i>
                             Akses Penuh
                         </button>
-                    @endif
-                @else
-                    <button type="button" class="btn btn-success" onclick="showFullAccess()">
-                        <i class="fas fa-unlock me-2"></i>
-                        Akses Penuh
+                    @endauth
+
+                    <!-- Print and PDF buttons (hidden by default, shown after unlock) -->
+                    <button type="button" class="btn btn-info d-none" id="printDetailBtn" onclick="printDetail()">
+                        <i class="fas fa-print me-2"></i>Print
                     </button>
-                @endauth
+                    <button type="button" class="btn btn-danger d-none" id="downloadPdfBtn" onclick="downloadPDF()">
+                        <i class="fas fa-file-pdf me-2"></i>PDF
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -668,24 +667,10 @@ $(document).ready(function() {
                                     <i class="fas fa-calendar me-1"></i>
                                     ${item.tanggal_kejadian}
                                 </small>
-                                @auth
-                                    @if(Auth::user()->role === 'user')
-                                        <button onclick="viewDetailWithUnlock(${item.id}, '${item.jenis_rental}')" class="btn btn-primary btn-sm">
-                                            <i class="fas fa-eye me-1"></i>
-                                            Detail
-                                        </button>
-                                    @else
-                                        <button onclick="viewDetail(${item.id})" class="btn btn-primary btn-sm">
-                                            <i class="fas fa-eye me-1"></i>
-                                            Detail
-                                        </button>
-                                    @endif
-                                @else
-                                    <button onclick="viewDetail(${item.id})" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-eye me-1"></i>
-                                        Detail
-                                    </button>
-                                @endauth
+                                <button onclick="viewDetail(${item.id})" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-eye me-1"></i>
+                                    Lihat Detail
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -766,163 +751,103 @@ $(document).ready(function() {
                         jenisLaporanHtml = `<span class="badge bg-warning text-dark">${data.jenis_laporan}</span>`;
                     }
 
-                    // Cek apakah data lengkap atau sensor
-                    if (data.is_full_access) {
-                        // Tampilkan data lengkap untuk admin/pemilik rental
-                        $('#detailContent').html(`
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label fw-medium text-primary">Nama Lengkap</label>
-                                    <p class="mb-0">${data.nama_lengkap}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-medium text-primary">NIK</label>
-                                    <p class="mb-0">${data.nik}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-medium text-primary">Jenis Kelamin</label>
-                                    <p class="mb-0">${data.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan'}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-medium text-primary">No HP</label>
-                                    <p class="mb-0">${data.no_hp}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-medium text-primary">Jenis Rental</label>
-                                    <p class="mb-0">${data.jenis_rental}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-medium text-primary">Jumlah Laporan</label>
-                                    <p class="mb-0"><span class="badge bg-danger">${data.jumlah_laporan} Laporan</span></p>
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label fw-medium text-primary">Alamat Lengkap</label>
-                                    <p class="mb-0">${data.alamat}</p>
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label fw-medium text-primary">Jenis Laporan</label>
-                                    <div>${jenisLaporanHtml}</div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-medium text-primary">Tanggal Kejadian</label>
-                                    <p class="mb-0">${data.tanggal_kejadian}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-medium text-primary">Pelapor</label>
-                                    <p class="mb-0">
-                                        ${data.pelapor_role === 'pengusaha_rental' ?
-                                            `<a href="/rental/${data.pelapor_id}/profil" class="text-decoration-none fw-bold text-success">
-                                                <i class="fas fa-building me-1"></i>${data.pelapor}
-                                            </a>` :
-                                            data.pelapor
-                                        }
-                                        ${data.is_verified ? '<i class="fas fa-check-circle text-primary ms-2" title="Rental Terverifikasi"></i>' : ''}
-                                    </p>
-                                </div>
-                                ${data.kronologi ? `
-                                <div class="col-12">
-                                    <label class="form-label fw-medium text-primary">Kronologi Kejadian</label>
-                                    <div class="alert alert-warning">
-                                        ${data.kronologi}
-                                    </div>
-                                </div>
-                                ` : ''}
-                                ${data.jumlah_laporan > 1 ? `
-                                <div class="col-12">
-                                    <div class="alert alert-info">
-                                        <i class="fas fa-history me-2"></i>
-                                        <strong>Multiple Reports:</strong> Terlapor ini memiliki ${data.jumlah_laporan} laporan.
-                                        <a href="/laporan/${data.nik}/timeline" class="alert-link">Lihat Timeline Lengkap</a>
-                                    </div>
-                                </div>
-                                ` : ''}
-                                <div class="col-12">
-                                    <div class="alert alert-success">
-                                        <i class="fas fa-check-circle me-2"></i>
-                                        <strong>Akses Penuh:</strong> Anda dapat melihat semua data tanpa sensor.
-                                    </div>
-                                </div>
-                            </div>
-                        `);
-                    } else {
-                        // Tampilkan data sensor untuk user biasa
-                        $('#detailContent').html(`
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label fw-medium text-primary">Nama Lengkap</label>
-                                    <p class="mb-0">${data.nama_lengkap}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-medium text-primary">NIK</label>
-                                    <p class="mb-0">${data.nik}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-medium text-primary">Jenis Kelamin</label>
-                                    <p class="mb-0">${data.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan'}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-medium text-primary">No HP</label>
-                                    <p class="mb-0">${data.no_hp}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-medium text-primary">Jenis Rental</label>
-                                    <p class="mb-0">${data.jenis_rental}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-medium text-primary">Jumlah Laporan</label>
-                                    <p class="mb-0"><span class="badge bg-danger">${data.jumlah_laporan} Laporan</span></p>
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label fw-medium text-primary">Alamat</label>
-                                    <p class="mb-0">${data.alamat || 'Data tersensor'}</p>
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label fw-medium text-primary">Jenis Laporan</label>
-                                    <div>${jenisLaporanHtml}</div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-medium text-primary">Tanggal Kejadian</label>
-                                    <p class="mb-0">${data.tanggal_kejadian}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-medium text-primary">Pelapor</label>
-                                    <p class="mb-0">
-                                        ${data.pelapor_role === 'pengusaha_rental' ?
-                                            `<a href="/rental/${data.pelapor_id}/profil" class="text-decoration-none fw-bold text-success">
-                                                <i class="fas fa-building me-1"></i>${data.pelapor}
-                                            </a>` :
-                                            data.pelapor
-                                        }
-                                        ${data.is_verified ? '<i class="fas fa-check-circle text-primary ms-2" title="Rental Terverifikasi"></i>' : ''}
-                                    </p>
-                                </div>
-                                ${data.jumlah_laporan > 1 ? `
-                                <div class="col-12">
-                                    <div class="alert alert-warning">
-                                        <i class="fas fa-history me-2"></i>
-                                        <strong>Multiple Reports:</strong> Terlapor ini memiliki ${data.jumlah_laporan} laporan.
-                                        <a href="/laporan/${data.nik}/timeline" class="alert-link">Lihat Timeline Lengkap</a>
-                                    </div>
-                                </div>
-                                ` : ''}
-                                <div class="col-12">
-                                    <div class="alert alert-info">
-                                        <i class="fas fa-info-circle me-2"></i>
-                                        <strong>Informasi:</strong> Beberapa data disensor untuk privasi.
-                                        <a href="{{ route('rental.daftar') }}" class="alert-link">Daftar sebagai rental</a>
-                                        untuk akses penuh atau beli kredit.
-                                    </div>
-                                </div>
-                            </div>
-                        `);
-                    }
+                    // Store current detail data
+                    currentDetailData = data;
+                    currentDetailId = data.id;
 
-                    // Hide/show unlock button based on access level
-                    if (data.is_full_access) {
+                    // Tampilkan data tanpa sensor untuk semua user
+                    $('#detailContent').html(`
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-primary">Nama Lengkap</label>
+                                <p class="mb-0">${data.nama_lengkap}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-primary">NIK</label>
+                                <p class="mb-0">${data.nik}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-primary">Jenis Kelamin</label>
+                                <p class="mb-0">${data.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan'}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-primary">No HP</label>
+                                <p class="mb-0">${data.no_hp}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-primary">Jenis Rental</label>
+                                <p class="mb-0">${data.jenis_rental}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-primary">Jumlah Laporan</label>
+                                <p class="mb-0"><span class="badge bg-danger">${data.jumlah_laporan} Laporan</span></p>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-medium text-primary">Alamat Lengkap</label>
+                                <p class="mb-0">${data.alamat || 'Tidak ada data'}</p>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-medium text-primary">Jenis Laporan</label>
+                                <div>${jenisLaporanHtml}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-primary">Tanggal Kejadian</label>
+                                <p class="mb-0">${data.tanggal_kejadian}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-primary">Pelapor</label>
+                                <p class="mb-0">
+                                    ${data.pelapor_role === 'pengusaha_rental' ?
+                                        `<a href="/rental/${data.pelapor_id}/profil" class="text-decoration-none fw-bold text-success">
+                                            <i class="fas fa-building me-1"></i>${data.pelapor}
+                                        </a>` :
+                                        data.pelapor
+                                    }
+                                    ${data.is_verified ? '<i class="fas fa-check-circle text-primary ms-2" title="Rental Terverifikasi"></i>' : ''}
+                                </p>
+                            </div>
+                            ${data.kronologi ? `
+                            <div class="col-12">
+                                <label class="form-label fw-medium text-primary">Kronologi Kejadian</label>
+                                <div class="alert alert-warning">
+                                    ${data.kronologi}
+                                </div>
+                            </div>
+                            ` : ''}
+                            ${data.jumlah_laporan > 1 ? `
+                            <div class="col-12">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-history me-2"></i>
+                                    <strong>Multiple Reports:</strong> Terlapor ini memiliki ${data.jumlah_laporan} laporan.
+                                    <a href="/laporan/${data.nik}/timeline" class="alert-link">Lihat Timeline Lengkap</a>
+                                </div>
+                            </div>
+                            ` : ''}
+                        </div>
+                    `);
+
+                    // Show/hide buttons based on user role and unlock status
+                    @auth
+                        @if(Auth::user()->role === 'user')
+                            if (data.is_full_access) {
+                                $('#unlockDetailBtn').hide();
+                                $('#printDetailBtn').removeClass('d-none');
+                                $('#downloadPdfBtn').removeClass('d-none');
+                            } else {
+                                $('#unlockDetailBtn').show();
+                                $('#printDetailBtn').addClass('d-none');
+                                $('#downloadPdfBtn').addClass('d-none');
+                            }
+                        @else
+                            $('#unlockDetailBtn').hide();
+                            $('#printDetailBtn').removeClass('d-none');
+                            $('#downloadPdfBtn').removeClass('d-none');
+                        @endif
+                    @else
                         $('#unlockDetailBtn').hide();
-                    } else {
-                        $('#unlockDetailBtn').show();
-                    }
+                        $('#printDetailBtn').addClass('d-none');
+                        $('#downloadPdfBtn').addClass('d-none');
+                    @endauth
 
                     const modal = new bootstrap.Modal(document.getElementById('detailModal'));
                     modal.show();
@@ -1081,6 +1006,9 @@ $(document).ready(function() {
     });
 
     function showFullDetail(data) {
+        // Update current data
+        currentDetailData = data;
+
         let jenisLaporanHtml = '';
         if (Array.isArray(data.jenis_laporan)) {
             data.jenis_laporan.forEach(function(jenis) {
@@ -1090,40 +1018,246 @@ $(document).ready(function() {
             jenisLaporanHtml = `<span class="badge bg-warning text-dark">${data.jenis_laporan}</span>`;
         }
 
+        let statusPenangananHtml = '';
+        if (Array.isArray(data.status_penanganan)) {
+            data.status_penanganan.forEach(function(status) {
+                statusPenangananHtml += `<span class="badge bg-info text-dark me-2 mb-2">${status}</span>`;
+            });
+        }
+
+        let fotoPenyewaHtml = '';
+        if (Array.isArray(data.foto_penyewa) && data.foto_penyewa.length > 0) {
+            data.foto_penyewa.forEach(function(foto) {
+                fotoPenyewaHtml += `<img src="/storage/${foto}" class="img-thumbnail me-2 mb-2" style="max-width: 100px; max-height: 100px;">`;
+            });
+        }
+
+        let fotoKtpSimHtml = '';
+        if (Array.isArray(data.foto_ktp_sim) && data.foto_ktp_sim.length > 0) {
+            data.foto_ktp_sim.forEach(function(foto) {
+                fotoKtpSimHtml += `<img src="/storage/${foto}" class="img-thumbnail me-2 mb-2" style="max-width: 100px; max-height: 100px;">`;
+            });
+        }
+
+        let buktiHtml = '';
+        if (Array.isArray(data.bukti) && data.bukti.length > 0) {
+            data.bukti.forEach(function(bukti) {
+                const fileName = bukti.split('/').pop();
+                const extension = fileName.split('.').pop().toLowerCase();
+                if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) {
+                    buktiHtml += `<img src="/storage/${bukti}" class="img-thumbnail me-2 mb-2" style="max-width: 100px; max-height: 100px;">`;
+                } else {
+                    buktiHtml += `<a href="/storage/${bukti}" target="_blank" class="btn btn-sm btn-outline-primary me-2 mb-2">${fileName}</a>`;
+                }
+            });
+        }
+
         $('#detailContent').html(`
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label fw-medium text-primary">Nama Lengkap</label>
-                    <p class="mb-0">${data.nama_lengkap}</p>
+            <!-- 1. Informasi Penyewa -->
+            <div class="card mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0"><i class="fas fa-user me-2"></i>Informasi Penyewa</h6>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-medium text-primary">NIK</label>
-                    <p class="mb-0">${data.nik}</p>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium text-primary">Nama Lengkap</label>
+                            <p class="mb-0">${data.nama_lengkap || 'Tidak ada data'}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium text-primary">NIK</label>
+                            <p class="mb-0">${data.nik || 'Tidak ada data'}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium text-primary">Jenis Kelamin</label>
+                            <p class="mb-0">${data.jenis_kelamin ? (data.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan') : 'Tidak ada data'}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium text-primary">No HP</label>
+                            <p class="mb-0">${data.no_hp || 'Tidak ada data'}</p>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-medium text-primary">Alamat Lengkap</label>
+                            <p class="mb-0">${data.alamat || 'Tidak ada data'}</p>
+                        </div>
+                        ${fotoPenyewaHtml ? `
+                        <div class="col-12">
+                            <label class="form-label fw-medium text-primary">Foto Penyewa</label>
+                            <div>${fotoPenyewaHtml}</div>
+                        </div>
+                        ` : ''}
+                        ${fotoKtpSimHtml ? `
+                        <div class="col-12">
+                            <label class="form-label fw-medium text-primary">Foto KTP/SIM</label>
+                            <div>${fotoKtpSimHtml}</div>
+                        </div>
+                        ` : ''}
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-medium text-primary">No HP</label>
-                    <p class="mb-0">${data.no_hp}</p>
+            </div>
+
+            <!-- 2. Informasi Pelapor -->
+            <div class="card mb-3">
+                <div class="card-header bg-success text-white">
+                    <h6 class="mb-0"><i class="fas fa-building me-2"></i>Informasi Pelapor</h6>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-medium text-primary">Jenis Rental</label>
-                    <p class="mb-0">${data.jenis_rental}</p>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium text-primary">Nama Perusahaan Rental</label>
+                            <p class="mb-0">${data.nama_perusahaan_rental || 'Tidak ada data'}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium text-primary">Nama Penanggung Jawab</label>
+                            <p class="mb-0">${data.nama_penanggung_jawab || 'Tidak ada data'}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium text-primary">No WhatsApp</label>
+                            <p class="mb-0">${data.no_wa_pelapor || 'Tidak ada data'}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium text-primary">Email</label>
+                            <p class="mb-0">${data.email_pelapor || 'Tidak ada data'}</p>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-medium text-primary">Alamat Usaha</label>
+                            <p class="mb-0">${data.alamat_usaha || 'Tidak ada data'}</p>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-medium text-primary">Website Usaha</label>
+                            <p class="mb-0">${data.website_usaha || 'Tidak ada data'}</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-medium text-primary">Jumlah Laporan</label>
-                    <p class="mb-0"><span class="badge bg-danger">${data.jumlah_laporan} Laporan</span></p>
+            </div>
+
+            <!-- 3. Detail Masalah -->
+            <div class="card mb-3">
+                <div class="card-header bg-danger text-white">
+                    <h6 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Detail Masalah</h6>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-medium text-primary">Tanggal Kejadian</label>
-                    <p class="mb-0">${data.tanggal_kejadian}</p>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium text-primary">Kategori Rental</label>
+                            <p class="mb-0">${data.jenis_rental || 'Tidak ada data'}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium text-primary">Tanggal Sewa</label>
+                            <p class="mb-0">${data.tanggal_sewa || 'Tidak ada data'}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium text-primary">Tanggal Kejadian</label>
+                            <p class="mb-0">${data.tanggal_kejadian || 'Tidak ada data'}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium text-primary">Jenis Kendaraan/Barang</label>
+                            <p class="mb-0">${data.jenis_kendaraan || 'Tidak ada data'}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium text-primary">Nomor Polisi</label>
+                            <p class="mb-0">${data.nomor_polisi || 'Tidak ada data'}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium text-primary">Nilai Kerugian</label>
+                            <p class="mb-0">${data.nilai_kerugian ? 'Rp ' + parseInt(data.nilai_kerugian).toLocaleString('id-ID') : 'Tidak ada data'}</p>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-medium text-primary">Jenis Laporan</label>
+                            <div>${jenisLaporanHtml || 'Tidak ada data'}</div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-medium text-primary">Kronologi Kejadian</label>
+                            <div class="alert alert-warning">${data.kronologi || 'Tidak ada data'}</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-12">
-                    <label class="form-label fw-medium text-primary">Alamat Lengkap</label>
-                    <p class="mb-0">${data.alamat}</p>
+            </div>
+
+            <!-- 4. Status Penanganan -->
+            ${statusPenangananHtml ? `
+            <div class="card mb-3">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0"><i class="fas fa-gavel me-2"></i>Status Penanganan</h6>
                 </div>
-                <div class="col-12">
-                    <label class="form-label fw-medium text-primary">Jenis Laporan</label>
-                    <div>${jenisLaporanHtml}</div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label fw-medium text-primary">Status Penanganan</label>
+                            <div>${statusPenangananHtml}</div>
+                        </div>
+                        ${data.status_lainnya ? `
+                        <div class="col-12">
+                            <label class="form-label fw-medium text-primary">Status Lainnya</label>
+                            <p class="mb-0">${data.status_lainnya}</p>
+                        </div>
+                        ` : ''}
+                    </div>
                 </div>
+            </div>
+            ` : ''}
+
+            <!-- 5. Bukti Pendukung -->
+            ${buktiHtml ? `
+            <div class="card mb-3">
+                <div class="card-header bg-warning text-dark">
+                    <h6 class="mb-0"><i class="fas fa-paperclip me-2"></i>Bukti Pendukung</h6>
+                </div>
+                <div class="card-body">
+                    <div>${buktiHtml}</div>
+                </div>
+            </div>
+            ` : ''}
+
+            <!-- 6. Informasi Sistem -->
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Informasi Sistem</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium text-primary">Status Validitas</label>
+                            <p class="mb-0"><span class="badge bg-success">${data.status_validitas}</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium text-primary">Jumlah Laporan (NIK ini)</label>
+                            <p class="mb-0"><span class="badge bg-danger">${data.jumlah_laporan} Laporan</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium text-primary">Pelapor</label>
+                            <p class="mb-0">
+                                ${data.pelapor_role === 'pengusaha_rental' ?
+                                    `<a href="/rental/${data.pelapor_id}/profil" class="text-decoration-none fw-bold text-success">
+                                        <i class="fas fa-building me-1"></i>${data.pelapor}
+                                    </a>` :
+                                    data.pelapor
+                                }
+                                ${data.is_verified ? '<i class="fas fa-check-circle text-primary ms-2" title="Rental Terverifikasi"></i>' : ''}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium text-primary">Tanggal Dibuat</label>
+                            <p class="mb-0">${data.created_at}</p>
+                        </div>
+                        ${data.jumlah_laporan > 1 ? `
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                <i class="fas fa-history me-2"></i>
+                                <strong>Multiple Reports:</strong> Terlapor ini memiliki ${data.jumlah_laporan} laporan.
+                                <a href="/laporan/${data.nik}/timeline" class="alert-link">Lihat Timeline Lengkap</a>
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+        `);
+
+        // Show print and PDF buttons
+        $('#unlockDetailBtn').hide();
+        $('#printDetailBtn').removeClass('d-none');
+        $('#downloadPdfBtn').removeClass('d-none');
                 <div class="col-12">
                     <label class="form-label fw-medium text-primary">Kronologi Kejadian</label>
                     <div class="alert alert-warning">
@@ -1180,6 +1314,24 @@ $(document).ready(function() {
     }
     @endif
     @endauth
+
+    // Print detail function
+    window.printDetail = function() {
+        if (!currentDetailId) {
+            alert('Data tidak tersedia untuk dicetak');
+            return;
+        }
+        window.open(`/cetak-detail/${currentDetailId}`, '_blank');
+    };
+
+    // Download PDF function
+    window.downloadPDF = function() {
+        if (!currentDetailId) {
+            alert('Data tidak tersedia untuk diunduh');
+            return;
+        }
+        window.open(`/unduh-pdf/${currentDetailId}`, '_blank');
+    };
 });
 </script>
 @endpush
