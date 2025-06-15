@@ -237,6 +237,13 @@
                         <i class="fas fa-user me-1"></i>
                         {{ $report->user->name }}
                     </p>
+                    @if(Auth::user()->role === 'pengusaha_rental')
+                    <div class="mt-2">
+                        <button onclick="showRentalDetail({{ $report->id }})" class="btn btn-sm btn-primary">
+                            <i class="fas fa-eye me-1"></i> Lihat Detail
+                        </button>
+                    </div>
+                    @endif
                 </div>
                 @empty
                 <div class="card-body text-center py-5">
@@ -258,6 +265,9 @@
                                 <th class="border-0">Status</th>
                                 <th class="border-0">Pelapor</th>
                                 <th class="border-0">Tanggal</th>
+                                @if(Auth::user()->role === 'pengusaha_rental')
+                                <th class="border-0">Aksi</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -286,6 +296,13 @@
                                 <td class="align-middle">
                                     <small class="text-muted">{{ $report->created_at->format('d/m/Y') }}</small>
                                 </td>
+                                @if(Auth::user()->role === 'pengusaha_rental')
+                                <td class="align-middle">
+                                    <button onclick="showRentalDetail({{ $report->id }})" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-eye me-1"></i> Lihat Detail
+                                    </button>
+                                </td>
+                                @endif
                             </tr>
                             @empty
                             <tr>
@@ -302,6 +319,44 @@
         </div>
     </div>
 </div>
+
+@if(Auth::user()->role === 'pengusaha_rental')
+<!-- Rental Detail Modal -->
+<div class="modal fade" id="rentalDetailModal" tabindex="-1" aria-labelledby="rentalDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rentalDetailModalLabel">
+                    <i class="fas fa-eye me-2"></i>
+                    Detail Laporan Blacklist
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="rentalDetailContent">
+                    <!-- Content will be loaded here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>
+                    Tutup
+                </button>
+                <button type="button" class="btn btn-info" onclick="printRentalDetail()">
+                    <i class="fas fa-print me-2"></i>
+                    Print
+                </button>
+                <button type="button" class="btn btn-primary" onclick="downloadRentalPDF()">
+                    <i class="fas fa-download me-2"></i>
+                    Download PDF
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
 @endsection
 
 @push('scripts')
@@ -396,13 +451,18 @@ $(document).ready(function() {
                                     </small>
                                 </div>
                             </div>
-                            ${item.can_edit ? `
-                                <div class="ms-3">
+                            <div class="ms-3">
+                                @if(Auth::user()->role === 'pengusaha_rental')
+                                <button onclick="showRentalDetail(${item.id})" class="btn btn-sm btn-primary mb-1">
+                                    <i class="fas fa-eye"></i> Detail
+                                </button>
+                                @endif
+                                ${item.can_edit ? `
                                     <a href="/dasbor/daftar-hitam/${item.id}/edit" class="btn btn-sm btn-outline-primary">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                </div>
-                            ` : ''}
+                                ` : ''}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -430,6 +490,133 @@ $(document).ready(function() {
         $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Memuat...');
         loadDashboardSearchResults(false);
     });
+
+    @if(Auth::user()->role === 'pengusaha_rental')
+    // Rental detail function
+    window.showRentalDetail = function(id) {
+        // Show loading
+        $('#rentalDetailModal').modal('show');
+        $('#rentalDetailContent').html('<div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-2x"></i><p class="mt-2">Memuat data...</p></div>');
+
+        // Fetch detail data
+        $.ajax({
+            url: `/api/blacklist/${id}`,
+            method: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    displayRentalDetailModal(response.data);
+                } else {
+                    $('#rentalDetailContent').html('<div class="alert alert-danger">Gagal memuat data</div>');
+                }
+            },
+            error: function() {
+                $('#rentalDetailContent').html('<div class="alert alert-danger">Terjadi kesalahan saat memuat data</div>');
+            }
+        });
+    };
+
+    function displayRentalDetailModal(data) {
+        const content = `
+            <div class="row">
+                <div class="col-md-6">
+                    <h6 class="text-primary mb-3"><i class="fas fa-user me-2"></i>Data Pribadi</h6>
+                    <table class="table table-sm">
+                        <tr><td><strong>Nama Lengkap:</strong></td><td>${data.nama_lengkap}</td></tr>
+                        <tr><td><strong>NIK:</strong></td><td>${data.nik}</td></tr>
+                        <tr><td><strong>No. HP:</strong></td><td>${data.no_hp}</td></tr>
+                        <tr><td><strong>Alamat:</strong></td><td>${data.alamat || '-'}</td></tr>
+                        <tr><td><strong>Jenis Kelamin:</strong></td><td>${data.jenis_kelamin || '-'}</td></tr>
+                        <tr><td><strong>Tanggal Lahir:</strong></td><td>${data.tanggal_lahir || '-'}</td></tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="text-danger mb-3"><i class="fas fa-exclamation-triangle me-2"></i>Data Laporan</h6>
+                    <table class="table table-sm">
+                        <tr><td><strong>Jenis Rental:</strong></td><td>${data.jenis_rental}</td></tr>
+                        <tr><td><strong>Kronologi:</strong></td><td>${data.kronologi || '-'}</td></tr>
+                        <tr><td><strong>Kerugian:</strong></td><td>${data.kerugian_finansial ? 'Rp ' + new Intl.NumberFormat('id-ID').format(data.kerugian_finansial) : '-'}</td></tr>
+                        <tr><td><strong>Status:</strong></td><td><span class="badge ${data.status_validitas === 'Valid' ? 'bg-success' : data.status_validitas === 'Pending' ? 'bg-warning' : 'bg-danger'}">${data.status_validitas}</span></td></tr>
+                        <tr><td><strong>Pelapor:</strong></td><td>${data.user ? data.user.name : '-'}</td></tr>
+                        <tr><td><strong>Tanggal Laporan:</strong></td><td>${new Date(data.created_at).toLocaleDateString('id-ID')}</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            ${data.bukti_pendukung && data.bukti_pendukung.length > 0 ? `
+                <div class="mt-4">
+                    <h6 class="text-info mb-3"><i class="fas fa-paperclip me-2"></i>Bukti Pendukung</h6>
+                    <div class="row">
+                        ${data.bukti_pendukung.map(file => `
+                            <div class="col-md-3 mb-2">
+                                <div class="card">
+                                    <div class="card-body text-center p-2">
+                                        ${file.includes('.jpg') || file.includes('.jpeg') || file.includes('.png') || file.includes('.gif') ?
+                                            `<img src="/storage/${file}" class="img-fluid" style="max-height: 100px;">` :
+                                            `<i class="fas fa-file fa-3x text-muted"></i>`
+                                        }
+                                        <p class="small mt-1 mb-0">${file.split('/').pop()}</p>
+                                        <a href="/storage/${file}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-download"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            ` : ''}
+        `;
+
+        $('#rentalDetailContent').html(content);
+    }
+
+    // Print function
+    window.printRentalDetail = function() {
+        const content = $('#rentalDetailContent').html();
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>Detail Laporan Blacklist - CekPenyewa.com</title>
+                    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+                    <style>
+                        @media print {
+                            .btn { display: none !important; }
+                        }
+                        .watermark {
+                            position: fixed;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%) rotate(-45deg);
+                            font-size: 6rem;
+                            color: rgba(218, 53, 68, 0.1);
+                            z-index: -1;
+                            pointer-events: none;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="watermark">CekPenyewa.com</div>
+                    <div class="container mt-4">
+                        <div class="text-center mb-4">
+                            <h3>Detail Laporan Blacklist</h3>
+                            <p class="text-muted">CekPenyewa.com - ${new Date().toLocaleDateString('id-ID')}</p>
+                        </div>
+                        ${content}
+                    </div>
+                </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+    };
+
+    // Download PDF function
+    window.downloadRentalPDF = function() {
+        // Simple implementation - you can enhance this with jsPDF
+        printRentalDetail();
+    };
+    @endif
 });
 </script>
 @endpush

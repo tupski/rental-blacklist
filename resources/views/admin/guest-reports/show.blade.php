@@ -220,7 +220,7 @@
                     <i class="fas fa-edit"></i> Edit Laporan
                 </a>
 
-                <form action="{{ route('admin.guest-reports.destroy', $guestReport->id) }}" method="POST" class="mt-2">
+                <form action="{{ route('admin.laporan-tamu.hapus', $guestReport) }}" method="POST" class="mt-2">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger btn-block"
@@ -304,7 +304,7 @@
                     <span>&times;</span>
                 </button>
             </div>
-            <form action="{{ route('admin.laporan-tamu.tolak', $guestReport->id) }}" method="POST">
+            <form action="{{ route('admin.laporan-tamu.tolak', $guestReport) }}" method="POST">
                 @csrf
                 <div class="modal-body">
                     <div class="form-group">
