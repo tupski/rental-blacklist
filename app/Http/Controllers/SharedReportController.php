@@ -61,7 +61,7 @@ class SharedReportController extends Controller
             'blacklist_id' => $id,
             'user_id' => $user->id,
             'password' => Hash::make($request->password),
-            'expires_at' => now()->addHours($request->duration),
+            'expires_at' => now()->addHours((int) $request->duration),
             'one_time_view' => $request->boolean('one_time_view', false)
         ]);
 
