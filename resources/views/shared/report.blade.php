@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Berbagi - {{ $sharedReport->blacklist->nama_lengkap }} - CekPenyewa.com</title>
+    <title>Berbagi Laporan - {{ $sharedReport->blacklist->nama_lengkap }} - CekPenyewa.com</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -107,12 +107,12 @@
                             <i class="fas fa-shield-alt me-2"></i>
                             CekPenyewa.com
                         </div>
-                        <p class="mb-0">Laporan Berbagi - Data Sensitif</p>
+                        <p class="mb-0">Berbagi Laporan - Data Sensitif</p>
                     </div>
                     <div class="col-md-6 text-md-end">
                         <small>
-                            Dibagikan oleh: {{ $sharedReport->user->name }}<br>
-                            Berlaku hingga: {{ $sharedReport->formatted_expiry }}
+                            Dibagikan oleh: <b>{{ $sharedReport->user->name }}</b><br>
+                            Berlaku hingga: <b>{{ $sharedReport->formatted_expiry }}</b>
                         </small>
                     </div>
                 </div>
@@ -128,21 +128,21 @@
     <div class="container">
         @php
             $blacklist = $sharedReport->blacklist;
-            
+
             // Helper function untuk sensor data
             function censorData($data, $showUncensored) {
                 if ($showUncensored) {
                     return $data;
                 }
-                
+
                 if (strlen($data) <= 3) {
                     return str_repeat('*', strlen($data));
                 }
-                
+
                 $firstChar = substr($data, 0, 1);
                 $lastChar = substr($data, -1);
                 $middle = str_repeat('*', strlen($data) - 2);
-                
+
                 return $firstChar . $middle . $lastChar;
             }
         @endphp
@@ -336,7 +336,7 @@
 
         // Disable F12, Ctrl+Shift+I, Ctrl+U
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'F12' || 
+            if (e.key === 'F12' ||
                 (e.ctrlKey && e.shiftKey && e.key === 'I') ||
                 (e.ctrlKey && e.key === 'u')) {
                 e.preventDefault();

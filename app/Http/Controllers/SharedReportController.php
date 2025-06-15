@@ -88,6 +88,9 @@ class SharedReportController extends Controller
             return view('shared.expired', compact('sharedReport'));
         }
 
+        // Clear any previous session data for security
+        session()->forget('shared_report_verified_' . $token);
+
         return view('shared.password', compact('sharedReport'));
     }
 
@@ -121,10 +124,46 @@ class SharedReportController extends Controller
         // Mark as accessed
         $sharedReport->markAsAccessed();
 
+        // Set session to indicate user has verified password
+        session(['shared_report_verified_' . $token => true]);
+
+        // Redirect to report page instead of showing directly
+        return redirect()->route('shared.report', $token);
+    }
+
+    /**
+     * Show shared report (with session verification)
+     */
+    public function showReport($token)
+    {
+        $sharedReport = SharedReport::with(['blacklist', 'user'])
+            ->where('token', $token)
+            ->firstOrFail();
+
+        if (!$sharedReport->isValid()) {
+            return view('shared.expired', compact('sharedReport'));
+        }
+
+        // Check if user has verified password in this session
+        if (!session('shared_report_verified_' . $token)) {
+            return redirect()->route('shared.view', $token)
+                ->with('info', 'Silakan masukkan password untuk mengakses laporan.');
+        }
+
         // Determine if data should be uncensored
         $showUncensored = $sharedReport->canAccessUncensoredData();
 
         return view('shared.report', compact('sharedReport', 'showUncensored'));
+    }
+
+    /**
+     * Redirect to password form when accessing verify URL with GET method
+     */
+    public function redirectToPasswordForm($token)
+    {
+        // Redirect back to password form with info message
+        return redirect()->route('shared.view', $token)
+            ->with('info', 'Silakan masukkan password untuk mengakses laporan.');
     }
 
     /**

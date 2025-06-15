@@ -118,6 +118,13 @@
                             </div>
                         </div>
 
+                        @if(session('info'))
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                {{ session('info') }}
+                            </div>
+                        @endif
+
                         @if($errors->any())
                             <div class="alert alert-danger">
                                 <i class="fas fa-exclamation-circle me-2"></i>

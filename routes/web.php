@@ -52,6 +52,8 @@ Route::get('/detail-laporan/{id}', [PublicRentalController::class, 'reportDetail
 // Shared report routes
 Route::get('/berbagi/{token}', [App\Http\Controllers\SharedReportController::class, 'view'])->name('shared.view');
 Route::post('/berbagi/{token}/verifikasi', [App\Http\Controllers\SharedReportController::class, 'verify'])->name('shared.verify');
+Route::get('/berbagi/{token}/verifikasi', [App\Http\Controllers\SharedReportController::class, 'redirectToPasswordForm'])->name('shared.verify.get');
+Route::get('/berbagi/{token}/laporan', [App\Http\Controllers\SharedReportController::class, 'showReport'])->name('shared.report');
 
 // Guest reporting (no authentication required)
 Route::get('/lapor', [ReportController::class, 'create'])->name('laporan.buat');
