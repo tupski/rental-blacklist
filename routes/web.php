@@ -25,6 +25,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [PublicController::class, 'index'])->name('beranda');
 Route::post('/cari', [PublicController::class, 'search'])->name('publik.cari');
 Route::get('/detail/{id}', [PublicController::class, 'detail'])->name('publik.detail');
+Route::get('/share/{token}', [PublicController::class, 'viewSharedReport'])->name('publik.share');
+Route::post('/share/{token}/verify', [PublicController::class, 'verifySharedReport'])->name('publik.share.verify');
 
 // Public information pages
 Route::get('/sponsor', [SponsorController::class, 'index'])->name('sponsor.indeks');
@@ -103,6 +105,8 @@ Route::middleware('auth')->group(function () {
         Route::put('/{id}', [BlacklistController::class, 'update'])->name('perbarui');
         Route::delete('/{id}', [BlacklistController::class, 'destroy'])->name('hapus');
         Route::post('/cari', [BlacklistController::class, 'searchForDashboard'])->name('cari');
+        Route::get('/{id}/pdf', [BlacklistController::class, 'generatePDF'])->name('pdf');
+        Route::post('/{id}/share', [BlacklistController::class, 'generateShareLink'])->name('share');
     });
 
     // Invoice routes
