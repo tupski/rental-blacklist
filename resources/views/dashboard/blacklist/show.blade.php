@@ -427,7 +427,7 @@
 function deleteBlacklist(id) {
     if (confirm('Apakah Anda yakin ingin menghapus laporan ini?')) {
         $.ajax({
-            url: `/dashboard/blacklist/${id}`,
+            url: `/dasbor/daftar-hitam/${id}`,
             method: 'DELETE',
             data: {
                 _token: '{{ csrf_token() }}'

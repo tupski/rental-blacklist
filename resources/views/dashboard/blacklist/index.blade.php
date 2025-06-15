@@ -267,7 +267,7 @@ $(document).ready(function() {
                                     <i class="fas fa-eye"></i>
                                 </button>
                                 ${canEdit ? `
-                                    <a href="/dashboard/blacklist/${item.id}/edit" class="btn btn-outline-success btn-sm" title="Edit">
+                                    <a href="/dasbor/daftar-hitam/${item.id}/edit" class="btn btn-outline-success btn-sm" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <button onclick="deleteBlacklist(${item.id})" class="btn btn-outline-danger btn-sm" title="Hapus">
@@ -295,7 +295,7 @@ $(document).ready(function() {
     // Global functions
     window.showDetail = function(id) {
         $.ajax({
-            url: `/dashboard/blacklist/${id}`,
+            url: `/dasbor/daftar-hitam/${id}`,
             method: 'GET',
             success: function(response) {
                 if (response.success) {
@@ -385,7 +385,7 @@ $(document).ready(function() {
     window.deleteBlacklist = function(id) {
         if (confirm('Apakah Anda yakin ingin menghapus laporan ini?')) {
             $.ajax({
-                url: `/dashboard/blacklist/${id}`,
+                url: `/dasbor/daftar-hitam/${id}`,
                 method: 'DELETE',
                 data: {
                     _token: '{{ csrf_token() }}'
