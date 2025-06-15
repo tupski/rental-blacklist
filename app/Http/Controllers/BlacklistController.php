@@ -14,36 +14,54 @@ class BlacklistController extends Controller
 
     public function index(Request $request)
     {
-        // Filter hanya laporan dari user yang sedang login
-        $query = RentalBlacklist::with('user')->where('user_id', Auth::id());
+        // Get user's own reports
+        $myReportsQuery = RentalBlacklist::with('user')
+            ->where('user_id', Auth::id())
+            ->latest();
 
+        // Get all reports
+        $allReportsQuery = RentalBlacklist::with('user')->latest();
+
+        // Apply filters to both queries
         if ($request->has('search') && $request->cari) {
-            $query->search($request->cari);
+            $myReportsQuery->search($request->cari);
+            $allReportsQuery->search($request->cari);
         }
 
         if ($request->has('jenis_rental') && $request->jenis_rental) {
-            $query->where('jenis_rental', $request->jenis_rental);
+            $myReportsQuery->where('jenis_rental', $request->jenis_rental);
+            $allReportsQuery->where('jenis_rental', $request->jenis_rental);
         }
 
         if ($request->has('status') && $request->status) {
-            $query->where('status_validitas', $request->status);
+            $myReportsQuery->where('status_validitas', $request->status);
+            $allReportsQuery->where('status_validitas', $request->status);
         }
 
-        $blacklists = $query->latest()->paginate(10);
+        $myReports = $myReportsQuery->paginate(10, ['*'], 'my_page');
+        $allReports = $allReportsQuery->paginate(10, ['*'], 'all_page');
 
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
-                'data' => $blacklists->items(),
+                'my_reports' => $myReports->items(),
+                'all_reports' => $allReports->items(),
                 'pagination' => [
-                    'current_page' => $blacklists->currentPage(),
-                    'last_page' => $blacklists->lastPage(),
-                    'total' => $blacklists->total()
+                    'my_reports' => [
+                        'current_page' => $myReports->currentPage(),
+                        'last_page' => $myReports->lastPage(),
+                        'total' => $myReports->total()
+                    ],
+                    'all_reports' => [
+                        'current_page' => $allReports->currentPage(),
+                        'last_page' => $allReports->lastPage(),
+                        'total' => $allReports->total()
+                    ]
                 ]
             ]);
         }
 
-        return view('dashboard.blacklist.index', compact('blacklists'));
+        return view('dashboard.blacklist.index', compact('myReports', 'allReports'));
     }
 
     public function create()

@@ -84,80 +84,161 @@
     <!-- Results -->
     <div id="results">
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-light border-0">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-database me-2 text-primary"></i>
-                    Data Laporan
-                </h5>
+            <div class="card-header bg-light border-0 p-0">
+                <!-- Tabs -->
+                <ul class="nav nav-tabs" id="reportTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="my-reports-tab" data-bs-toggle="tab" data-bs-target="#my-reports" type="button" role="tab">
+                            <i class="fas fa-user me-2"></i>Laporan Saya
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="all-reports-tab" data-bs-toggle="tab" data-bs-target="#all-reports" type="button" role="tab">
+                            <i class="fas fa-list me-2"></i>Semua Laporan
+                        </button>
+                    </li>
+                </ul>
             </div>
 
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Nama</th>
-                            <th>NIK</th>
-                            <th>Jenis Rental</th>
-                            <th>Status</th>
-                            <th>Pelapor</th>
-                            <th>Tanggal</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="blacklistTableBody">
-                        @forelse($blacklists as $blacklist)
-                        <tr>
-                            <td>
-                                <div class="fw-medium">{{ $blacklist->nama_lengkap }}</div>
-                                <small class="text-muted">{{ $blacklist->no_hp }}</small>
-                            </td>
-                            <td>{{ $blacklist->nik }}</td>
-                            <td>{{ $blacklist->jenis_rental }}</td>
-                            <td>
-                                <span class="badge
-                                    @if($blacklist->status_validitas === 'Valid') bg-success
-                                    @elseif($blacklist->status_validitas === 'Pending') bg-warning
-                                    @else bg-danger @endif">
-                                    {{ $blacklist->status_validitas }}
-                                </span>
-                            </td>
-                            <td>{{ $blacklist->user->name }}</td>
-                            <td>
-                                <small class="text-muted">{{ $blacklist->created_at->format('d/m/Y') }}</small>
-                            </td>
-                            <td>
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <button onclick="showDetail({{ $blacklist->id }})" class="btn btn-outline-primary btn-sm" title="Lihat Detail">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    @if($blacklist->user_id === Auth::id())
-                                        <a href="{{ route('dasbor.daftar-hitam.edit', $blacklist->id) }}" class="btn btn-outline-success btn-sm" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <button onclick="deleteBlacklist({{ $blacklist->id }})" class="btn btn-outline-danger btn-sm" title="Hapus">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    @endif
-                                </div>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="7" class="text-center text-muted py-4">
-                                Belum ada data laporan
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+            <div class="tab-content" id="reportTabsContent">
+                <!-- Tab Laporan Saya -->
+                <div class="tab-pane fade show active" id="my-reports" role="tabpanel">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Nama</th>
+                                    <th>NIK</th>
+                                    <th>Jenis Rental</th>
+                                    <th>Status</th>
+                                    <th>Tanggal</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="myReportsTableBody">
+                                @forelse($myReports as $blacklist)
+                                <tr>
+                                    <td>
+                                        <div class="fw-medium">{{ $blacklist->nama_lengkap }}</div>
+                                        <small class="text-muted">{{ $blacklist->no_hp }}</small>
+                                    </td>
+                                    <td>{{ $blacklist->nik }}</td>
+                                    <td>{{ $blacklist->jenis_rental }}</td>
+                                    <td>
+                                        <span class="badge
+                                            @if($blacklist->status_validitas === 'Valid') bg-success
+                                            @elseif($blacklist->status_validitas === 'Pending') bg-warning
+                                            @else bg-danger @endif">
+                                            {{ $blacklist->status_validitas }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">{{ $blacklist->created_at->format('d/m/Y') }}</small>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button onclick="showDetail({{ $blacklist->id }})" class="btn btn-outline-primary btn-sm" title="Lihat Detail">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <a href="{{ route('dasbor.daftar-hitam.edit', $blacklist->id) }}" class="btn btn-outline-success btn-sm" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button onclick="deleteBlacklist({{ $blacklist->id }})" class="btn btn-outline-danger btn-sm" title="Hapus">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">
+                                        Anda belum memiliki laporan
+                                    </td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
 
-            <!-- Pagination -->
-            @if($blacklists->hasPages())
-            <div class="card-footer bg-light">
-                {{ $blacklists->links() }}
+                    <!-- Pagination for My Reports -->
+                    @if($myReports->hasPages())
+                    <div class="card-footer bg-light">
+                        {{ $myReports->links() }}
+                    </div>
+                    @endif
+                </div>
+
+                <!-- Tab Semua Laporan -->
+                <div class="tab-pane fade" id="all-reports" role="tabpanel">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Nama</th>
+                                    <th>NIK</th>
+                                    <th>Jenis Rental</th>
+                                    <th>Status</th>
+                                    <th>Pelapor</th>
+                                    <th>Tanggal</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allReportsTableBody">
+                                @forelse($allReports as $blacklist)
+                                <tr>
+                                    <td>
+                                        <div class="fw-medium">{{ $blacklist->nama_lengkap }}</div>
+                                        <small class="text-muted">{{ $blacklist->no_hp }}</small>
+                                    </td>
+                                    <td>{{ $blacklist->nik }}</td>
+                                    <td>{{ $blacklist->jenis_rental }}</td>
+                                    <td>
+                                        <span class="badge
+                                            @if($blacklist->status_validitas === 'Valid') bg-success
+                                            @elseif($blacklist->status_validitas === 'Pending') bg-warning
+                                            @else bg-danger @endif">
+                                            {{ $blacklist->status_validitas }}
+                                        </span>
+                                    </td>
+                                    <td>{{ $blacklist->user->name }}</td>
+                                    <td>
+                                        <small class="text-muted">{{ $blacklist->created_at->format('d/m/Y') }}</small>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button onclick="showDetail({{ $blacklist->id }})" class="btn btn-outline-primary btn-sm" title="Lihat Detail">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            @if($blacklist->user_id === Auth::id())
+                                                <a href="{{ route('dasbor.daftar-hitam.edit', $blacklist->id) }}" class="btn btn-outline-success btn-sm" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <button onclick="deleteBlacklist({{ $blacklist->id }})" class="btn btn-outline-danger btn-sm" title="Hapus">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted py-4">
+                                        Belum ada data laporan
+                                    </td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination for All Reports -->
+                    @if($allReports->hasPages())
+                    <div class="card-footer bg-light">
+                        {{ $allReports->links() }}
+                    </div>
+                    @endif
+                </div>
             </div>
-            @endif
         </div>
     </div>
 </div>
