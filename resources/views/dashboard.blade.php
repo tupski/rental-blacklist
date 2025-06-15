@@ -349,8 +349,8 @@
                     <i class="fas fa-print me-2"></i>
                     Print
                 </button>
-                <button type="button" class="btn btn-primary" onclick="downloadRentalPDF()">
-                    <i class="fas fa-download me-2"></i>
+                <button type="button" class="btn btn-success" onclick="downloadRentalPDF()">
+                    <i class="fas fa-file-pdf me-2"></i>
                     Download PDF
                 </button>
             </div>
@@ -519,6 +519,8 @@ $(document).ready(function() {
     @if(Auth::user()->role === 'pengusaha_rental')
     // Rental detail function
     window.showRentalDetail = function(id) {
+        currentRentalDetailId = id; // Store current ID for print/PDF
+
         // Show loading
         $('#rentalDetailModal').modal('show');
         $('#rentalDetailContent').html('<div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-2x"></i><p class="mt-2">Memuat data...</p></div>');
@@ -597,50 +599,24 @@ $(document).ready(function() {
 
     // Print function
     window.printRentalDetail = function() {
-        const content = $('#rentalDetailContent').html();
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(`
-            <html>
-                <head>
-                    <title>Detail Laporan Blacklist - CekPenyewa.com</title>
-                    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-                    <style>
-                        @media print {
-                            .btn { display: none !important; }
-                        }
-                        .watermark {
-                            position: fixed;
-                            top: 50%;
-                            left: 50%;
-                            transform: translate(-50%, -50%) rotate(-45deg);
-                            font-size: 6rem;
-                            color: rgba(218, 53, 68, 0.1);
-                            z-index: -1;
-                            pointer-events: none;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="watermark">CekPenyewa.com</div>
-                    <div class="container mt-4">
-                        <div class="text-center mb-4">
-                            <h3>Detail Laporan Blacklist</h3>
-                            <p class="text-muted">CekPenyewa.com - ${new Date().toLocaleDateString('id-ID')}</p>
-                        </div>
-                        ${content}
-                    </div>
-                </body>
-            </html>
-        `);
-        printWindow.document.close();
-        printWindow.print();
+        if (currentRentalDetailId) {
+            window.open(`/rental/cetak-detail/${currentRentalDetailId}`, '_blank');
+        } else {
+            alert('Tidak ada data yang dipilih');
+        }
     };
 
     // Download PDF function
     window.downloadRentalPDF = function() {
-        // Simple implementation - you can enhance this with jsPDF
-        printRentalDetail();
+        if (currentRentalDetailId) {
+            window.open(`/rental/unduh-pdf/${currentRentalDetailId}`, '_blank');
+        } else {
+            alert('Tidak ada data yang dipilih');
+        }
     };
+
+    // Variable to store current detail ID
+    let currentRentalDetailId = null;
     @endif
 });
 </script>

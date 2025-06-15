@@ -139,6 +139,10 @@ Route::middleware(['auth', 'verified', 'role:pengusaha_rental'])->group(function
         ]);
     })->name('rental.blacklist.detail');
 
+    // Print and PDF for rental owners
+    Route::get('/rental/cetak-detail/{id}', [DashboardController::class, 'printDetail'])->name('rental.cetak-detail');
+    Route::get('/rental/unduh-pdf/{id}', [DashboardController::class, 'downloadPDF'])->name('rental.unduh-pdf');
+
     // API Key management
     Route::prefix('kunci-api')->name('kunci-api.')->group(function () {
         Route::get('/', [App\Http\Controllers\ApiKeyController::class, 'show'])->name('tampil');
