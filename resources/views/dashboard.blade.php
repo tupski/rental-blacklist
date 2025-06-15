@@ -313,6 +313,9 @@ $(document).ready(function() {
         performDashboardSearch();
     });
 
+    let currentDashboardSearchQuery = '';
+    let currentDashboardPage = 1;
+
     function performDashboardSearch() {
         const search = $('#dashboardSearchInput').val().trim();
 
@@ -321,21 +324,30 @@ $(document).ready(function() {
             return;
         }
 
+        currentDashboardSearchQuery = search;
+        currentDashboardPage = 1;
+        loadDashboardSearchResults(true);
+    }
+
+    function loadDashboardSearchResults(isNewSearch = false) {
         $('#dashboardSearchBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Mencari...');
 
         $.ajax({
             url: '{{ route('dasbor.daftar-hitam.cari') }}',
             method: 'POST',
             data: {
-                search: search,
+                search: currentDashboardSearchQuery,
+                page: currentDashboardPage,
                 _token: '{{ csrf_token() }}'
             },
             success: function(response) {
                 if (response.success && response.data.length > 0) {
-                    displayDashboardResults(response.data);
+                    displayDashboardResults(response.data, response.pagination, isNewSearch);
                 } else {
-                    $('#dashboardResultsList').html('<p class="text-muted small">Tidak ada data ditemukan</p>');
-                    $('#dashboardSearchResults').removeClass('d-none');
+                    if (isNewSearch) {
+                        $('#dashboardResultsList').html('<p class="text-muted small">Tidak ada data ditemukan</p>');
+                        $('#dashboardSearchResults').removeClass('d-none');
+                    }
                 }
             },
             error: function(xhr) {
@@ -348,8 +360,15 @@ $(document).ready(function() {
         });
     }
 
-    function displayDashboardResults(data) {
+    function displayDashboardResults(data, pagination, isNewSearch = false) {
         let html = '';
+
+        if (isNewSearch) {
+            html = ''; // Clear previous results for new search
+        } else {
+            html = $('#dashboardResultsList').html(); // Append to existing results
+        }
+
         data.forEach(function(item) {
             const statusClass = item.status_validitas === 'Valid' ? 'bg-success' :
                                item.status_validitas === 'Pending' ? 'bg-warning' :
@@ -363,6 +382,7 @@ $(document).ready(function() {
                                 <h6 class="fw-bold text-dark">${item.nama_lengkap}</h6>
                                 <p class="text-muted small mb-1">NIK: ${item.nik}</p>
                                 <p class="text-muted small mb-1">HP: ${item.no_hp}</p>
+                                <p class="text-muted small mb-1">Alamat: ${item.alamat}</p>
                                 <p class="text-muted small mb-2">Rental: ${item.jenis_rental}</p>
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="badge ${statusClass}">
@@ -371,11 +391,14 @@ $(document).ready(function() {
                                     <small class="text-muted">
                                         ${item.jumlah_laporan} laporan
                                     </small>
+                                    <small class="text-muted">
+                                        Pelapor: ${item.pelapor}
+                                    </small>
                                 </div>
                             </div>
                             ${item.can_edit ? `
                                 <div class="ms-3">
-                                    <a href="/dashboard/blacklist/${item.id}/edit" class="btn btn-sm btn-outline-primary">
+                                    <a href="/dasbor/daftar-hitam/${item.id}/edit" class="btn btn-sm btn-outline-primary">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                 </div>
@@ -386,9 +409,27 @@ $(document).ready(function() {
             `;
         });
 
+        // Add load more button if there are more results
+        if (pagination.has_more) {
+            html += `
+                <div class="text-center mt-3">
+                    <button id="loadMoreDashboardBtn" class="btn btn-outline-primary">
+                        <i class="fas fa-plus me-2"></i>Muat Lebih Banyak
+                    </button>
+                </div>
+            `;
+        }
+
         $('#dashboardResultsList').html(html);
         $('#dashboardSearchResults').removeClass('d-none');
     }
+
+    // Handle load more button click
+    $(document).on('click', '#loadMoreDashboardBtn', function() {
+        currentDashboardPage++;
+        $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Memuat...');
+        loadDashboardSearchResults(false);
+    });
 });
 </script>
 @endpush

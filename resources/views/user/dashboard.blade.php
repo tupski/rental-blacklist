@@ -375,6 +375,9 @@ $(document).ready(function() {
         performUserSearch();
     });
 
+    let currentUserSearchQuery = '';
+    let currentUserPage = 1;
+
     function performUserSearch() {
         const search = $('#userSearchInput').val().trim();
 
@@ -383,21 +386,30 @@ $(document).ready(function() {
             return;
         }
 
+        currentUserSearchQuery = search;
+        currentUserPage = 1;
+        loadUserSearchResults(true);
+    }
+
+    function loadUserSearchResults(isNewSearch = false) {
         $('#userSearchBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Mencari...');
 
         $.ajax({
             url: '{{ route('pengguna.cari') }}',
             method: 'POST',
             data: {
-                search: search,
+                search: currentUserSearchQuery,
+                page: currentUserPage,
                 _token: '{{ csrf_token() }}'
             },
             success: function(response) {
                 if (response.success && response.data.length > 0) {
-                    displayUserResults(response.data);
+                    displayUserResults(response.data, response.pagination, isNewSearch);
                 } else {
-                    $('#userResultsList').html('<p class="text-muted small">Tidak ada data ditemukan</p>');
-                    $('#userSearchResults').removeClass('d-none');
+                    if (isNewSearch) {
+                        $('#userResultsList').html('<p class="text-muted small">Tidak ada data ditemukan</p>');
+                        $('#userSearchResults').removeClass('d-none');
+                    }
                 }
             },
             error: function(xhr) {
@@ -410,8 +422,15 @@ $(document).ready(function() {
         });
     }
 
-    function displayUserResults(data) {
+    function displayUserResults(data, pagination, isNewSearch = false) {
         let html = '';
+
+        if (isNewSearch) {
+            html = ''; // Clear previous results for new search
+        } else {
+            html = $('#userResultsList').html(); // Append to existing results
+        }
+
         data.forEach(function(item) {
             const priceFormatted = 'Rp ' + item.price.toLocaleString('id-ID');
             const unlockStatus = item.is_unlocked ?
@@ -456,9 +475,27 @@ $(document).ready(function() {
             `;
         });
 
+        // Add load more button if there are more results
+        if (pagination.has_more) {
+            html += `
+                <div class="text-center mt-3">
+                    <button id="loadMoreUserBtn" class="btn btn-outline-primary">
+                        <i class="fas fa-plus me-2"></i>Muat Lebih Banyak
+                    </button>
+                </div>
+            `;
+        }
+
         $('#userResultsList').html(html);
         $('#userSearchResults').removeClass('d-none');
     }
+
+    // Handle load more button click
+    $(document).on('click', '#loadMoreUserBtn', function() {
+        currentUserPage++;
+        $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Memuat...');
+        loadUserSearchResults(false);
+    });
 
     // Handle unlock button click
     $(document).on('click', '.unlock-btn', function() {

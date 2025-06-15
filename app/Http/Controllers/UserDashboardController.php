@@ -47,14 +47,24 @@ class UserDashboardController extends Controller
     public function search(Request $request)
     {
         $request->validate([
-            'search' => 'required|string|min:3'
+            'search' => 'required|string|min:3',
+            'page' => 'nullable|integer|min:1'
         ]);
 
-        $search = $request->input('cari');
+        $search = $request->input('search');
+        $page = $request->input('page', 1);
+        $perPage = 5;
 
-        $results = RentalBlacklist::search($search)
+        $query = RentalBlacklist::search($search)
             ->where('status_validitas', 'Valid')
-            ->with('user')
+            ->with('user');
+
+        // Get total count for pagination
+        $total = $query->count();
+
+        // Apply pagination
+        $results = $query->skip(($page - 1) * $perPage)
+            ->take($perPage)
             ->get()
             ->map(function ($item) use ($search) {
                 $user = Auth::user();
@@ -110,9 +120,17 @@ class UserDashboardController extends Controller
                 ];
             });
 
+        $hasMore = ($page * $perPage) < $total;
+
         return response()->json([
             'success' => true,
-            'data' => $results
+            'data' => $results,
+            'pagination' => [
+                'current_page' => $page,
+                'per_page' => $perPage,
+                'total' => $total,
+                'has_more' => $hasMore
+            ]
         ]);
     }
 
