@@ -885,7 +885,7 @@ $(document).ready(function() {
                 duration: $('#publicDuration').val(),
                 password: password,
                 password_confirmation: passwordConfirmation,
-                one_time_view: $('#publicOneTimeView').is(':checked'),
+                one_time_view: $('#publicOneTimeView').is(':checked') ? 1 : 0,
                 _token: '{{ csrf_token() }}'
             },
             success: function(response) {

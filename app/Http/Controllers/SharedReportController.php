@@ -19,7 +19,7 @@ class SharedReportController extends Controller
         $validator = Validator::make($request->all(), [
             'duration' => 'required|integer|in:1,3,6,12,24',
             'password' => 'required|string|min:6|confirmed',
-            'one_time_view' => 'boolean'
+            'one_time_view' => 'nullable|boolean'
         ], [
             'duration.required' => 'Durasi harus dipilih',
             'duration.in' => 'Durasi tidak valid',

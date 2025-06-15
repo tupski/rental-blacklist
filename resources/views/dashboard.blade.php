@@ -914,7 +914,7 @@ $(document).ready(function() {
                 duration: $('#duration').val(),
                 password: password,
                 password_confirmation: passwordConfirmation,
-                one_time_view: $('#one_time_view').is(':checked'),
+                one_time_view: $('#one_time_view').is(':checked') ? 1 : 0,
                 _token: '{{ csrf_token() }}'
             },
             success: function(response) {
@@ -1103,7 +1103,7 @@ $(document).ready(function() {
                 duration: $('#userDuration').val(),
                 password: password,
                 password_confirmation: passwordConfirmation,
-                one_time_view: $('#userOneTimeView').is(':checked'),
+                one_time_view: $('#userOneTimeView').is(':checked') ? 1 : 0,
                 _token: '{{ csrf_token() }}'
             },
             success: function(response) {
