@@ -20,7 +20,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'role' => \App\Http\Middleware\RoleMiddleware::class,
+            'account.status' => \App\Http\Middleware\CheckAccountStatus::class,
         ]);
+
+        // Apply account status check to all authenticated routes
+        $middleware->appendToGroup('web', \App\Http\Middleware\CheckAccountStatus::class);
 
         // Redirect unauthenticated users to 'masuk' route instead of 'login'
         $middleware->redirectGuestsTo(fn () => route('masuk'));

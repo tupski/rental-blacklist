@@ -53,6 +53,23 @@ class PublicController extends Controller
             'cari' => 'required|string|min:3'
         ]);
 
+        // Check if user can search
+        if (auth()->check() && !auth()->user()->canSearchData()) {
+            $message = 'Akses pencarian ditolak.';
+            if (!auth()->user()->isActive()) {
+                $message = 'Akun Anda belum aktif. Menunggu persetujuan admin untuk dapat menggunakan fitur pencarian.';
+            } elseif (auth()->user()->requiresEmailVerification()) {
+                $message = 'Email belum diverifikasi. Silakan verifikasi email terlebih dahulu untuk menggunakan fitur pencarian.';
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => $message,
+                'account_status' => auth()->user()->account_status,
+                'email_verified' => auth()->user()->hasVerifiedEmail()
+            ], 403);
+        }
+
         $search = $request->input('cari');
 
         $results = RentalBlacklist::search($search)
@@ -64,28 +81,27 @@ class PublicController extends Controller
                 $isAuthenticated = auth()->check();
                 $user = auth()->user();
 
-
-
-                // Cek apakah user sudah unlock data ini
-                $isUnlocked = $isAuthenticated && $user->hasUnlockedData($item->id);
-
                 // Cek apakah user sudah unlock data ini atau NIK ini
                 $isUnlocked = $isAuthenticated && ($user->hasUnlockedData($item->id) || $user->hasUnlockedNik($item->nik));
 
-                // Tampilkan data tanpa sensor untuk semua user
+                // Check if user can access uncensored data
+                $canAccessData = $isAuthenticated && $user->canAccessData();
+
+                // Tampilkan data sesuai dengan status akun
                 return [
                     'id' => $item->id,
-                    'nama_lengkap' => $item->nama_lengkap,
-                    'nik' => $item->nik,
-                    'no_hp' => $item->no_hp,
-                    'alamat' => $item->alamat,
+                    'nama_lengkap' => $canAccessData ? $item->nama_lengkap : $item->sensored_nama,
+                    'nik' => $canAccessData ? $item->nik : $item->sensored_nik,
+                    'no_hp' => $canAccessData ? $item->no_hp : $item->sensored_no_hp,
+                    'alamat' => $canAccessData ? $item->alamat : $item->sensored_alamat,
                     'jenis_rental' => $item->jenis_rental,
                     'jenis_laporan' => $item->jenis_laporan,
                     'tanggal_kejadian' => $item->tanggal_kejadian->format('d/m/Y'),
                     'jumlah_laporan' => RentalBlacklist::countReportsByNik($item->nik),
                     'pelapor' => $item->user->name,
                     'is_verified' => $item->user && $item->user->role === 'pengusaha_rental',
-                    'is_unlocked' => $isUnlocked
+                    'is_unlocked' => $isUnlocked,
+                    'can_access_data' => $canAccessData
                 ];
             });
 
@@ -104,10 +120,9 @@ class PublicController extends Controller
         $isAuthenticated = auth()->check();
         $user = auth()->user();
 
-        // Cek apakah user adalah admin atau pemilik rental
-        $isAdmin = $isAuthenticated && $user->role === 'admin';
-        $isRentalOwner = $isAuthenticated && $user->role === 'pengusaha_rental';
-        $shouldShowFullData = $isAdmin || $isRentalOwner;
+        // Cek apakah user dapat mengakses data
+        $canAccessData = $isAuthenticated && $user->canAccessData();
+        $shouldShowFullData = $canAccessData;
 
         // Cek apakah user sudah unlock data ini atau NIK ini (untuk user biasa)
         $isUnlocked = $isAuthenticated && ($user->hasUnlockedData($id) || $user->hasUnlockedNik($blacklist->nik));
@@ -170,6 +185,23 @@ class PublicController extends Controller
         $user = auth()->user();
         $blacklist = RentalBlacklist::findOrFail($id);
 
+        // Check if user can access full features
+        if (!$user->canAccessFullFeatures()) {
+            $message = 'Akses ditolak.';
+            if (!$user->isActive()) {
+                $message = 'Akun Anda belum aktif. Menunggu persetujuan admin untuk dapat menggunakan fitur ini.';
+            } elseif ($user->requiresEmailVerification()) {
+                $message = 'Email belum diverifikasi. Silakan verifikasi email terlebih dahulu untuk menggunakan fitur ini.';
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => $message,
+                'account_status' => $user->account_status,
+                'email_verified' => $user->hasVerifiedEmail()
+            ], 403);
+        }
+
         // Check if user is pengusaha_rental (they get free access)
         if ($user->role === 'pengusaha_rental') {
             return response()->json([
@@ -220,11 +252,10 @@ class PublicController extends Controller
         $user = auth()->user();
         $blacklist = RentalBlacklist::with('user')->findOrFail($id);
 
-        // Check if user has access (pengusaha_rental or has unlocked this NIK)
+        // Check if user has access (active account and unlocked data)
         $hasAccess = $user && (
-            $user->role === 'pengusaha_rental' ||
-            $user->hasUnlockedData($id) ||
-            $user->hasUnlockedNik($blacklist->nik)
+            $user->canAccessData() ||
+            ($user->isActive() && ($user->hasUnlockedData($id) || $user->hasUnlockedNik($blacklist->nik)))
         );
 
         if (!$hasAccess) {
@@ -302,11 +333,10 @@ class PublicController extends Controller
         $user = auth()->user();
         $blacklist = RentalBlacklist::with('user')->findOrFail($id);
 
-        // Check if user has access (pengusaha_rental or has unlocked this NIK)
+        // Check if user has access (active account and unlocked data)
         $hasAccess = $user && (
-            $user->role === 'pengusaha_rental' ||
-            $user->hasUnlockedData($id) ||
-            $user->hasUnlockedNik($blacklist->nik)
+            $user->canAccessData() ||
+            ($user->isActive() && ($user->hasUnlockedData($id) || $user->hasUnlockedNik($blacklist->nik)))
         );
 
         if (!$hasAccess) {
@@ -321,11 +351,10 @@ class PublicController extends Controller
         $user = auth()->user();
         $blacklist = RentalBlacklist::with('user')->findOrFail($id);
 
-        // Check if user has access (pengusaha_rental or has unlocked this NIK)
+        // Check if user has access (active account and unlocked data)
         $hasAccess = $user && (
-            $user->role === 'pengusaha_rental' ||
-            $user->hasUnlockedData($id) ||
-            $user->hasUnlockedNik($blacklist->nik)
+            $user->canAccessData() ||
+            ($user->isActive() && ($user->hasUnlockedData($id) || $user->hasUnlockedNik($blacklist->nik)))
         );
 
         if (!$hasAccess) {

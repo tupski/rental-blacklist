@@ -167,10 +167,11 @@
             left: 50%;
             transform: translate(-50%, -50%) rotate(-45deg);
             font-size: 80px;
-            color: rgba(218, 53, 68, 0.08);
+            color: rgba(218, 53, 68, 0.15);
             font-weight: bold;
-            z-index: -1;
+            z-index: 1000;
             pointer-events: none;
+            opacity: 0.3;
         }
         .warning-box {
             background-color: #fff3cd;
@@ -180,6 +181,35 @@
             border-radius: 5px;
             margin-bottom: 20px;
             font-size: 11px;
+        }
+        .media-image {
+            max-width: 200px;
+            max-height: 150px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .video-thumbnail {
+            position: relative;
+            display: inline-block;
+            margin: 5px;
+        }
+        .video-thumbnail video {
+            max-width: 200px;
+            max-height: 150px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .video-play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 30px;
+            color: white;
+            background: rgba(0,0,0,0.7);
+            border-radius: 50%;
+            padding: 10px;
         }
         @media print {
             body { margin: 0; }
@@ -250,11 +280,27 @@
         <div class="media-list">
             @if($blacklist->foto_penyewa && is_array($blacklist->foto_penyewa) && count($blacklist->foto_penyewa) > 0)
                 @foreach($blacklist->foto_penyewa as $foto)
-                    <span class="media-item image">📸 {{ basename($foto) }}</span>
+                    @php
+                        $extension = strtolower(pathinfo($foto, PATHINFO_EXTENSION));
+                        $isImage = in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                    @endphp
+                    @if($isImage)
+                        <img src="{{ asset('storage/' . $foto) }}" alt="Foto Penyewa" class="media-image">
+                    @else
+                        <span class="media-item">📸 {{ basename($foto) }}</span>
+                    @endif
                 @endforeach
             @elseif($blacklist->foto_penyewa && is_string($blacklist->foto_penyewa) && count(json_decode($blacklist->foto_penyewa, true)) > 0)
                 @foreach(json_decode($blacklist->foto_penyewa, true) as $foto)
-                    <span class="media-item image">📸 {{ basename($foto) }}</span>
+                    @php
+                        $extension = strtolower(pathinfo($foto, PATHINFO_EXTENSION));
+                        $isImage = in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                    @endphp
+                    @if($isImage)
+                        <img src="{{ asset('storage/' . $foto) }}" alt="Foto Penyewa" class="media-image">
+                    @else
+                        <span class="media-item">📸 {{ basename($foto) }}</span>
+                    @endif
                 @endforeach
             @else
                 <span class="info-value empty">Tidak ada foto penyewa</span>
@@ -268,11 +314,27 @@
         <div class="media-list">
             @if($blacklist->foto_ktp_sim && is_array($blacklist->foto_ktp_sim) && count($blacklist->foto_ktp_sim) > 0)
                 @foreach($blacklist->foto_ktp_sim as $foto)
-                    <span class="media-item image">🆔 {{ basename($foto) }}</span>
+                    @php
+                        $extension = strtolower(pathinfo($foto, PATHINFO_EXTENSION));
+                        $isImage = in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                    @endphp
+                    @if($isImage)
+                        <img src="{{ asset('storage/' . $foto) }}" alt="Foto KTP/SIM" class="media-image">
+                    @else
+                        <span class="media-item">🆔 {{ basename($foto) }}</span>
+                    @endif
                 @endforeach
             @elseif($blacklist->foto_ktp_sim && is_string($blacklist->foto_ktp_sim) && count(json_decode($blacklist->foto_ktp_sim, true)) > 0)
                 @foreach(json_decode($blacklist->foto_ktp_sim, true) as $foto)
-                    <span class="media-item image">🆔 {{ basename($foto) }}</span>
+                    @php
+                        $extension = strtolower(pathinfo($foto, PATHINFO_EXTENSION));
+                        $isImage = in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                    @endphp
+                    @if($isImage)
+                        <img src="{{ asset('storage/' . $foto) }}" alt="Foto KTP/SIM" class="media-image">
+                    @else
+                        <span class="media-item">🆔 {{ basename($foto) }}</span>
+                    @endif
                 @endforeach
             @else
                 <span class="info-value empty">Tidak ada foto KTP/SIM</span>
@@ -500,19 +562,36 @@
                     @php
                         $fileName = basename($bukti);
                         $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-                        $isImage = in_array($extension, ['jpg', 'jpeg', 'png', 'gif']);
-                        $isVideo = in_array($extension, ['mp4', 'avi', 'mov', 'wmv']);
+                        $isImage = in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                        $isVideo = in_array($extension, ['mp4', 'avi', 'mov', 'wmv', 'mkv']);
                         $isPdf = $extension === 'pdf';
                     @endphp
 
                     @if($isImage)
-                        <span class="media-item image">📸 {{ $fileName }}</span>
+                        <div style="margin-bottom: 10px;">
+                            <img src="{{ asset('storage/' . $bukti) }}" alt="Bukti Pendukung" class="media-image">
+                            <br><small>📸 {{ $fileName }}</small>
+                        </div>
                     @elseif($isVideo)
-                        <span class="media-item video">🎥 {{ $fileName }} - <strong>Link Unduh:</strong> {{ url('/storage/' . $bukti) }}</span>
+                        <div class="video-thumbnail" style="margin-bottom: 10px;">
+                            <video width="200" height="150" style="border: 1px solid #ddd; border-radius: 4px;">
+                                <source src="{{ asset('storage/' . $bukti) }}" type="video/{{ $extension }}">
+                                Video tidak dapat ditampilkan
+                            </video>
+                            <div class="video-play-icon">▶</div>
+                            <br><small>🎥 {{ $fileName }}</small>
+                            <br><small><strong>Link:</strong> {{ url('/storage/' . $bukti) }}</small>
+                        </div>
                     @elseif($isPdf)
-                        <span class="media-item document">📄 {{ $fileName }} - <strong>Link Unduh:</strong> {{ url('/storage/' . $bukti) }}</span>
+                        <div style="margin-bottom: 10px;">
+                            <span class="media-item document">📄 {{ $fileName }}</span>
+                            <br><small><strong>Link:</strong> {{ url('/storage/' . $bukti) }}</small>
+                        </div>
                     @else
-                        <span class="media-item document">📁 {{ $fileName }} - <strong>Link Unduh:</strong> {{ url('/storage/' . $bukti) }}</span>
+                        <div style="margin-bottom: 10px;">
+                            <span class="media-item document">📁 {{ $fileName }}</span>
+                            <br><small><strong>Link:</strong> {{ url('/storage/' . $bukti) }}</small>
+                        </div>
                     @endif
                 @endforeach
             @elseif($blacklist->bukti && is_string($blacklist->bukti) && count(json_decode($blacklist->bukti, true)) > 0)
@@ -520,19 +599,36 @@
                     @php
                         $fileName = basename($bukti);
                         $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-                        $isImage = in_array($extension, ['jpg', 'jpeg', 'png', 'gif']);
-                        $isVideo = in_array($extension, ['mp4', 'avi', 'mov', 'wmv']);
+                        $isImage = in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                        $isVideo = in_array($extension, ['mp4', 'avi', 'mov', 'wmv', 'mkv']);
                         $isPdf = $extension === 'pdf';
                     @endphp
 
                     @if($isImage)
-                        <span class="media-item image">📸 {{ $fileName }}</span>
+                        <div style="margin-bottom: 10px;">
+                            <img src="{{ asset('storage/' . $bukti) }}" alt="Bukti Pendukung" class="media-image">
+                            <br><small>📸 {{ $fileName }}</small>
+                        </div>
                     @elseif($isVideo)
-                        <span class="media-item video">🎥 {{ $fileName }} - <strong>Link Unduh:</strong> {{ url('/storage/' . $bukti) }}</span>
+                        <div class="video-thumbnail" style="margin-bottom: 10px;">
+                            <video width="200" height="150" style="border: 1px solid #ddd; border-radius: 4px;">
+                                <source src="{{ asset('storage/' . $bukti) }}" type="video/{{ $extension }}">
+                                Video tidak dapat ditampilkan
+                            </video>
+                            <div class="video-play-icon">▶</div>
+                            <br><small>🎥 {{ $fileName }}</small>
+                            <br><small><strong>Link:</strong> {{ url('/storage/' . $bukti) }}</small>
+                        </div>
                     @elseif($isPdf)
-                        <span class="media-item document">📄 {{ $fileName }} - <strong>Link Unduh:</strong> {{ url('/storage/' . $bukti) }}</span>
+                        <div style="margin-bottom: 10px;">
+                            <span class="media-item document">📄 {{ $fileName }}</span>
+                            <br><small><strong>Link:</strong> {{ url('/storage/' . $bukti) }}</small>
+                        </div>
                     @else
-                        <span class="media-item document">📁 {{ $fileName }} - <strong>Link Unduh:</strong> {{ url('/storage/' . $bukti) }}</span>
+                        <div style="margin-bottom: 10px;">
+                            <span class="media-item document">📁 {{ $fileName }}</span>
+                            <br><small><strong>Link:</strong> {{ url('/storage/' . $bukti) }}</small>
+                        </div>
                     @endif
                 @endforeach
             @else

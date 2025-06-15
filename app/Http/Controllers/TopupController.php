@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\TopupRequest;
 use App\Models\User;
+use App\Helpers\FileNamingHelper;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\TopupRequestNotification;
@@ -207,7 +208,8 @@ class TopupController extends Controller
 
         // Store the uploaded file
         $file = $request->file('proof_of_payment');
-        $filename = 'proof_' . $invoice . '_' . time() . '.' . $file->getClientOriginalExtension();
+        $extension = $file->getClientOriginalExtension();
+        $filename = FileNamingHelper::generateTopupProofFilename(Auth::user()->name, $invoice, $extension);
         $path = $file->storeAs('topup-proofs', $filename, 'public');
 
         // Update topup request

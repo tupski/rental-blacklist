@@ -51,6 +51,25 @@ class UserDashboardController extends Controller
 
     public function search(Request $request)
     {
+        $user = Auth::user();
+
+        // Check if user can search
+        if (!$user->canSearchData()) {
+            $message = 'Akses pencarian ditolak.';
+            if (!$user->isActive()) {
+                $message = 'Akun Anda belum aktif. Menunggu persetujuan admin untuk dapat menggunakan fitur pencarian.';
+            } elseif ($user->requiresEmailVerification()) {
+                $message = 'Email belum diverifikasi. Silakan verifikasi email terlebih dahulu untuk menggunakan fitur pencarian.';
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => $message,
+                'account_status' => $user->account_status,
+                'email_verified' => $user->hasVerifiedEmail()
+            ], 403);
+        }
+
         $request->validate([
             'search' => 'required|string|min:3',
             'page' => 'nullable|integer|min:1'
@@ -113,6 +132,24 @@ class UserDashboardController extends Controller
     {
         try {
             $user = Auth::user();
+
+            // Check if user can access full features
+            if (!$user->canAccessFullFeatures()) {
+                $message = 'Akses ditolak.';
+                if (!$user->isActive()) {
+                    $message = 'Akun Anda belum aktif. Menunggu persetujuan admin untuk dapat menggunakan fitur ini.';
+                } elseif ($user->requiresEmailVerification()) {
+                    $message = 'Email belum diverifikasi. Silakan verifikasi email terlebih dahulu untuk menggunakan fitur ini.';
+                }
+
+                return response()->json([
+                    'success' => false,
+                    'message' => $message,
+                    'account_status' => $user->account_status,
+                    'email_verified' => $user->hasVerifiedEmail()
+                ], 403);
+            }
+
             $blacklist = RentalBlacklist::findOrFail($id);
 
             // Ensure user has balance record

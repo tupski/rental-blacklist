@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\RentalRegistration;
 use App\Models\User;
+use App\Helpers\FileNamingHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -82,7 +83,9 @@ class RentalController extends Controller
             $dokumenFiles = [];
             foreach ($request->file('dokumen_legalitas') as $file) {
                 if ($file->isValid()) {
-                    $path = $file->store('rental-docs', 'public');
+                    $extension = $file->getClientOriginalExtension();
+                    $filename = FileNamingHelper::generateRentalDocFilename($data['nama_perusahaan'], $extension, 'dokumen-legalitas');
+                    $path = $file->storeAs('rental-docs', $filename, 'public');
                     $dokumenFiles[] = $path;
                 }
             }
@@ -94,7 +97,9 @@ class RentalController extends Controller
             $fotoFiles = [];
             foreach ($request->file('foto_tempat') as $file) {
                 if ($file->isValid()) {
-                    $path = $file->store('rental-photos', 'public');
+                    $extension = $file->getClientOriginalExtension();
+                    $filename = FileNamingHelper::generateRentalPhotoFilename($data['nama_perusahaan'], $extension);
+                    $path = $file->storeAs('rental-photos', $filename, 'public');
                     $fotoFiles[] = $path;
                 }
             }

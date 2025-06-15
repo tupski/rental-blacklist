@@ -26,8 +26,14 @@ class ProfileController extends Controller
             ]);
         }
 
+        // Check if user can edit profile
+        $canEdit = $user->canEditProfile();
+        $requiresEmailVerification = $user->requiresEmailVerification();
+
         return view('profile.edit', [
             'user' => $user,
+            'canEdit' => $canEdit,
+            'requiresEmailVerification' => $requiresEmailVerification,
         ]);
     }
 
@@ -36,13 +42,27 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        // Check if user can edit profile
+        if (!$user->canEditProfile()) {
+            $message = 'Anda tidak dapat mengedit profil saat ini.';
+            if (!$user->isActive()) {
+                $message = 'Akun Anda belum aktif. Menunggu persetujuan admin untuk dapat mengedit profil.';
+            } elseif ($user->requiresEmailVerification()) {
+                $message = 'Email belum diverifikasi. Silakan verifikasi email terlebih dahulu untuk dapat mengedit profil.';
+            }
+
+            return Redirect::route('profil.edit')->with('error', $message);
         }
 
-        $request->user()->save();
+        $user->fill($request->validated());
+
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
 
         return Redirect::route('profil.edit')->with('status', 'profile-updated');
     }

@@ -110,7 +110,7 @@ class SettingsSeeder extends Seeder
             // SMTP Settings
             [
                 'key' => 'smtp_host',
-                'value' => 'smtp.gmail.com',
+                'value' => 'smtp-relay.brevo.com',
                 'type' => 'text',
                 'group' => 'smtp',
                 'label' => 'SMTP Host',
@@ -126,7 +126,7 @@ class SettingsSeeder extends Seeder
             ],
             [
                 'key' => 'smtp_username',
-                'value' => '',
+                'value' => 'pt.indowebsolution@gmail.com',
                 'type' => 'text',
                 'group' => 'smtp',
                 'label' => 'SMTP Username',
@@ -134,7 +134,7 @@ class SettingsSeeder extends Seeder
             ],
             [
                 'key' => 'smtp_password',
-                'value' => '',
+                'value' => 'BfKvC4QSJNZ0rLFd',
                 'type' => 'password',
                 'group' => 'smtp',
                 'label' => 'SMTP Password',
@@ -150,7 +150,7 @@ class SettingsSeeder extends Seeder
             ],
             [
                 'key' => 'mail_from_address',
-                'value' => 'noreply@rentalguard.id',
+                'value' => 'noreply@cekpenyewa.com',
                 'type' => 'email',
                 'group' => 'smtp',
                 'label' => 'Email Pengirim',
@@ -158,11 +158,77 @@ class SettingsSeeder extends Seeder
             ],
             [
                 'key' => 'mail_from_name',
-                'value' => 'RentalGuard',
+                'value' => 'CekPenyewa.com',
                 'type' => 'text',
                 'group' => 'smtp',
                 'label' => 'Nama Pengirim',
                 'description' => 'Nama yang akan muncul sebagai pengirim email'
+            ],
+            [
+                'key' => 'test_email',
+                'value' => '',
+                'type' => 'email',
+                'group' => 'smtp',
+                'label' => 'Email Test',
+                'description' => 'Email untuk mengirim test SMTP'
+            ],
+
+            // Email Templates
+            [
+                'key' => 'email_template_test',
+                'value' => '<h2>Test Email - CekPenyewa.com</h2><p>Ini adalah email test dari sistem CekPenyewa.com.</p><p>Jika Anda menerima email ini, berarti konfigurasi SMTP sudah benar.</p><p>Terima kasih!</p>',
+                'type' => 'wysiwyg',
+                'group' => 'email_templates',
+                'label' => 'Template Test Email',
+                'description' => 'Template untuk test email SMTP'
+            ],
+            [
+                'key' => 'email_template_verification',
+                'value' => '<h2>Verifikasi Email - CekPenyewa.com</h2><p>Halo {{name}},</p><p>Terima kasih telah mendaftar di CekPenyewa.com. Silakan klik tombol di bawah ini untuk memverifikasi email Anda:</p><p><a href="{{verification_url}}" style="background-color: #da3544; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Verifikasi Email</a></p><p>Jika tombol tidak berfungsi, salin dan tempel URL berikut ke browser Anda:</p><p>{{verification_url}}</p><p>Terima kasih!</p>',
+                'type' => 'wysiwyg',
+                'group' => 'email_templates',
+                'label' => 'Template Verifikasi Email',
+                'description' => 'Template untuk email verifikasi akun'
+            ],
+            [
+                'key' => 'email_template_registration',
+                'value' => '<h2>Selamat Datang di CekPenyewa.com</h2><p>Halo {{name}},</p><p>Selamat datang di CekPenyewa.com! Akun Anda telah berhasil dibuat dengan detail berikut:</p><ul><li><strong>Email:</strong> {{email}}</li><li><strong>Role:</strong> {{role}}</li></ul><p>Anda sekarang dapat mengakses semua fitur yang tersedia di platform kami.</p><p>Terima kasih telah bergabung dengan kami!</p>',
+                'type' => 'wysiwyg',
+                'group' => 'email_templates',
+                'label' => 'Template Pendaftaran',
+                'description' => 'Template untuk email selamat datang setelah registrasi'
+            ],
+            [
+                'key' => 'email_template_account_suspended',
+                'value' => '<h2>Akun Ditangguhkan - CekPenyewa.com</h2><p>Halo {{name}},</p><p>Kami informasikan bahwa akun Anda di CekPenyewa.com telah ditangguhkan sementara.</p><p><strong>Alasan:</strong> {{reason}}</p><p>Jika Anda merasa ini adalah kesalahan atau ingin mengajukan banding, silakan hubungi tim support kami.</p><p>Terima kasih atas pengertian Anda.</p>',
+                'type' => 'wysiwyg',
+                'group' => 'email_templates',
+                'label' => 'Template Akun Ditangguhkan',
+                'description' => 'Template untuk email notifikasi akun ditangguhkan'
+            ],
+            [
+                'key' => 'email_template_topup',
+                'value' => '<h2>Konfirmasi Topup - CekPenyewa.com</h2><p>Halo {{name}},</p><p>Topup saldo Anda telah {{status}}.</p><p><strong>Detail Topup:</strong></p><ul><li><strong>Jumlah:</strong> {{amount}}</li><li><strong>Metode:</strong> {{method}}</li><li><strong>Status:</strong> {{status}}</li><li><strong>Tanggal:</strong> {{date}}</li></ul><p>{{status_message}}</p><p>Terima kasih!</p>',
+                'type' => 'wysiwyg',
+                'group' => 'email_templates',
+                'label' => 'Template Topup/Pembelian',
+                'description' => 'Template untuk email konfirmasi topup saldo'
+            ],
+            [
+                'key' => 'email_template_password_reset',
+                'value' => '<h2>Reset Password - CekPenyewa.com</h2><p>Halo {{name}},</p><p>Kami menerima permintaan untuk mereset password akun Anda. Klik tombol di bawah ini untuk mereset password:</p><p><a href="{{reset_url}}" style="background-color: #da3544; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset Password</a></p><p>Jika tombol tidak berfungsi, salin dan tempel URL berikut ke browser Anda:</p><p>{{reset_url}}</p><p>Link ini akan kedaluwarsa dalam 60 menit.</p><p>Jika Anda tidak meminta reset password, abaikan email ini.</p>',
+                'type' => 'wysiwyg',
+                'group' => 'email_templates',
+                'label' => 'Template Reset Password',
+                'description' => 'Template untuk email reset password'
+            ],
+            [
+                'key' => 'email_template_report_notification',
+                'value' => '<h2>Laporan Baru - CekPenyewa.com</h2><p>Halo Admin,</p><p>Ada laporan blacklist baru yang masuk ke sistem:</p><p><strong>Detail Laporan:</strong></p><ul><li><strong>Pelapor:</strong> {{reporter_name}}</li><li><strong>Rental:</strong> {{rental_name}}</li><li><strong>Kategori:</strong> {{category}}</li><li><strong>Tanggal:</strong> {{date}}</li></ul><p>Silakan login ke admin panel untuk melihat detail lengkap laporan.</p>',
+                'type' => 'wysiwyg',
+                'group' => 'email_templates',
+                'label' => 'Template Notifikasi Laporan',
+                'description' => 'Template untuk email notifikasi laporan baru'
             ],
 
             // Payment Gateway Settings
@@ -419,6 +485,48 @@ class SettingsSeeder extends Seeder
                 'group' => 'payment',
                 'label' => 'Xendit Secret Key',
                 'description' => 'Secret key untuk integrasi Xendit'
+            ],
+
+            // Account Activation Settings
+            [
+                'key' => 'auto_activate_user_accounts',
+                'value' => '1',
+                'type' => 'boolean',
+                'group' => 'account',
+                'label' => 'Auto Aktivasi Akun User Umum',
+                'description' => 'Otomatis mengaktifkan akun user umum setelah registrasi'
+            ],
+            [
+                'key' => 'auto_activate_rental_accounts',
+                'value' => '0',
+                'type' => 'boolean',
+                'group' => 'account',
+                'label' => 'Auto Aktivasi Akun Pemilik Rental',
+                'description' => 'Otomatis mengaktifkan akun pemilik rental setelah registrasi'
+            ],
+            [
+                'key' => 'admin_contact_wa1',
+                'value' => '0819-1191-9993',
+                'type' => 'text',
+                'group' => 'account',
+                'label' => 'WhatsApp Admin 1',
+                'description' => 'Nomor WhatsApp admin untuk kontak aktivasi akun'
+            ],
+            [
+                'key' => 'admin_contact_wa2',
+                'value' => '0822-1121-9993',
+                'type' => 'text',
+                'group' => 'account',
+                'label' => 'WhatsApp Admin 2',
+                'description' => 'Nomor WhatsApp admin kedua untuk kontak aktivasi akun'
+            ],
+            [
+                'key' => 'require_email_verification',
+                'value' => '1',
+                'type' => 'boolean',
+                'group' => 'account',
+                'label' => 'Wajib Verifikasi Email',
+                'description' => 'Mengharuskan user untuk verifikasi email sebelum mengakses fitur'
             ],
         ];
 

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('key')->unique();
             $table->text('value')->nullable();
-            $table->string('type')->default('text'); // text, textarea, boolean, number, json
+            $table->string('type')->default('text'); // text, textarea, boolean, number, json, wysiwyg
             $table->string('group')->default('general'); // general, seo, appearance, etc
             $table->string('label');
             $table->text('description')->nullable();

@@ -10,7 +10,7 @@ class ApplicationSettingController extends Controller
 {
     public function index()
     {
-        $settings = Setting::whereIn('group', ['general', 'seo', 'social', 'footer', 'contact', 'captcha'])
+        $settings = Setting::whereIn('group', ['general', 'seo', 'social', 'footer', 'contact', 'captcha', 'account'])
             ->orderBy('group')
             ->orderBy('label')
             ->get()

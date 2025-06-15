@@ -19,7 +19,7 @@
                     Pengaturan Aplikasi
                 </h3>
                 <div class="card-tools">
-                    <small class="text-muted">SEO, Media Sosial, Footer, Kontak, Captcha, dan Pengaturan Umum</small>
+                    <small class="text-muted">SEO, Media Sosial, Footer, Kontak, Captcha, Pengaturan Akun, dan Pengaturan Umum</small>
                 </div>
             </div>
             <div class="card-body">
@@ -56,6 +56,10 @@
                                             @case('captcha')
                                                 <i class="fas fa-shield-alt mr-2"></i>
                                                 Pengaturan Captcha
+                                                @break
+                                            @case('account')
+                                                <i class="fas fa-user-check mr-2"></i>
+                                                Pengaturan Akun
                                                 @break
                                             @default
                                                 {{ ucfirst($group) }}

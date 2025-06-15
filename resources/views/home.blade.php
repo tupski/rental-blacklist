@@ -11,6 +11,15 @@
 @endsection
 
 @section('content')
+<!-- Account Status Alert -->
+@include('components.account-status-alert')
+
+<!-- Email Verification Alert -->
+@include('components.email-verification-alert')
+
+<!-- Low Balance Alert -->
+@include('components.low-balance-alert')
+
 <!-- Hero Section -->
 <div class="bg-gradient-to-br from-danger-subtle to-warning-subtle min-vh-100">
     <!-- Hero Content -->

@@ -20,6 +20,11 @@
 
                 <!-- API Key Management -->
                 @auth
+                @php
+                    $canUseApi = Auth::user()->canUseApi();
+                    $requiresEmailVerification = Auth::user()->requiresEmailVerification();
+                    $isActive = Auth::user()->isActive();
+                @endphp
                 <div class="card shadow-lg border-0 mb-4">
                     <div class="card-header bg-success text-white">
                         <h4 class="card-title mb-0">
@@ -28,16 +33,30 @@
                         </h4>
                     </div>
                     <div class="card-body">
+                        @if(!$canUseApi)
+                            <div class="alert alert-warning mb-3">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <strong>Akses API Terbatas</strong><br>
+                                @if(!$isActive)
+                                    Akun Anda belum aktif. Menunggu persetujuan admin untuk dapat menggunakan API.
+                                @elseif($requiresEmailVerification)
+                                    Email belum diverifikasi. Silakan <a href="{{ route('verifikasi.pemberitahuan') }}" class="alert-link">verifikasi email</a> terlebih dahulu untuk dapat menggunakan API.
+                                @endif
+                            </div>
+                        @endif
                         <div class="row g-3">
                             <div class="col-md-8">
                                 <label for="apiKeyField" class="form-label fw-bold">Your API Key</label>
                                 <div class="input-group">
                                     <input type="password" class="form-control" id="apiKeyField"
-                                           placeholder="Klik 'Generate' untuk membuat API key" readonly>
-                                    <button class="btn btn-outline-secondary" type="button" id="toggleApiKey">
+                                           placeholder="Klik 'Generate' untuk membuat API key" readonly
+                                           @if(!$canUseApi) disabled @endif>
+                                    <button class="btn btn-outline-secondary" type="button" id="toggleApiKey"
+                                            @if(!$canUseApi) disabled @endif>
                                         <i class="fas fa-eye" id="toggleIcon"></i>
                                     </button>
-                                    <button class="btn btn-primary" type="button" id="copyApiKey">
+                                    <button class="btn btn-primary" type="button" id="copyApiKey"
+                                            @if(!$canUseApi) disabled @endif>
                                         <i class="fas fa-copy me-1"></i>
                                         Copy
                                     </button>
@@ -47,11 +66,13 @@
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Actions</label>
                                 <div class="d-grid gap-2">
-                                    <button class="btn btn-success" id="generateApiKey">
+                                    <button class="btn btn-success" id="generateApiKey"
+                                            @if(!$canUseApi) disabled @endif>
                                         <i class="fas fa-plus me-1"></i>
                                         Generate Key
                                     </button>
-                                    <button class="btn btn-warning" id="resetApiKey">
+                                    <button class="btn btn-warning" id="resetApiKey"
+                                            @if(!$canUseApi) disabled @endif>
                                         <i class="fas fa-refresh me-1"></i>
                                         Reset Key
                                     </button>
@@ -485,7 +506,11 @@ $(document).ready(function() {
             },
             error: function(xhr) {
                 console.error('Generate error:', xhr);
-                showAlert('Terjadi kesalahan saat membuat API key', 'danger');
+                let message = 'Terjadi kesalahan saat membuat API key';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                }
+                showAlert(message, 'danger');
             },
             complete: function() {
                 $('#generateApiKey').prop('disabled', false).html('<i class="fas fa-plus me-1"></i>Generate Key');
@@ -518,7 +543,11 @@ $(document).ready(function() {
             },
             error: function(xhr) {
                 console.error('Reset error:', xhr);
-                showAlert('Terjadi kesalahan saat mereset API key', 'danger');
+                let message = 'Terjadi kesalahan saat mereset API key';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                }
+                showAlert(message, 'danger');
             },
             complete: function() {
                 $('#resetApiKey').prop('disabled', false).html('<i class="fas fa-refresh me-1"></i>Reset Key');

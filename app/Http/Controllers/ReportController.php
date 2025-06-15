@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\RentalBlacklist;
 use App\Http\Requests\StoreBlacklistReportRequest;
 use App\Traits\HandlesFileWatermark;
+use App\Helpers\FileNamingHelper;
 use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
@@ -27,7 +28,9 @@ class ReportController extends Controller
         if ($request->hasFile('foto_penyewa')) {
             $fotoPenyewaFiles = [];
             foreach ($request->file('foto_penyewa') as $file) {
-                $path = $file->store('foto-penyewa', 'public');
+                $extension = $file->getClientOriginalExtension();
+                $filename = FileNamingHelper::generateFotoPenyewaFilename($validated['nama_lengkap'], $extension);
+                $path = $file->storeAs('foto-penyewa', $filename, 'public');
                 $fotoPenyewaFiles[] = $path;
                 $allFiles[] = $path;
             }
@@ -38,7 +41,9 @@ class ReportController extends Controller
         if ($request->hasFile('foto_ktp_sim')) {
             $fotoKtpFiles = [];
             foreach ($request->file('foto_ktp_sim') as $file) {
-                $path = $file->store('foto-ktp-sim', 'public');
+                $extension = $file->getClientOriginalExtension();
+                $filename = FileNamingHelper::generateFotoKtpSimFilename($validated['nama_lengkap'], $extension);
+                $path = $file->storeAs('foto-ktp-sim', $filename, 'public');
                 $fotoKtpFiles[] = $path;
                 $allFiles[] = $path;
             }
@@ -49,7 +54,9 @@ class ReportController extends Controller
         if ($request->hasFile('bukti')) {
             $buktiFiles = [];
             foreach ($request->file('bukti') as $file) {
-                $path = $file->store('bukti-pendukung', 'public');
+                $extension = $file->getClientOriginalExtension();
+                $filename = FileNamingHelper::generateBuktiFilename($validated['nama_lengkap'], $extension);
+                $path = $file->storeAs('bukti-pendukung', $filename, 'public');
                 $buktiFiles[] = $path;
                 $allFiles[] = $path;
             }

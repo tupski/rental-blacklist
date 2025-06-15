@@ -18,6 +18,15 @@
         <div class="min-h-screen bg-gray-100">
             @include('layouts.navigation')
 
+            <!-- Account Status Alert -->
+            @include('components.account-status-alert')
+
+            <!-- Email Verification Alert -->
+            @include('components.email-verification-alert')
+
+            <!-- Low Balance Alert -->
+            @include('components.low-balance-alert')
+
             <!-- Page Heading -->
             @isset($header)
                 <header class="bg-white shadow">

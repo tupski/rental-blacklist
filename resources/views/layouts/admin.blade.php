@@ -392,6 +392,22 @@
                         </ul>
                     </li>
 
+                    <!-- Persetujuan Akun -->
+                    <li class="nav-item">
+                        <a href="{{ route('admin.persetujuan-akun.indeks') }}" class="nav-link {{ request()->routeIs('admin.persetujuan-akun*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-user-clock"></i>
+                            <p>
+                                Persetujuan Akun
+                                @php
+                                    $pendingCount = \App\Models\User::where('account_status', 'pending')->count();
+                                @endphp
+                                @if($pendingCount > 0)
+                                    <span class="badge badge-warning right">{{ $pendingCount }}</span>
+                                @endif
+                            </p>
+                        </a>
+                    </li>
+
                     <!-- Laporan Guest -->
                     <li class="nav-item">
                         <a href="{{ route('admin.laporan-tamu.indeks') }}" class="nav-link {{ request()->routeIs('admin.laporan-tamu*') ? 'active' : '' }}">
@@ -481,9 +497,9 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.pengaturan.smtp.indeks') }}" class="nav-link {{ request()->routeIs('admin.pengaturan.smtp*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.pengaturan.email.indeks') }}" class="nav-link {{ request()->routeIs('admin.pengaturan.email*') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>SMTP</p>
+                                    <p>Email</p>
                                 </a>
                             </li>
                             <li class="nav-item">

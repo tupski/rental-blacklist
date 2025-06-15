@@ -28,6 +28,9 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'account_status',
+        'approved_at',
+        'approved_by',
         'nik',
         'no_hp',
         'alamat',
@@ -52,6 +55,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'approved_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
@@ -226,5 +230,166 @@ class User extends Authenticatable
         ]);
 
         return $unlock;
+    }
+
+    /**
+     * Check if account is active
+     */
+    public function isActive()
+    {
+        return $this->account_status === 'active';
+    }
+
+    /**
+     * Check if account is pending approval
+     */
+    public function isPending()
+    {
+        return $this->account_status === 'pending';
+    }
+
+    /**
+     * Check if account is suspended
+     */
+    public function isSuspended()
+    {
+        return $this->account_status === 'suspended';
+    }
+
+    /**
+     * Approve account
+     */
+    public function approve($approvedBy = null)
+    {
+        $this->update([
+            'account_status' => 'active',
+            'approved_at' => now(),
+            'approved_by' => $approvedBy
+        ]);
+    }
+
+    /**
+     * Suspend account
+     */
+    public function suspend()
+    {
+        $this->update([
+            'account_status' => 'suspended'
+        ]);
+    }
+
+    /**
+     * Get approved by user
+     */
+    public function approvedBy()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    /**
+     * Check if user can access data (not censored)
+     */
+    public function canAccessData()
+    {
+        // Admin always can access data
+        if ($this->role === 'admin') {
+            return true;
+        }
+
+        // Must be active
+        if (!$this->isActive()) {
+            return false;
+        }
+
+        // Must have verified email if required
+        if ($this->requiresEmailVerification()) {
+            return false;
+        }
+
+        // Rental owners can access data if active and email verified
+        if ($this->role === 'pengusaha_rental') {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if user can search data
+     */
+    public function canSearchData()
+    {
+        // Must have full features access
+        return $this->canAccessFullFeatures();
+    }
+
+    /**
+     * Check if user can use API
+     */
+    public function canUseApi()
+    {
+        // Must have full features access
+        return $this->canAccessFullFeatures();
+    }
+
+    /**
+     * Check if user can edit profile
+     */
+    public function canEditProfile()
+    {
+        // Must be active and email verified (if required)
+        if (!$this->isActive()) {
+            return false;
+        }
+
+        $requireEmailVerification = Setting::get('require_email_verification', '1') === '1';
+        if ($requireEmailVerification && !$this->hasVerifiedEmail()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if email verification is required
+     */
+    public function requiresEmailVerification()
+    {
+        $requireEmailVerification = Setting::get('require_email_verification', '1') === '1';
+        return $requireEmailVerification && !$this->hasVerifiedEmail();
+    }
+
+    /**
+     * Check if user can access full features
+     */
+    public function canAccessFullFeatures()
+    {
+        // Must be active
+        if (!$this->isActive()) {
+            return false;
+        }
+
+        // Must have verified email if required
+        if ($this->requiresEmailVerification()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if balance is low (less than 10,000)
+     */
+    public function hasLowBalance()
+    {
+        return $this->getCurrentBalance() < 10000;
+    }
+
+    /**
+     * Check if balance is zero or negative
+     */
+    public function hasZeroBalance()
+    {
+        return $this->getCurrentBalance() <= 0;
     }
 }

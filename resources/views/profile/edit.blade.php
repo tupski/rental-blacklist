@@ -36,6 +36,30 @@
             </div>
         </div>
 
+        <!-- Status Alerts -->
+        @if(!$canEdit)
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="alert alert-warning border-0 shadow-sm">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-exclamation-triangle text-warning me-3 fs-4"></i>
+                            <div>
+                                <h6 class="alert-heading mb-1">Profil Tidak Dapat Diedit</h6>
+                                <p class="mb-0">
+                                    @if(!Auth::user()->isActive())
+                                        Akun Anda belum aktif. Menunggu persetujuan admin untuk dapat mengedit profil.
+                                    @elseif($requiresEmailVerification)
+                                        Email belum diverifikasi. Silakan verifikasi email terlebih dahulu untuk dapat mengedit profil.
+                                        <a href="{{ route('verifikasi.pemberitahuan') }}" class="alert-link">Verifikasi sekarang</a>
+                                    @endif
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <!-- Profile Forms -->
         @if(Auth::user()->role === 'pengusaha_rental')
             @include('profile.partials.rental-owner-profile')

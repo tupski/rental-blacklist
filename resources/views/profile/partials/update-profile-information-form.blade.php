@@ -15,7 +15,8 @@
             <label for="name" class="form-label">Nama</label>
             <input type="text" class="form-control @error('name') is-invalid @enderror"
                    id="name" name="name" value="{{ old('name', $user->name) }}"
-                   required autofocus autocomplete="name">
+                   required autofocus autocomplete="name"
+                   @if(!$canEdit) disabled @endif>
             @error('name')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
@@ -25,7 +26,8 @@
             <label for="email" class="form-label">Email</label>
             <input type="email" class="form-control @error('email') is-invalid @enderror"
                    id="email" name="email" value="{{ old('email', $user->email) }}"
-                   required autocomplete="username">
+                   required autocomplete="username"
+                   @if(!$canEdit) disabled @endif>
             @error('email')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
@@ -51,7 +53,7 @@
         </div>
 
         <div class="d-flex align-items-center gap-3">
-            <button type="submit" class="btn btn-primary">
+            <button type="submit" class="btn btn-primary" @if(!$canEdit) disabled @endif>
                 <i class="fas fa-save me-2"></i>
                 Simpan
             </button>

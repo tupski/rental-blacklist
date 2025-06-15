@@ -10,7 +10,7 @@ use App\Http\Controllers\Admin\TopupController as AdminTopupController;
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
 use App\Http\Controllers\Admin\ApplicationSettingController as AdminApplicationSettingController;
 use App\Http\Controllers\Admin\SystemSettingController as AdminSystemSettingController;
-use App\Http\Controllers\Admin\SmtpSettingController as AdminSmtpSettingController;
+use App\Http\Controllers\Admin\EmailSettingController as AdminEmailSettingController;
 use App\Http\Controllers\Admin\PaymentSettingController as AdminPaymentSettingController;
 use App\Http\Controllers\Admin\DatabaseSettingController as AdminDatabaseSettingController;
 use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
@@ -60,6 +60,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         'update' => 'pengguna.perbarui',
         'destroy' => 'pengguna.hapus'
     ]);
+
+    // Account Approval
+    Route::get('persetujuan-akun', [App\Http\Controllers\Admin\AccountApprovalController::class, 'index'])->name('persetujuan-akun.indeks');
+    Route::post('account-approval/{user}/approve', [App\Http\Controllers\Admin\AccountApprovalController::class, 'approve'])->name('persetujuan-akun.setujui');
+    Route::post('account-approval/{user}/reject', [App\Http\Controllers\Admin\AccountApprovalController::class, 'reject'])->name('persetujuan-akun.tolak');
+    Route::post('account-approval/{user}/suspend', [App\Http\Controllers\Admin\AccountApprovalController::class, 'suspend'])->name('persetujuan-akun.nonaktifkan');
+    Route::post('account-approval/{user}/activate', [App\Http\Controllers\Admin\AccountApprovalController::class, 'activate'])->name('persetujuan-akun.aktifkan');
     Route::post('pengguna/cek-email', [AdminUserController::class, 'checkEmail'])->name('pengguna.cek-email');
     Route::post('pengguna/{user}/ubah-status', [AdminUserController::class, 'toggleStatus'])->name('pengguna.ubah-status');
     Route::post('pengguna/{user}/reset-kata-sandi', [AdminUserController::class, 'resetPassword'])->name('pengguna.reset-kata-sandi');
@@ -109,10 +116,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('pengaturan/sistem', [AdminSystemSettingController::class, 'index'])->name('pengaturan.sistem.indeks');
     Route::put('pengaturan/sistem', [AdminSystemSettingController::class, 'update'])->name('pengaturan.sistem.perbarui');
 
-    // Settings - SMTP
-    Route::get('pengaturan/smtp', [AdminSmtpSettingController::class, 'index'])->name('pengaturan.smtp.indeks');
-    Route::put('pengaturan/smtp', [AdminSmtpSettingController::class, 'update'])->name('pengaturan.smtp.perbarui');
-    Route::post('pengaturan/smtp/tes', [AdminSmtpSettingController::class, 'test'])->name('pengaturan.smtp.tes');
+    // Settings - Email
+    Route::get('pengaturan/email', [AdminEmailSettingController::class, 'index'])->name('pengaturan.email.indeks');
+    Route::put('pengaturan/email', [AdminEmailSettingController::class, 'update'])->name('pengaturan.email.perbarui');
+    Route::post('pengaturan/email/tes', [AdminEmailSettingController::class, 'testSmtp'])->name('pengaturan.email.tes');
 
     // Settings - Payment
     Route::get('pengaturan/pembayaran', [AdminPaymentSettingController::class, 'index'])->name('pengaturan.pembayaran.indeks');
