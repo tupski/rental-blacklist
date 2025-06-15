@@ -617,6 +617,35 @@
                     Data ini <strong>invalid</strong> dan dapat digunakan sebagai referensi untuk keputusan rental
                 @endif
             </p>
+
+            <!-- Verification Section -->
+            <div style="margin: 20px 0; padding: 15px; border: 2px solid #dc3545; border-radius: 8px; background-color: #f8f9fa; text-align: center;">
+                <h4 style="color: #dc3545; margin-bottom: 10px;">🔐 Verifikasi Keaslian Dokumen</h4>
+
+                <!-- Barcode -->
+                <div style="margin: 15px 0;">
+                    <img src="data:image/png;base64,{{ $barcode }}" alt="Barcode Verifikasi" style="height: 60px;">
+                </div>
+
+                <!-- Verification Code -->
+                <div style="margin: 10px 0;">
+                    <strong>Kode Verifikasi:</strong><br>
+                    <code style="font-size: 16px; font-weight: bold; color: #dc3545; background: white; padding: 5px 10px; border-radius: 4px; border: 1px solid #dc3545;">{{ $verificationCode }}</code>
+                </div>
+
+                <!-- Instructions -->
+                <div style="margin-top: 15px; font-size: 12px; color: #666;">
+                    <p><strong>Cara Verifikasi:</strong></p>
+                    <p>1. Kunjungi: <strong>cekpenyewa.com/verifikasi-dokumen</strong></p>
+                    <p>2. Masukkan kode verifikasi di atas</p>
+                    <p>3. Sistem akan menampilkan detail dokumen asli</p>
+                </div>
+
+                <p style="margin-top: 10px; font-size: 11px; color: #999;">
+                    Dokumen dicetak pada: {{ now()->format('d/m/Y H:i:s') }} WIB
+                </p>
+            </div>
+
             <p>
                 Untuk informasi lebih lanjut, kunjungi website resmi kami:<br>
                 <a href="https://cekpenyewa.com" style="color: #dc3545; text-decoration: none;">cekpenyewa.com</a>

@@ -709,6 +709,35 @@
                 @endif
             </p>
         </div>
+
+        <!-- Verification Section -->
+        <div style="margin: 20px 0; padding: 15px; border: 2px solid #da3544; text-align: center; background-color: #f8f9fa;">
+            <h4 style="color: #da3544; margin-bottom: 10px;">🔐 Verifikasi Keaslian Dokumen</h4>
+
+            <!-- Barcode -->
+            <div style="margin: 15px 0;">
+                <img src="data:image/png;base64,{{ $barcode }}" alt="Barcode Verifikasi" style="height: 60px;">
+            </div>
+
+            <!-- Verification Code -->
+            <div style="margin: 10px 0;">
+                <strong>Kode Verifikasi:</strong><br>
+                <span style="font-size: 16px; font-weight: bold; color: #da3544;">{{ $verificationCode }}</span>
+            </div>
+
+            <!-- Instructions -->
+            <div style="margin-top: 15px; font-size: 12px;">
+                <p><strong>Cara Verifikasi:</strong></p>
+                <p>1. Kunjungi: <strong>cekpenyewa.com/verifikasi-dokumen</strong></p>
+                <p>2. Masukkan kode verifikasi di atas</p>
+                <p>3. Sistem akan menampilkan detail dokumen asli</p>
+            </div>
+
+            <p style="margin-top: 10px; font-size: 11px;">
+                Dokumen dibuat pada: {{ now()->format('d/m/Y H:i:s') }} WIB
+            </p>
+        </div>
+
         <div style="margin-bottom: 10px;">
             Untuk informasi lebih lanjut, kunjungi website resmi kami:<br>
             <a href="https://cekpenyewa.com" style="color: #da3544; text-decoration: none;">cekpenyewa.com</a>

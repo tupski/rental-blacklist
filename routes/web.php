@@ -37,6 +37,10 @@ Route::get('/dokumentasi-api', [ApiController::class, 'documentation'])->name('a
 Route::get('/kontak', [ContactController::class, 'index'])->name('kontak');
 Route::post('/kontak', [ContactController::class, 'store'])->name('kontak.kirim');
 
+// Document verification
+Route::get('/verifikasi-dokumen', [App\Http\Controllers\DocumentVerificationController::class, 'index'])->name('verifikasi.index');
+Route::post('/verifikasi-dokumen', [App\Http\Controllers\DocumentVerificationController::class, 'verify'])->name('verifikasi.verify');
+
 // Public rental profile and report timeline
 Route::get('/rental/{id}/profil', [PublicRentalController::class, 'profile'])->name('rental.profil');
 Route::get('/laporan/{nik}/timeline', [PublicRentalController::class, 'reportTimeline'])->name('laporan.timeline');
