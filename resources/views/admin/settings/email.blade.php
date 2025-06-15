@@ -53,6 +53,15 @@
                                         </div>
                                     </div>
                                     <div class="card-body">
+                                        @if(config('mail.default') === 'log')
+                                            <div class="alert alert-warning">
+                                                <i class="fas fa-exclamation-triangle mr-2"></i>
+                                                <strong>Mode Development:</strong> MAIL_MAILER=log di file .env, sehingga email hanya disimpan di log file
+                                                <code>storage/logs/laravel.log</code> dan tidak benar-benar dikirim.
+                                                Untuk mengirim email sungguhan, ubah <code>MAIL_MAILER=smtp</code> di file .env.
+                                            </div>
+                                        @endif
+                                    <div class="card-body">
                                         <div class="row">
                                             @foreach($settings['smtp'] as $setting)
                                                 <div class="col-md-6">
@@ -333,8 +342,11 @@ $(document).ready(function() {
             mail_from_name: $('#setting_mail_from_name').val()
         };
 
+        console.log('Sending SMTP test data:', smtpData);
+
         $.post('{{ route("admin.pengaturan.email.tes") }}', smtpData)
             .done(function(response) {
+                console.log('SMTP test response:', response);
                 if (response.success) {
                     toastr.success(response.message);
                     $('#testEmailModal').modal('hide');
@@ -343,9 +355,12 @@ $(document).ready(function() {
                 }
             })
             .fail(function(xhr) {
+                console.error('SMTP test failed:', xhr);
                 let message = 'Terjadi kesalahan saat mengirim test email';
                 if (xhr.responseJSON && xhr.responseJSON.message) {
                     message = xhr.responseJSON.message;
+                } else if (xhr.responseText) {
+                    message = 'Error: ' + xhr.status + ' - ' + xhr.statusText;
                 }
                 toastr.error(message);
             })
