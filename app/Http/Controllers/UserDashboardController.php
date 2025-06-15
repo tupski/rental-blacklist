@@ -27,17 +27,22 @@ class UserDashboardController extends Controller
             ->latest()
             ->take(5)
             ->get()
-            ->map(function ($report) {
+            ->map(function ($report) use ($user) {
+                // Check if user has unlocked this data or NIK
+                $isUnlocked = $user && ($user->hasUnlockedData($report->id) || $user->hasUnlockedNik($report->nik));
+
                 return [
                     'id' => $report->id,
-                    'nama_lengkap' => $report->sensored_nama,
-                    'nik' => $report->sensored_nik,
-                    'no_hp' => $report->sensored_no_hp,
+                    'nama_lengkap' => $isUnlocked ? $report->nama_lengkap : $report->sensored_nama,
+                    'nik' => $isUnlocked ? $report->nik : $report->sensored_nik,
+                    'no_hp' => $isUnlocked ? $report->no_hp : $report->sensored_no_hp,
                     'jenis_rental' => $report->jenis_rental,
                     'status_validitas' => $report->status_validitas,
                     'created_at' => $report->created_at,
                     'user' => $report->user,
                     'jumlah_laporan' => RentalBlacklist::countReportsByNik($report->nik),
+                    'is_unlocked' => $isUnlocked,
+                    'price' => $this->getDetailPrice($report->jenis_rental)
                 ];
             });
 
@@ -78,10 +83,8 @@ class UserDashboardController extends Controller
                 $isExactPhoneMatch = $item->no_hp === $search || $item->no_hp === $normalizedSearch;
                 $isExactMatch = $isExactNameMatch || $isExactNikMatch || $isExactPhoneMatch;
 
-                // Cek apakah user sudah unlock data ini
-                $isUnlocked = UserUnlock::where('user_id', Auth::id())
-                                       ->where('blacklist_id', $item->id)
-                                       ->exists();
+                // Cek apakah user sudah unlock data ini atau NIK ini
+                $isUnlocked = $user->hasUnlockedData($item->id) || $user->hasUnlockedNik($item->nik);
 
                 // Jika user adalah pengusaha rental, sudah unlock, atau query lengkap cocok, tampilkan data lengkap
                 if (($user->role === 'pengusaha_rental') || $isUnlocked || $isExactMatch) {
@@ -146,15 +149,19 @@ class UserDashboardController extends Controller
                 $user->refresh();
             }
 
-            // Check if already unlocked
+            // Check if already unlocked (this specific report or any report with same NIK)
             $existingUnlock = UserUnlock::where('user_id', $user->id)
                                        ->where('blacklist_id', $id)
                                        ->first();
 
-            if ($existingUnlock) {
+            $existingNikUnlock = $user->hasUnlockedNik($blacklist->nik);
+
+            if ($existingUnlock || $existingNikUnlock) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Data sudah pernah dibuka sebelumnya'
+                    'message' => $existingNikUnlock ?
+                        'Anda sudah pernah membuka data dengan NIK yang sama sebelumnya' :
+                        'Data sudah pernah dibuka sebelumnya'
                 ]);
             }
 

@@ -218,12 +218,19 @@
                             </div>
                         </div>
                         <div class="ms-3">
-                            <button class="btn btn-sm btn-outline-primary unlock-btn"
-                                    data-id="{{ $report['id'] }}"
-                                    data-name="{{ $report['nama_lengkap'] }}"
-                                    data-rental="{{ $report['jenis_rental'] }}">
-                                <i class="fas fa-eye"></i> Lihat
-                            </button>
+                            @if($report['is_unlocked'])
+                                <button onclick="showUserDetail({{ $report['id'] }})" class="btn btn-sm btn-success">
+                                    <i class="fas fa-eye"></i> Lihat
+                                </button>
+                            @else
+                                <button class="btn btn-sm btn-outline-danger unlock-btn"
+                                        data-id="{{ $report['id'] }}"
+                                        data-name="{{ $report['nama_lengkap'] }}"
+                                        data-rental="{{ $report['jenis_rental'] }}"
+                                        data-price="{{ $report['price'] }}">
+                                    <i class="fas fa-eye"></i> Lihat
+                                </button>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -268,12 +275,25 @@
                                     <span class="badge bg-success">{{ $report['jumlah_laporan'] }} laporan</span>
                                 </td>
                                 <td class="align-middle">
-                                    <button class="btn btn-sm btn-outline-primary unlock-btn"
-                                            data-id="{{ $report['id'] }}"
-                                            data-name="{{ $report['nama_lengkap'] }}"
-                                            data-rental="{{ $report['jenis_rental'] }}">
-                                        <i class="fas fa-eye me-1"></i> Lihat Detail
-                                    </button>
+                                    @if($report['is_unlocked'])
+                                        <button onclick="showUserDetail({{ $report['id'] }})" class="btn btn-sm btn-success">
+                                            <i class="fas fa-eye me-1"></i> Lihat Detail
+                                        </button>
+                                        <div class="mt-1">
+                                            <span class="badge bg-success"><i class="fas fa-check me-1"></i>Sudah Dibuka</span>
+                                        </div>
+                                    @else
+                                        <button class="btn btn-sm btn-outline-danger unlock-btn"
+                                                data-id="{{ $report['id'] }}"
+                                                data-name="{{ $report['nama_lengkap'] }}"
+                                                data-rental="{{ $report['jenis_rental'] }}"
+                                                data-price="{{ $report['price'] }}">
+                                            <i class="fas fa-eye me-1"></i> Lihat Detail
+                                        </button>
+                                        <div class="mt-1 text-center">
+                                            <small class="text-danger fw-bold">Rp {{ number_format($report['price'], 0, ',', '.') }}</small>
+                                        </div>
+                                    @endif
                                 </td>
                             </tr>
                             @empty
@@ -452,7 +472,7 @@ $(document).ready(function() {
             const priceFormatted = 'Rp ' + item.price.toLocaleString('id-ID');
             const unlockStatus = item.is_unlocked ?
                 `<div class="d-grid gap-1">
-                    <button onclick="showUserDetail(${item.id})" class="btn btn-sm btn-primary">
+                    <button onclick="showUserDetail(${item.id})" class="btn btn-sm btn-success">
                         <i class="fas fa-eye me-1"></i>Lihat Detail
                     </button>
                     <span class="badge bg-success"><i class="fas fa-check me-1"></i>Sudah Dibuka</span>

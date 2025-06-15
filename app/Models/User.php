@@ -186,6 +186,16 @@ class User extends Authenticatable
         return UserUnlock::hasUnlocked($this->id, $blacklistId);
     }
 
+    // Check if user has unlocked any data for specific NIK
+    public function hasUnlockedNik($nik)
+    {
+        return UserUnlock::where('user_id', $this->id)
+            ->whereHas('rentalBlacklist', function($query) use ($nik) {
+                $query->where('nik', $nik);
+            })
+            ->exists();
+    }
+
     // Get all unlocked blacklist IDs for this user
     public function getUnlockedDataIds()
     {

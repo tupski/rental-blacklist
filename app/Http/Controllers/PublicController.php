@@ -159,8 +159,8 @@ class PublicController extends Controller
         $isRentalOwner = $isAuthenticated && $user->role === 'pengusaha_rental';
         $shouldShowFullData = $isAdmin || $isRentalOwner;
 
-        // Cek apakah user sudah unlock data ini (untuk user biasa)
-        $isUnlocked = $isAuthenticated && $user->hasUnlockedData($id);
+        // Cek apakah user sudah unlock data ini atau NIK ini (untuk user biasa)
+        $isUnlocked = $isAuthenticated && ($user->hasUnlockedData($id) || $user->hasUnlockedNik($blacklist->nik));
 
         // Jika admin, pemilik rental, atau sudah unlock, tampilkan data lengkap
         if ($shouldShowFullData || $isUnlocked) {
@@ -359,8 +359,14 @@ class PublicController extends Controller
         $user = auth()->user();
         $blacklist = RentalBlacklist::with('user')->findOrFail($id);
 
-        // Check if user has access (pengusaha_rental or has unlocked)
-        if (!$user || ($user->role !== 'pengusaha_rental' && !$user->hasUnlockedData($id))) {
+        // Check if user has access (pengusaha_rental or has unlocked this NIK)
+        $hasAccess = $user && (
+            $user->role === 'pengusaha_rental' ||
+            $user->hasUnlockedData($id) ||
+            $user->hasUnlockedNik($blacklist->nik)
+        );
+
+        if (!$hasAccess) {
             return response()->json([
                 'success' => false,
                 'message' => 'Anda tidak memiliki akses ke data lengkap ini'
@@ -379,8 +385,8 @@ class PublicController extends Controller
             'alamat' => $blacklist->alamat,
 
             // Foto Penyewa dan KTP/SIM
-            'foto_penyewa' => $blacklist->foto_penyewa ? json_decode($blacklist->foto_penyewa, true) : [],
-            'foto_ktp_sim' => $blacklist->foto_ktp_sim ? json_decode($blacklist->foto_ktp_sim, true) : [],
+            'foto_penyewa' => $blacklist->foto_penyewa ?: [],
+            'foto_ktp_sim' => $blacklist->foto_ktp_sim ?: [],
 
             // Informasi Pelapor
             'nama_perusahaan_rental' => $blacklist->nama_perusahaan_rental,
@@ -400,15 +406,15 @@ class PublicController extends Controller
             'nomor_polisi' => $blacklist->nomor_polisi,
             'nilai_kerugian' => $blacklist->nilai_kerugian,
             'nilai_kerugian_formatted' => $blacklist->nilai_kerugian ? 'Rp ' . number_format($blacklist->nilai_kerugian, 0, ',', '.') : null,
-            'jenis_laporan' => $blacklist->jenis_laporan ? json_decode($blacklist->jenis_laporan, true) : [],
+            'jenis_laporan' => $blacklist->jenis_laporan ?: [],
             'kronologi' => $blacklist->kronologi,
 
             // Status Penanganan
-            'status_penanganan' => $blacklist->status_penanganan ? json_decode($blacklist->status_penanganan, true) : [],
+            'status_penanganan' => $blacklist->status_penanganan ?: [],
             'status_lainnya' => $blacklist->status_lainnya,
 
             // Bukti Pendukung
-            'bukti' => $blacklist->bukti ? json_decode($blacklist->bukti, true) : [],
+            'bukti' => $blacklist->bukti ?: [],
 
             // Persetujuan
             'persetujuan' => $blacklist->persetujuan,
@@ -435,8 +441,14 @@ class PublicController extends Controller
         $user = auth()->user();
         $blacklist = RentalBlacklist::with('user')->findOrFail($id);
 
-        // Check if user has access
-        if (!$user || ($user->role !== 'pengusaha_rental' && !$user->hasUnlockedData($id))) {
+        // Check if user has access (pengusaha_rental or has unlocked this NIK)
+        $hasAccess = $user && (
+            $user->role === 'pengusaha_rental' ||
+            $user->hasUnlockedData($id) ||
+            $user->hasUnlockedNik($blacklist->nik)
+        );
+
+        if (!$hasAccess) {
             abort(403, 'Anda tidak memiliki akses ke data lengkap ini');
         }
 
@@ -448,8 +460,14 @@ class PublicController extends Controller
         $user = auth()->user();
         $blacklist = RentalBlacklist::with('user')->findOrFail($id);
 
-        // Check if user has access
-        if (!$user || ($user->role !== 'pengusaha_rental' && !$user->hasUnlockedData($id))) {
+        // Check if user has access (pengusaha_rental or has unlocked this NIK)
+        $hasAccess = $user && (
+            $user->role === 'pengusaha_rental' ||
+            $user->hasUnlockedData($id) ||
+            $user->hasUnlockedNik($blacklist->nik)
+        );
+
+        if (!$hasAccess) {
             abort(403, 'Anda tidak memiliki akses ke data lengkap ini');
         }
 
