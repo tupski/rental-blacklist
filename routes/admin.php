@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\EmailSettingController as AdminEmailSettingContro
 use App\Http\Controllers\Admin\PaymentSettingController as AdminPaymentSettingController;
 use App\Http\Controllers\Admin\DatabaseSettingController as AdminDatabaseSettingController;
 use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
+use App\Http\Controllers\Admin\ReportController as AdminReportController;
 
 
 /*
@@ -133,9 +134,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('pengaturan/database/optimasi', [AdminDatabaseSettingController::class, 'optimize'])->name('pengaturan.database.optimasi');
     Route::post('pengaturan/database/optimasi-db', [AdminDatabaseSettingController::class, 'optimizeDatabase'])->name('pengaturan.database.optimasi-db');
 
-    // Reports & Analytics (placeholder routes)
-    Route::get('laporan', function() { return view('admin.reports.index'); })->name('laporan');
-    Route::get('analitik', function() { return view('admin.analytics.index'); })->name('analitik');
+    // Reports & Analytics
+    Route::get('laporan', [AdminReportController::class, 'index'])->name('laporan');
+    Route::get('analitik', [AdminReportController::class, 'analytics'])->name('analitik');
+    Route::get('laporan/data', [AdminReportController::class, 'getData'])->name('laporan.data');
+    Route::get('laporan/ekspor', [AdminReportController::class, 'export'])->name('laporan.ekspor');
 
     // Notifications
     Route::get('notifikasi', [AdminNotificationController::class, 'getNotifications'])->name('notifikasi.ambil');

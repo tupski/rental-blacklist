@@ -14,7 +14,14 @@ class ReportController extends Controller
 {
     public function index()
     {
-        return view('admin.reports');
+        $stats = [
+            'total_blacklist' => RentalBlacklist::count(),
+            'total_users' => User::where('role', '!=', 'admin')->count(),
+            'pending_reports' => GuestReport::where('status', 'pending')->count(),
+            'pending_topups' => TopupRequest::where('status', 'pending')->count(),
+        ];
+
+        return view('admin.reports', compact('stats'));
     }
 
     public function analytics()

@@ -40,7 +40,7 @@
                             </tr>
                             <tr>
                                 <td><strong>Tanggal Laporan:</strong></td>
-                                <td>{{ $guestReport->created_at->format('d/m/Y H:i:s') }}</td>
+                                <td>{{ $guestReport->created_at ? $guestReport->created_at->format('d/m/Y H:i:s') : '-' }}</td>
                             </tr>
                         </table>
                     </div>
@@ -237,6 +237,7 @@
             </div>
             <div class="card-body">
                 <div class="timeline">
+                    @if($guestReport->created_at)
                     <div class="time-label">
                         <span class="bg-primary">{{ $guestReport->created_at->format('d M Y') }}</span>
                     </div>
@@ -250,8 +251,9 @@
                             </div>
                         </div>
                     </div>
+                    @endif
 
-                    @if($guestReport->status === 'approved')
+                    @if($guestReport->status === 'approved' && $guestReport->updated_at)
                     <div class="time-label">
                         <span class="bg-success">{{ $guestReport->updated_at->format('d M Y') }}</span>
                     </div>
@@ -267,7 +269,7 @@
                     </div>
                     @endif
 
-                    @if($guestReport->status === 'rejected')
+                    @if($guestReport->status === 'rejected' && $guestReport->updated_at)
                     <div class="time-label">
                         <span class="bg-danger">{{ $guestReport->updated_at->format('d M Y') }}</span>
                     </div>
