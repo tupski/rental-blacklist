@@ -591,6 +591,7 @@ $(document).ready(function() {
     $('#dashboardSearchForm').on('submit', function(e) {
         e.preventDefault();
         performDashboardSearch();
+        return false; // Prevent any default form submission
     });
 
     // Auto-update URL parameter saat mengetik
@@ -625,19 +626,26 @@ $(document).ready(function() {
 
     function updateURL(search) {
         const url = new URL(window.location);
-        if (search) {
+        if (search && search.length >= 3) {
             url.searchParams.set('cari', search);
         } else {
             url.searchParams.delete('cari');
         }
-        window.history.pushState({}, '', url);
+        window.history.replaceState({}, '', url);
     }
 
     function loadDashboardSearchResults(isNewSearch = false) {
         $('#dashboardSearchBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Mencari...');
 
+        // Determine search URL based on user role
+        const searchUrl = @if(Auth::user()->role === 'pengusaha_rental')
+            '{{ route('rental.cari') }}'
+        @else
+            '{{ route('dasbor.daftar-hitam.cari') }}'
+        @endif;
+
         $.ajax({
-            url: '{{ route('dasbor.daftar-hitam.cari') }}',
+            url: searchUrl,
             method: 'POST',
             data: {
                 search: currentDashboardSearchQuery,

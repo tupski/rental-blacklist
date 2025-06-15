@@ -137,6 +137,7 @@ Route::middleware(['auth', 'verified', 'role:pengusaha_rental'])->group(function
 
     // Dashboard
     Route::get('/rental/dasbor', [DashboardController::class, 'index'])->name('rental.dasbor');
+    Route::post('/rental/cari', [DashboardController::class, 'search'])->name('rental.cari');
 
     // Blacklist detail for rental owners
     Route::get('/rental/blacklist/{id}', function ($id) {

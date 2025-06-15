@@ -32,6 +32,62 @@ class DashboardController extends Controller
         return view('dashboard', compact('stats', 'recentReports', 'searchQuery'));
     }
 
+    public function search(Request $request)
+    {
+        $search = $request->input('search');
+        $page = $request->input('page', 1);
+        $perPage = 5;
+
+        if (strlen($search) < 3) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pencarian minimal 3 karakter'
+            ]);
+        }
+
+        $query = RentalBlacklist::with('user')
+            ->where(function($q) use ($search) {
+                $q->where('nama_lengkap', 'LIKE', "%{$search}%")
+                  ->orWhere('nik', 'LIKE', "%{$search}%")
+                  ->orWhere('no_hp', 'LIKE', "%{$search}%")
+                  ->orWhere('alamat', 'LIKE', "%{$search}%");
+            })
+            ->where('status_validitas', 'Valid')
+            ->latest();
+
+        $total = $query->count();
+        $results = $query->skip(($page - 1) * $perPage)
+                        ->take($perPage)
+                        ->get()
+                        ->map(function($item) {
+                            return [
+                                'id' => $item->id,
+                                'nama_lengkap' => $item->nama_lengkap,
+                                'nik' => $item->nik,
+                                'no_hp' => $item->no_hp,
+                                'alamat' => $item->alamat,
+                                'jenis_rental' => $item->jenis_rental,
+                                'status_validitas' => $item->status_validitas,
+                                'jumlah_laporan' => 1, // For rental owners, each record is one report
+                                'pelapor' => $item->user ? $item->user->name : 'Tidak diketahui',
+                                'can_edit' => false // Rental owners can't edit reports
+                            ];
+                        });
+
+        $hasMore = ($page * $perPage) < $total;
+
+        return response()->json([
+            'success' => true,
+            'data' => $results,
+            'pagination' => [
+                'current_page' => $page,
+                'per_page' => $perPage,
+                'total' => $total,
+                'has_more' => $hasMore
+            ]
+        ]);
+    }
+
     public function printDetail($id)
     {
         $blacklist = RentalBlacklist::with('user')->findOrFail($id);
