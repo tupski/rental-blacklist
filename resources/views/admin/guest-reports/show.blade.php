@@ -202,7 +202,7 @@
                 </div>
 
                 @if($guestReport->status === 'pending')
-                <form action="{{ route('admin.laporan-tamu.setujui', $guestReport->id) }}" method="POST" class="mb-2">
+                <form action="{{ route('admin.laporan-tamu.setujui', $guestReport) }}" method="POST" class="mb-2">
                     @csrf
                     <button type="submit" class="btn btn-success btn-block"
                             onclick="return confirm('Approve laporan ini? Data akan ditambahkan ke blacklist.')">
@@ -215,7 +215,7 @@
                 </button>
                 @endif
 
-                <a href="{{ route('admin.laporan-tamu.edit', $guestReport->id) }}"
+                <a href="{{ route('admin.laporan-tamu.edit', $guestReport) }}"
                    class="btn btn-warning btn-block">
                     <i class="fas fa-edit"></i> Edit Laporan
                 </a>

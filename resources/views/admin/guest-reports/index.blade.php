@@ -85,7 +85,7 @@
                                             </button>
                                         @endif
 
-                                        <a href="{{ route('admin.laporan-tamu.edit', $report->id) }}"
+                                        <a href="{{ route('admin.laporan-tamu.edit', $report) }}"
                                            class="btn btn-warning btn-sm" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
