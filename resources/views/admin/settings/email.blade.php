@@ -173,27 +173,27 @@
 
                                             @if($template->key === 'email_template_verification')
                                                 <div class="alert alert-info">
-                                                    <strong>Variabel yang tersedia:</strong> {{name}}, {{email}}, {{verification_url}}
+                                                    <strong>Variabel yang tersedia:</strong> @{{name}}, @{{email}}, @{{verification_url}}
                                                 </div>
                                             @elseif($template->key === 'email_template_registration')
                                                 <div class="alert alert-info">
-                                                    <strong>Variabel yang tersedia:</strong> {{name}}, {{email}}, {{role}}
+                                                    <strong>Variabel yang tersedia:</strong> @{{name}}, @{{email}}, @{{role}}
                                                 </div>
                                             @elseif($template->key === 'email_template_account_suspended')
                                                 <div class="alert alert-info">
-                                                    <strong>Variabel yang tersedia:</strong> {{name}}, {{email}}, {{reason}}
+                                                    <strong>Variabel yang tersedia:</strong> @{{name}}, @{{email}}, @{{reason}}
                                                 </div>
                                             @elseif($template->key === 'email_template_topup')
                                                 <div class="alert alert-info">
-                                                    <strong>Variabel yang tersedia:</strong> {{name}}, {{amount}}, {{method}}, {{status}}, {{date}}, {{status_message}}
+                                                    <strong>Variabel yang tersedia:</strong> @{{name}}, @{{amount}}, @{{method}}, @{{status}}, @{{date}}, @{{status_message}}
                                                 </div>
                                             @elseif($template->key === 'email_template_password_reset')
                                                 <div class="alert alert-info">
-                                                    <strong>Variabel yang tersedia:</strong> {{name}}, {{email}}, {{reset_url}}
+                                                    <strong>Variabel yang tersedia:</strong> @{{name}}, @{{email}}, @{{reset_url}}
                                                 </div>
                                             @elseif($template->key === 'email_template_report_notification')
                                                 <div class="alert alert-info">
-                                                    <strong>Variabel yang tersedia:</strong> {{reporter_name}}, {{rental_name}}, {{category}}, {{date}}
+                                                    <strong>Variabel yang tersedia:</strong> @{{reporter_name}}, @{{rental_name}}, @{{category}}, @{{date}}
                                                 </div>
                                             @endif
                                         </div>
