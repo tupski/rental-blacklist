@@ -471,15 +471,14 @@
             <!-- Verification URL -->
             <div style="margin: 10px 0; font-size: 12px; color: #666;">
                 <strong>Link Verifikasi:</strong><br>
-                <span style="font-size: 11px; word-break: break-all;">{{ $verificationUrl }}</span>
+                <code style="font-size: 16px; font-weight: bold; color: #dc3545; background: white; padding: 5px 10px; border-radius: 4px; border: 1px solid #1f11e2;"><a href="{{ $verificationUrl }}" target="_blank">{{ $verificationUrl }}</a></code>
             </div>
 
             <!-- Instructions -->
             <div style="margin-top: 15px; font-size: 12px; color: #666;">
                 <p><strong>Cara Verifikasi:</strong></p>
                 <p>1. <strong>Scan QR Code</strong> dengan kamera HP untuk verifikasi otomatis</p>
-                <p>2. Atau kunjungi: <strong>cekpenyewa.com/verifikasi-dokumen</strong></p>
-                <p>3. Masukkan kode verifikasi di atas secara manual</p>
+                <p>2. Atau kunjungi: <strong>{{ $verificationUrl }}</strong></p>
             </div>
 
             <p style="margin-top: 10px; font-size: 11px; color: #999;">

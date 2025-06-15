@@ -219,19 +219,24 @@
                             </div>
                         </div>
                         <div class="ms-3">
-                            @if($report['is_unlocked'])
-                                <button onclick="showUserDetail({{ $report['id'] }})" class="btn btn-sm btn-success">
-                                    <i class="fas fa-eye"></i> Lihat
-                                </button>
-                            @else
-                                <button class="btn btn-sm btn-outline-danger unlock-btn"
-                                        data-id="{{ $report['id'] }}"
-                                        data-name="{{ $report['nama_lengkap'] }}"
-                                        data-rental="{{ $report['jenis_rental'] }}"
-                                        data-price="{{ $report['price'] }}">
-                                    <i class="fas fa-eye"></i> Lihat
-                                </button>
-                            @endif
+                            <div class="d-flex flex-column gap-1">
+                                <a href="{{ route('detail.laporan', $report['id']) }}" class="btn btn-sm btn-success">
+                                    <i class="fas fa-file-alt"></i> Detail Lengkap
+                                </a>
+                                @if($report['is_unlocked'])
+                                    <button onclick="showUserDetail({{ $report['id'] }})" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-eye"></i> Lihat
+                                    </button>
+                                @else
+                                    <button class="btn btn-sm btn-outline-danger unlock-btn"
+                                            data-id="{{ $report['id'] }}"
+                                            data-name="{{ $report['nama_lengkap'] }}"
+                                            data-rental="{{ $report['jenis_rental'] }}"
+                                            data-price="{{ $report['price'] }}">
+                                        <i class="fas fa-eye"></i> Lihat
+                                    </button>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -276,25 +281,28 @@
                                     <span class="badge bg-success">{{ $report['jumlah_laporan'] }} laporan</span>
                                 </td>
                                 <td class="align-middle">
-                                    @if($report['is_unlocked'])
-                                        <button onclick="showUserDetail({{ $report['id'] }})" class="btn btn-sm btn-success">
-                                            <i class="fas fa-eye me-1"></i> Lihat Detail
-                                        </button>
-                                        <div class="mt-1">
+                                    <div class="d-flex flex-column gap-1">
+                                        <a href="{{ route('detail.laporan', $report['id']) }}" class="btn btn-sm btn-success">
+                                            <i class="fas fa-file-alt me-1"></i> Detail Lengkap
+                                        </a>
+                                        @if($report['is_unlocked'])
+                                            <button onclick="showUserDetail({{ $report['id'] }})" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-eye me-1"></i> Lihat
+                                            </button>
                                             <span class="badge bg-success"><i class="fas fa-check me-1"></i>Sudah Dibuka</span>
-                                        </div>
-                                    @else
-                                        <button class="btn btn-sm btn-outline-danger unlock-btn"
-                                                data-id="{{ $report['id'] }}"
-                                                data-name="{{ $report['nama_lengkap'] }}"
-                                                data-rental="{{ $report['jenis_rental'] }}"
-                                                data-price="{{ $report['price'] }}">
-                                            <i class="fas fa-eye me-1"></i> Lihat Detail
-                                        </button>
-                                        <div class="mt-1 text-center">
-                                            <small class="text-danger fw-bold">Rp {{ number_format($report['price'], 0, ',', '.') }}</small>
-                                        </div>
-                                    @endif
+                                        @else
+                                            <button class="btn btn-sm btn-outline-danger unlock-btn"
+                                                    data-id="{{ $report['id'] }}"
+                                                    data-name="{{ $report['nama_lengkap'] }}"
+                                                    data-rental="{{ $report['jenis_rental'] }}"
+                                                    data-price="{{ $report['price'] }}">
+                                                <i class="fas fa-eye me-1"></i> Lihat
+                                            </button>
+                                            <div class="text-center">
+                                                <small class="text-danger fw-bold">Rp {{ number_format($report['price'], 0, ',', '.') }}</small>
+                                            </div>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                             @empty
@@ -421,6 +429,16 @@ $(document).ready(function() {
         performUserSearch();
     });
 
+    // Auto-update URL parameter saat mengetik
+    $('#userSearchInput').on('input', function() {
+        const search = $(this).val().trim();
+        if (search.length >= 3) {
+            updateURL(search);
+        } else if (search.length === 0) {
+            updateURL('');
+        }
+    });
+
     let currentUserSearchQuery = '';
     let currentUserPage = 1;
 
@@ -495,18 +513,24 @@ $(document).ready(function() {
             const priceFormatted = 'Rp ' + item.price.toLocaleString('id-ID');
             const unlockStatus = item.is_unlocked ?
                 `<div class="d-grid gap-1">
-                    <button onclick="showUserDetail(${item.id})" class="btn btn-sm btn-success">
-                        <i class="fas fa-eye me-1"></i>Lihat Detail
+                    <a href="/detail-laporan/${item.id}" class="btn btn-sm btn-success">
+                        <i class="fas fa-file-alt me-1"></i>Detail Lengkap
+                    </a>
+                    <button onclick="showUserDetail(${item.id})" class="btn btn-sm btn-primary">
+                        <i class="fas fa-eye me-1"></i>Lihat
                     </button>
                     <span class="badge bg-success"><i class="fas fa-check me-1"></i>Sudah Dibuka</span>
                 </div>` :
                 `<div class="d-grid gap-1">
+                    <a href="/detail-laporan/${item.id}" class="btn btn-sm btn-success">
+                        <i class="fas fa-file-alt me-1"></i>Detail Lengkap
+                    </a>
                     <button class="btn btn-sm btn-outline-danger unlock-btn"
                              data-id="${item.id}"
                              data-name="${item.nama_lengkap}"
                              data-rental="${item.jenis_rental}"
                              data-price="${item.price}">
-                        <i class="fas fa-eye me-1"></i>Lihat Detail
+                        <i class="fas fa-eye me-1"></i>Lihat
                     </button>
                     <div class="text-center">
                         <small class="text-danger fw-bold">${priceFormatted}</small>

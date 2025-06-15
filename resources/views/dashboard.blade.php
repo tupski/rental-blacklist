@@ -343,13 +343,223 @@
                     <i class="fas fa-times me-2"></i>
                     Tutup
                 </button>
-                <button type="button" class="btn btn-info" onclick="printRentalDetail()">
-                    <i class="fas fa-print me-2"></i>
-                    Print
+
+                <!-- Dropdown untuk Print/PDF -->
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-download me-2"></i>
+                        Cetak & Unduh
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item" href="#" onclick="printRentalDetail()">
+                                <i class="fas fa-print me-2"></i>
+                                Print
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#" onclick="downloadRentalPDF()">
+                                <i class="fas fa-file-pdf me-2"></i>
+                                Download PDF
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Tombol Bagikan -->
+                <button type="button" class="btn btn-warning" onclick="showShareModal()">
+                    <i class="fas fa-share-alt me-2"></i>
+                    Bagikan
                 </button>
-                <button type="button" class="btn btn-success" onclick="downloadRentalPDF()">
-                    <i class="fas fa-file-pdf me-2"></i>
-                    Download PDF
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Bagikan Laporan -->
+<div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="shareModalLabel">
+                    <i class="fas fa-share-alt me-2"></i>
+                    Bagikan Laporan
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="shareForm">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Peringatan:</strong> Link berbagi akan memberikan akses ke data sensitif. Pastikan hanya dibagikan kepada pihak yang berwenang.
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="duration" class="form-label">Durasi Berlaku</label>
+                        <select class="form-select" id="duration" name="duration" required>
+                            <option value="">Pilih durasi...</option>
+                            <option value="1">1 Jam</option>
+                            <option value="3">3 Jam</option>
+                            <option value="6">6 Jam</option>
+                            <option value="12">12 Jam</option>
+                            <option value="24">24 Jam</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password"
+                               placeholder="Minimal 6 karakter" minlength="6" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password_confirmation" class="form-label">Konfirmasi Password</label>
+                        <input type="password" class="form-control" id="password_confirmation" name="password_confirmation"
+                               placeholder="Ulangi password" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="one_time_view" name="one_time_view">
+                            <label class="form-check-label" for="one_time_view">
+                                <strong>Sekali Lihat</strong> - Link akan kadaluarsa setelah dibuka sekali
+                            </label>
+                        </div>
+                    </div>
+                </form>
+
+                <div id="shareResult" class="d-none">
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Link berbagi berhasil dibuat!
+                    </div>
+                    <div class="mb-3">
+                        <label for="shareUrl" class="form-label">Link Berbagi</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="shareUrl" readonly>
+                            <button class="btn btn-outline-secondary" type="button" onclick="copyShareUrl()">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="shareInfo" class="small text-muted"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-primary" id="createShareBtn">
+                    <i class="fas fa-share-alt me-2"></i>
+                    Buat Link Berbagi
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@else
+<!-- User Detail Modal -->
+<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailModalLabel">
+                    <i class="fas fa-file-alt me-2"></i>
+                    Detail Laporan Blacklist
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="detailContent">
+                    <!-- Content will be loaded here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>
+                    Tutup
+                </button>
+                <button type="button" class="btn btn-warning" onclick="showUserShareModal()" id="userShareBtn" style="display: none;">
+                    <i class="fas fa-share-alt me-2"></i>
+                    Bagikan
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Bagikan Laporan untuk User -->
+<div class="modal fade" id="userShareModal" tabindex="-1" aria-labelledby="userShareModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userShareModalLabel">
+                    <i class="fas fa-share-alt me-2"></i>
+                    Bagikan Laporan
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="userShareForm">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Peringatan:</strong> Link berbagi akan memberikan akses ke data sensitif. Pastikan hanya dibagikan kepada pihak yang berwenang.
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="userDuration" class="form-label">Durasi Berlaku</label>
+                        <select class="form-select" id="userDuration" name="duration" required>
+                            <option value="">Pilih durasi...</option>
+                            <option value="1">1 Jam</option>
+                            <option value="3">3 Jam</option>
+                            <option value="6">6 Jam</option>
+                            <option value="12">12 Jam</option>
+                            <option value="24">24 Jam</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="userPassword" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="userPassword" name="password"
+                               placeholder="Minimal 6 karakter" minlength="6" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="userPasswordConfirmation" class="form-label">Konfirmasi Password</label>
+                        <input type="password" class="form-control" id="userPasswordConfirmation" name="password_confirmation"
+                               placeholder="Ulangi password" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="userOneTimeView" name="one_time_view">
+                            <label class="form-check-label" for="userOneTimeView">
+                                <strong>Sekali Lihat</strong> - Link akan kadaluarsa setelah dibuka sekali
+                            </label>
+                        </div>
+                    </div>
+                </form>
+
+                <div id="userShareResult" class="d-none">
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Link berbagi berhasil dibuat!
+                    </div>
+                    <div class="mb-3">
+                        <label for="userShareUrl" class="form-label">Link Berbagi</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="userShareUrl" readonly>
+                            <button class="btn btn-outline-secondary" type="button" onclick="copyUserShareUrl()">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="userShareInfo" class="small text-muted"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-primary" id="createUserShareBtn">
+                    <i class="fas fa-share-alt me-2"></i>
+                    Buat Link Berbagi
                 </button>
             </div>
         </div>
@@ -375,6 +585,16 @@ $(document).ready(function() {
     $('#dashboardSearchForm').on('submit', function(e) {
         e.preventDefault();
         performDashboardSearch();
+    });
+
+    // Auto-update URL parameter saat mengetik
+    $('#dashboardSearchInput').on('input', function() {
+        const search = $(this).val().trim();
+        if (search.length >= 3) {
+            updateURL(search);
+        } else if (search.length === 0) {
+            updateURL('');
+        }
     });
 
     let currentDashboardSearchQuery = '';
@@ -475,16 +695,25 @@ $(document).ready(function() {
                                 </div>
                             </div>
                             <div class="ms-3">
-                                @if(Auth::user()->role === 'pengusaha_rental')
-                                <button onclick="showRentalDetail(${item.id})" class="btn btn-sm btn-primary mb-1">
-                                    <i class="fas fa-eye"></i> Detail
-                                </button>
-                                @endif
-                                ${item.can_edit ? `
-                                    <a href="/dasbor/daftar-hitam/${item.id}/edit" class="btn btn-sm btn-outline-primary">
-                                        <i class="fas fa-edit"></i>
+                                <div class="d-flex flex-column gap-1">
+                                    <a href="/detail-laporan/${item.id}" class="btn btn-sm btn-success">
+                                        <i class="fas fa-file-alt"></i> Detail Lengkap
                                     </a>
-                                ` : ''}
+                                    @if(Auth::user()->role === 'pengusaha_rental')
+                                    <button onclick="showRentalDetail(${item.id})" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-eye"></i> Lihat
+                                    </button>
+                                    @else
+                                    <button onclick="showDetail(${item.id})" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-eye"></i> Lihat
+                                    </button>
+                                    @endif
+                                    ${item.can_edit ? `
+                                        <a href="/dasbor/daftar-hitam/${item.id}/edit" class="btn btn-sm btn-outline-secondary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    ` : ''}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -615,6 +844,264 @@ $(document).ready(function() {
 
     // Variable to store current detail ID
     let currentRentalDetailId = null;
+
+    // Show share modal
+    window.showShareModal = function() {
+        if (!currentRentalDetailId) {
+            alert('Tidak ada data yang dipilih');
+            return;
+        }
+
+        // Reset form
+        $('#shareForm')[0].reset();
+        $('#shareResult').addClass('d-none');
+        $('#shareModal').modal('show');
+    };
+
+    // Handle share form submission
+    $('#createShareBtn').on('click', function() {
+        if (!currentRentalDetailId) {
+            alert('Tidak ada data yang dipilih');
+            return;
+        }
+
+        const form = $('#shareForm')[0];
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        const password = $('#password').val();
+        const passwordConfirmation = $('#password_confirmation').val();
+
+        if (password !== passwordConfirmation) {
+            alert('Konfirmasi password tidak cocok');
+            return;
+        }
+
+        const btn = $(this);
+        const originalText = btn.html();
+        btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Membuat Link...');
+
+        $.ajax({
+            url: `/rental/bagikan/${currentRentalDetailId}`,
+            method: 'POST',
+            data: {
+                duration: $('#duration').val(),
+                password: password,
+                password_confirmation: passwordConfirmation,
+                one_time_view: $('#one_time_view').is(':checked'),
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('#shareUrl').val(response.share_url);
+                    $('#shareInfo').html(`
+                        <i class="fas fa-clock me-1"></i>Berlaku hingga: ${response.expires_at}<br>
+                        ${response.one_time_view ? '<i class="fas fa-eye me-1"></i>Sekali lihat: Ya' : '<i class="fas fa-eye me-1"></i>Sekali lihat: Tidak'}
+                    `);
+                    $('#shareResult').removeClass('d-none');
+                    btn.html('<i class="fas fa-check me-2"></i>Link Dibuat');
+                } else {
+                    alert('Gagal membuat link berbagi: ' + (response.message || 'Terjadi kesalahan'));
+                }
+            },
+            error: function(xhr) {
+                console.error('Share error:', xhr);
+                let errorMessage = 'Terjadi kesalahan saat membuat link';
+                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                    const errors = Object.values(xhr.responseJSON.errors).flat();
+                    errorMessage = errors.join(', ');
+                }
+                alert(errorMessage);
+            },
+            complete: function() {
+                btn.prop('disabled', false).html(originalText);
+            }
+        });
+    });
+
+    // Copy share URL to clipboard
+    window.copyShareUrl = function() {
+        const shareUrl = $('#shareUrl')[0];
+        shareUrl.select();
+        shareUrl.setSelectionRange(0, 99999);
+        document.execCommand('copy');
+
+        // Show feedback
+        const btn = event.target.closest('button');
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i>';
+        setTimeout(() => {
+            btn.innerHTML = originalHtml;
+        }, 2000);
+    };
+    @endif
+
+    @if(Auth::user()->role !== 'pengusaha_rental')
+    // Variable to store current user detail ID
+    let currentUserDetailId = null;
+
+    // User detail function (for regular users)
+    window.showDetail = function(id) {
+        currentUserDetailId = id; // Store current ID for sharing
+
+        // Show loading
+        $('#detailModal').modal('show');
+        $('#detailContent').html('<div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-2x"></i><p class="mt-2">Memuat data...</p></div>');
+
+        // Fetch detail data
+        $.ajax({
+            url: `/detail/${id}`,
+            method: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    displayDetailModal(response.data);
+                } else {
+                    $('#detailContent').html('<div class="alert alert-danger">Gagal memuat data</div>');
+                }
+            },
+            error: function() {
+                $('#detailContent').html('<div class="alert alert-danger">Terjadi kesalahan saat memuat data</div>');
+            }
+        });
+    };
+
+    function displayDetailModal(data) {
+        const content = `
+            <div class="row">
+                <div class="col-md-6">
+                    <h6 class="text-primary mb-3"><i class="fas fa-user me-2"></i>Data Penyewa</h6>
+                    <table class="table table-sm">
+                        <tr><td><strong>Nama Lengkap:</strong></td><td>${data.nama_lengkap}</td></tr>
+                        <tr><td><strong>NIK:</strong></td><td>${data.nik}</td></tr>
+                        <tr><td><strong>No. HP:</strong></td><td>${data.no_hp}</td></tr>
+                        <tr><td><strong>Alamat:</strong></td><td>${data.alamat || '-'}</td></tr>
+                        <tr><td><strong>Jenis Kelamin:</strong></td><td>${data.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan'}</td></tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="text-danger mb-3"><i class="fas fa-exclamation-triangle me-2"></i>Data Laporan</h6>
+                    <table class="table table-sm">
+                        <tr><td><strong>Jenis Rental:</strong></td><td>${data.jenis_rental}</td></tr>
+                        <tr><td><strong>Tanggal Kejadian:</strong></td><td>${data.tanggal_kejadian}</td></tr>
+                        <tr><td><strong>Kronologi:</strong></td><td>${data.kronologi || '-'}</td></tr>
+                        <tr><td><strong>Status:</strong></td><td><span class="badge ${data.is_verified ? 'bg-success' : 'bg-warning'}">${data.is_verified ? 'Terverifikasi' : 'Belum Terverifikasi'}</span></td></tr>
+                        <tr><td><strong>Jumlah Laporan:</strong></td><td>${data.jumlah_laporan} laporan</td></tr>
+                        <tr><td><strong>Pelapor:</strong></td><td>${data.pelapor}</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            ${!data.is_full_access ? `
+                <div class="alert alert-info mt-3">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Data Disensor:</strong> ${data.message}
+                </div>
+            ` : ''}
+        `;
+
+        $('#detailContent').html(content);
+
+        // Show/hide share button based on access level
+        if (data.is_full_access) {
+            $('#userShareBtn').show();
+        } else {
+            $('#userShareBtn').hide();
+        }
+    }
+
+    // Show user share modal
+    window.showUserShareModal = function() {
+        if (!currentUserDetailId) {
+            alert('Tidak ada data yang dipilih');
+            return;
+        }
+
+        // Reset form
+        $('#userShareForm')[0].reset();
+        $('#userShareResult').addClass('d-none');
+        $('#userShareModal').modal('show');
+    };
+
+    // Handle user share form submission
+    $('#createUserShareBtn').on('click', function() {
+        if (!currentUserDetailId) {
+            alert('Tidak ada data yang dipilih');
+            return;
+        }
+
+        const form = $('#userShareForm')[0];
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        const password = $('#userPassword').val();
+        const passwordConfirmation = $('#userPasswordConfirmation').val();
+
+        if (password !== passwordConfirmation) {
+            alert('Konfirmasi password tidak cocok');
+            return;
+        }
+
+        const btn = $(this);
+        const originalText = btn.html();
+        btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Membuat Link...');
+
+        $.ajax({
+            url: `/pengguna/bagikan/${currentUserDetailId}`,
+            method: 'POST',
+            data: {
+                duration: $('#userDuration').val(),
+                password: password,
+                password_confirmation: passwordConfirmation,
+                one_time_view: $('#userOneTimeView').is(':checked'),
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('#userShareUrl').val(response.share_url);
+                    $('#userShareInfo').html(`
+                        <i class="fas fa-clock me-1"></i>Berlaku hingga: ${response.expires_at}<br>
+                        ${response.one_time_view ? '<i class="fas fa-eye me-1"></i>Sekali lihat: Ya' : '<i class="fas fa-eye me-1"></i>Sekali lihat: Tidak'}
+                    `);
+                    $('#userShareResult').removeClass('d-none');
+                    btn.html('<i class="fas fa-check me-2"></i>Link Dibuat');
+                } else {
+                    alert('Gagal membuat link berbagi: ' + (response.message || 'Terjadi kesalahan'));
+                }
+            },
+            error: function(xhr) {
+                console.error('Share error:', xhr);
+                let errorMessage = 'Terjadi kesalahan saat membuat link';
+                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                    const errors = Object.values(xhr.responseJSON.errors).flat();
+                    errorMessage = errors.join(', ');
+                }
+                alert(errorMessage);
+            },
+            complete: function() {
+                btn.prop('disabled', false).html(originalText);
+            }
+        });
+    });
+
+    // Copy user share URL to clipboard
+    window.copyUserShareUrl = function() {
+        const shareUrl = $('#userShareUrl')[0];
+        shareUrl.select();
+        shareUrl.setSelectionRange(0, 99999);
+        document.execCommand('copy');
+
+        // Show feedback
+        const btn = event.target.closest('button');
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i>';
+        setTimeout(() => {
+            btn.innerHTML = originalHtml;
+        }, 2000);
+    };
     @endif
 });
 </script>

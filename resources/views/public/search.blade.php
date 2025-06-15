@@ -251,6 +251,88 @@
         </div>
     </div>
 </div>
+
+@auth
+<!-- Modal Bagikan Laporan untuk Halaman Publik -->
+<div class="modal fade" id="publicShareModal" tabindex="-1" aria-labelledby="publicShareModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="publicShareModalLabel">
+                    <i class="fas fa-share-alt me-2"></i>
+                    Bagikan Laporan
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="publicShareForm">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Peringatan:</strong> Link berbagi akan memberikan akses ke data sensitif. Pastikan hanya dibagikan kepada pihak yang berwenang.
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="publicDuration" class="form-label">Durasi Berlaku</label>
+                        <select class="form-select" id="publicDuration" name="duration" required>
+                            <option value="">Pilih durasi...</option>
+                            <option value="1">1 Jam</option>
+                            <option value="3">3 Jam</option>
+                            <option value="6">6 Jam</option>
+                            <option value="12">12 Jam</option>
+                            <option value="24">24 Jam</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="publicPassword" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="publicPassword" name="password"
+                               placeholder="Minimal 6 karakter" minlength="6" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="publicPasswordConfirmation" class="form-label">Konfirmasi Password</label>
+                        <input type="password" class="form-control" id="publicPasswordConfirmation" name="password_confirmation"
+                               placeholder="Ulangi password" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="publicOneTimeView" name="one_time_view">
+                            <label class="form-check-label" for="publicOneTimeView">
+                                <strong>Sekali Lihat</strong> - Link akan kadaluarsa setelah dibuka sekali
+                            </label>
+                        </div>
+                    </div>
+                </form>
+
+                <div id="publicShareResult" class="d-none">
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Link berbagi berhasil dibuat!
+                    </div>
+                    <div class="mb-3">
+                        <label for="publicShareUrl" class="form-label">Link Berbagi</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="publicShareUrl" readonly>
+                            <button class="btn btn-outline-secondary" type="button" onclick="copyPublicShareUrl()">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="publicShareInfo" class="small text-muted"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-primary" id="createPublicShareBtn">
+                    <i class="fas fa-share-alt me-2"></i>
+                    Buat Link Berbagi
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@endauth
 @endsection
 
 @push('styles')
@@ -667,14 +749,36 @@ $(document).ready(function() {
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                                        <button onclick="printDetail(${id})" class="btn btn-primary">
-                                            <i class="fas fa-print me-2"></i>
-                                            Print
+
+                                        <!-- Dropdown untuk Print/PDF -->
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fas fa-download me-2"></i>
+                                                Cetak & Unduh
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <a class="dropdown-item" href="#" onclick="printDetail(${id})">
+                                                        <i class="fas fa-print me-2"></i>
+                                                        Print
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item" href="#" onclick="downloadPDF(${id})">
+                                                        <i class="fas fa-file-pdf me-2"></i>
+                                                        Download PDF
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                        @auth
+                                        <!-- Tombol Bagikan -->
+                                        <button type="button" class="btn btn-warning" onclick="showPublicShareModal(${id})">
+                                            <i class="fas fa-share-alt me-2"></i>
+                                            Bagikan
                                         </button>
-                                        <button onclick="downloadPDF(${id})" class="btn btn-danger">
-                                            <i class="fas fa-file-pdf me-2"></i>
-                                            Download PDF
-                                        </button>
+                                        @endauth
                                     </div>
                                 </div>
                             </div>
@@ -713,6 +817,98 @@ $(document).ready(function() {
     // Download PDF function
     window.downloadPDF = function(id) {
         window.open(`/download-pdf/${id}`, '_blank');
+    };
+
+    // Global variable to store current share ID
+    let currentPublicShareId = null;
+
+    // Show public share modal
+    window.showPublicShareModal = function(id) {
+        currentPublicShareId = id;
+
+        // Reset form
+        $('#publicShareForm')[0].reset();
+        $('#publicShareResult').addClass('d-none');
+        $('#publicShareModal').modal('show');
+    };
+
+    // Handle public share form submission
+    $('#createPublicShareBtn').on('click', function() {
+        if (!currentPublicShareId) {
+            alert('Tidak ada data yang dipilih');
+            return;
+        }
+
+        const form = $('#publicShareForm')[0];
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        const password = $('#publicPassword').val();
+        const passwordConfirmation = $('#publicPasswordConfirmation').val();
+
+        if (password !== passwordConfirmation) {
+            alert('Konfirmasi password tidak cocok');
+            return;
+        }
+
+        const btn = $(this);
+        const originalText = btn.html();
+        btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Membuat Link...');
+
+        $.ajax({
+            url: `/dasbor/daftar-hitam/${currentPublicShareId}/bagikan`,
+            method: 'POST',
+            data: {
+                duration: $('#publicDuration').val(),
+                password: password,
+                password_confirmation: passwordConfirmation,
+                one_time_view: $('#publicOneTimeView').is(':checked'),
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('#publicShareUrl').val(response.share_url);
+                    $('#publicShareInfo').html(`
+                        <i class="fas fa-clock me-1"></i>Berlaku hingga: ${response.expires_at}<br>
+                        ${response.one_time_view ? '<i class="fas fa-eye me-1"></i>Sekali lihat: Ya' : '<i class="fas fa-eye me-1"></i>Sekali lihat: Tidak'}
+                    `);
+                    $('#publicShareResult').removeClass('d-none');
+                    btn.html('<i class="fas fa-check me-2"></i>Link Dibuat');
+                } else {
+                    alert('Gagal membuat link berbagi: ' + (response.message || 'Terjadi kesalahan'));
+                }
+            },
+            error: function(xhr) {
+                console.error('Share error:', xhr);
+                let errorMessage = 'Terjadi kesalahan saat membuat link';
+                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                    const errors = Object.values(xhr.responseJSON.errors).flat();
+                    errorMessage = errors.join(', ');
+                }
+                alert(errorMessage);
+            },
+            complete: function() {
+                btn.prop('disabled', false).html(originalText);
+            }
+        });
+    });
+
+    // Copy public share URL to clipboard
+    window.copyPublicShareUrl = function() {
+        const shareUrl = $('#publicShareUrl')[0];
+        shareUrl.select();
+        shareUrl.setSelectionRange(0, 99999);
+        document.execCommand('copy');
+
+        // Show feedback
+        const btn = event.target.closest('button');
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i>';
+        setTimeout(() => {
+            btn.innerHTML = originalHtml;
+        }, 2000);
     };
 });
 </script>

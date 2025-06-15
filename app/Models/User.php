@@ -112,6 +112,12 @@ class User extends Authenticatable
         return $this->hasMany(UserUnlock::class);
     }
 
+    // Relasi shared reports
+    public function sharedReports(): HasMany
+    {
+        return $this->hasMany(SharedReport::class);
+    }
+
     // Relasi rental registration
     public function rentalRegistration()
     {

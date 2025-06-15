@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Helpers\PhoneHelper;
@@ -73,6 +74,11 @@ class RentalBlacklist extends Model
     public function fileWatermarks(): MorphMany
     {
         return $this->morphMany(FileWatermark::class, 'watermarkable');
+    }
+
+    public function sharedReports(): HasMany
+    {
+        return $this->hasMany(SharedReport::class, 'blacklist_id');
     }
 
     // Mutator untuk normalisasi nomor HP

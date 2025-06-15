@@ -46,6 +46,13 @@ Route::get('/rental/{id}/profil', [PublicRentalController::class, 'profile'])->n
 Route::get('/laporan/{nik}/timeline', [PublicRentalController::class, 'reportTimeline'])->name('laporan.timeline');
 Route::get('/laporan/{id}/detail', [PublicRentalController::class, 'reportDetail'])->name('laporan.detail');
 
+// Public detail page (accessible to all)
+Route::get('/detail-laporan/{id}', [PublicRentalController::class, 'reportDetail'])->name('detail.laporan');
+
+// Shared report routes
+Route::get('/berbagi/{token}', [App\Http\Controllers\SharedReportController::class, 'view'])->name('shared.view');
+Route::post('/berbagi/{token}/verifikasi', [App\Http\Controllers\SharedReportController::class, 'verify'])->name('shared.verify');
+
 // Guest reporting (no authentication required)
 Route::get('/lapor', [ReportController::class, 'create'])->name('laporan.buat');
 Route::post('/lapor', [ReportController::class, 'store'])->name('laporan.simpan');
@@ -110,7 +117,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{id}', [BlacklistController::class, 'destroy'])->name('hapus');
         Route::post('/cari', [BlacklistController::class, 'searchForDashboard'])->name('cari');
         Route::get('/{id}/pdf', [BlacklistController::class, 'generatePDF'])->name('pdf');
-        Route::post('/{id}/share', [BlacklistController::class, 'generateShareLink'])->name('share');
+        Route::post('/{id}/bagikan', [App\Http\Controllers\SharedReportController::class, 'create'])->name('bagikan');
     });
 
     // Invoice routes
@@ -146,6 +153,7 @@ Route::middleware(['auth', 'verified', 'role:pengusaha_rental'])->group(function
     // Print and PDF for rental owners
     Route::get('/rental/cetak-detail/{id}', [DashboardController::class, 'printDetail'])->name('rental.cetak-detail');
     Route::get('/rental/unduh-pdf/{id}', [DashboardController::class, 'downloadPDF'])->name('rental.unduh-pdf');
+    Route::post('/rental/bagikan/{id}', [App\Http\Controllers\SharedReportController::class, 'create'])->name('rental.bagikan');
 
     // API Key management
     Route::prefix('kunci-api')->name('kunci-api.')->group(function () {
@@ -167,6 +175,7 @@ Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
     Route::get('/pengguna/dasbor', [App\Http\Controllers\UserDashboardController::class, 'index'])->name('pengguna.dasbor');
     Route::post('/pengguna/cari', [App\Http\Controllers\UserDashboardController::class, 'search'])->name('pengguna.cari');
     Route::post('/pengguna/buka/{id}', [App\Http\Controllers\UserDashboardController::class, 'unlock'])->name('pengguna.buka');
+    Route::post('/pengguna/bagikan/{id}', [App\Http\Controllers\SharedReportController::class, 'create'])->name('pengguna.bagikan');
 
     // Topup & Balance routes (only for regular users)
     Route::get('/isi-saldo', [TopupController::class, 'index'])->name('isi-saldo.indeks');

@@ -676,10 +676,16 @@ $(document).ready(function() {
                                     <i class="fas fa-calendar me-1"></i>
                                     ${item.tanggal_kejadian}
                                 </small>
-                                <button onclick="viewDetail(${item.id})" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-eye me-1"></i>
-                                    Lihat Detail
-                                </button>
+                                <div class="d-flex flex-column gap-1">
+                                    <a href="/detail-laporan/${item.id}" class="btn btn-success btn-sm">
+                                        <i class="fas fa-file-alt me-1"></i>
+                                        Detail Lengkap
+                                    </a>
+                                    <button onclick="viewDetail(${item.id})" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-eye me-1"></i>
+                                        Lihat
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
