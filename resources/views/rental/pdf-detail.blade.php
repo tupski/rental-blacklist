@@ -374,9 +374,9 @@
         <div style="margin: 20px 0; padding: 15px; border: 2px solid #da3544; text-align: center; background-color: #f8f9fa;">
             <h4 style="color: #da3544; margin-bottom: 10px;">🔐 Verifikasi Keaslian Dokumen</h4>
 
-            <!-- Barcode -->
+            <!-- QR Code -->
             <div style="margin: 15px 0;">
-                <img src="data:image/png;base64,{{ $barcode }}" alt="Barcode Verifikasi" style="height: 60px;">
+                <img src="data:image/png;base64,{{ $qrCode }}" alt="QR Code Verifikasi" style="width: 120px; height: 120px; border: 1px solid #ddd;">
             </div>
 
             <!-- Verification Code -->
@@ -385,12 +385,18 @@
                 <span style="font-size: 16px; font-weight: bold; color: #da3544;">{{ $verificationCode }}</span>
             </div>
 
+            <!-- Verification URL -->
+            <div style="margin: 10px 0; font-size: 12px;">
+                <strong>Link Verifikasi:</strong><br>
+                <span style="font-size: 10px; word-break: break-all;">{{ $verificationUrl }}</span>
+            </div>
+
             <!-- Instructions -->
             <div style="margin-top: 15px; font-size: 12px;">
                 <p><strong>Cara Verifikasi:</strong></p>
-                <p>1. Kunjungi: <strong>cekpenyewa.com/verifikasi-dokumen</strong></p>
-                <p>2. Masukkan kode verifikasi di atas</p>
-                <p>3. Sistem akan menampilkan detail dokumen asli</p>
+                <p>1. <strong>Scan QR Code</strong> dengan kamera HP untuk verifikasi otomatis</p>
+                <p>2. Atau kunjungi: <strong>cekpenyewa.com/verifikasi-dokumen</strong></p>
+                <p>3. Masukkan kode verifikasi di atas secara manual</p>
             </div>
 
             <p style="margin-top: 10px; font-size: 11px;">

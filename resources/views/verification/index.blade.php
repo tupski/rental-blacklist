@@ -19,6 +19,14 @@
                 </div>
 
                 <!-- Alert Messages -->
+                @if(request('kode'))
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                        <i class="fas fa-qrcode me-2"></i>
+                        <strong>QR Code Terdeteksi!</strong> Kode verifikasi telah diisi otomatis. Klik "Verifikasi Dokumen" untuk melanjutkan.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+
                 @if(session('error'))
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <i class="fas fa-exclamation-triangle me-2"></i>
@@ -52,7 +60,7 @@
                                     id="verification_code"
                                     name="verification_code"
                                     placeholder="Contoh: ABC12345-DEF67890-GHI12345"
-                                    value="{{ old('verification_code') }}"
+                                    value="{{ old('verification_code', request('kode')) }}"
                                     style="font-family: 'Courier New', monospace; letter-spacing: 1px;"
                                     required
                                 >
@@ -150,6 +158,13 @@ $(document).ready(function() {
 
         $(this).val(value);
     });
+
+    // Auto submit form if code is provided via QR Code
+    @if(request('kode'))
+        setTimeout(function() {
+            $('form').submit();
+        }, 2000); // Wait 2 seconds to show the alert
+    @endif
 
     // Auto dismiss alerts after 5 seconds
     setTimeout(function() {

@@ -7,7 +7,7 @@ use App\Models\DocumentVerification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Picqer\Barcode\BarcodeGeneratorPNG;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class DashboardController extends Controller
 {
@@ -55,11 +55,11 @@ class DashboardController extends Controller
             'user_agent' => request()->userAgent()
         ]);
 
-        // Generate barcode
-        $generator = new BarcodeGeneratorPNG();
-        $barcode = base64_encode($generator->getBarcode($verificationCode, $generator::TYPE_CODE_128));
+        // Generate QR Code with verification URL
+        $verificationUrl = route('verifikasi.index', ['kode' => $verificationCode]);
+        $qrCode = base64_encode(QrCode::format('png')->size(200)->generate($verificationUrl));
 
-        return view('rental.print-detail', compact('blacklist', 'verificationCode', 'barcode'));
+        return view('rental.print-detail', compact('blacklist', 'verificationCode', 'qrCode', 'verificationUrl'));
     }
 
     public function downloadPDF($id)
@@ -86,9 +86,9 @@ class DashboardController extends Controller
             'user_agent' => request()->userAgent()
         ]);
 
-        // Generate barcode
-        $generator = new BarcodeGeneratorPNG();
-        $barcode = base64_encode($generator->getBarcode($verificationCode, $generator::TYPE_CODE_128));
+        // Generate QR Code with verification URL
+        $verificationUrl = route('verifikasi.index', ['kode' => $verificationCode]);
+        $qrCode = base64_encode(QrCode::format('png')->size(200)->generate($verificationUrl));
 
         // Generate filename: laporan-penyewa-nama-penyewa-tanggalcetak-jamcetak.pdf
         $namaPenyewa = str_replace(' ', '-', strtolower($blacklist->nama_lengkap));
@@ -97,7 +97,7 @@ class DashboardController extends Controller
         $jamCetak = now()->format('His');
         $filename = "laporan-penyewa-{$namaPenyewa}-{$tanggalCetak}-{$jamCetak}.pdf";
 
-        $pdf = Pdf::loadView('rental.pdf-detail', compact('blacklist', 'verificationCode', 'barcode'));
+        $pdf = Pdf::loadView('rental.pdf-detail', compact('blacklist', 'verificationCode', 'qrCode', 'verificationUrl'));
         return $pdf->download($filename);
     }
 }

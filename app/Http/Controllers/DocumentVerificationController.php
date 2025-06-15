@@ -7,8 +7,15 @@ use Illuminate\Http\Request;
 
 class DocumentVerificationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $kode = $request->get('kode');
+
+        // Jika ada parameter kode, langsung verifikasi
+        if ($kode) {
+            return $this->verify(new Request(['verification_code' => $kode]));
+        }
+
         return view('verification.index');
     }
 

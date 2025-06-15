@@ -622,9 +622,9 @@
             <div style="margin: 20px 0; padding: 15px; border: 2px solid #dc3545; border-radius: 8px; background-color: #f8f9fa; text-align: center;">
                 <h4 style="color: #dc3545; margin-bottom: 10px;">🔐 Verifikasi Keaslian Dokumen</h4>
 
-                <!-- Barcode -->
+                <!-- QR Code -->
                 <div style="margin: 15px 0;">
-                    <img src="data:image/png;base64,{{ $barcode }}" alt="Barcode Verifikasi" style="height: 60px;">
+                    <img src="data:image/png;base64,{{ $qrCode }}" alt="QR Code Verifikasi" style="width: 120px; height: 120px; border: 1px solid #ddd; border-radius: 8px;">
                 </div>
 
                 <!-- Verification Code -->
@@ -633,12 +633,18 @@
                     <code style="font-size: 16px; font-weight: bold; color: #dc3545; background: white; padding: 5px 10px; border-radius: 4px; border: 1px solid #dc3545;">{{ $verificationCode }}</code>
                 </div>
 
+                <!-- Verification URL -->
+                <div style="margin: 10px 0; font-size: 12px; color: #666;">
+                    <strong>Link Verifikasi:</strong><br>
+                    <span style="font-size: 11px; word-break: break-all;">{{ $verificationUrl }}</span>
+                </div>
+
                 <!-- Instructions -->
                 <div style="margin-top: 15px; font-size: 12px; color: #666;">
                     <p><strong>Cara Verifikasi:</strong></p>
-                    <p>1. Kunjungi: <strong>cekpenyewa.com/verifikasi-dokumen</strong></p>
-                    <p>2. Masukkan kode verifikasi di atas</p>
-                    <p>3. Sistem akan menampilkan detail dokumen asli</p>
+                    <p>1. <strong>Scan QR Code</strong> dengan kamera HP untuk verifikasi otomatis</p>
+                    <p>2. Atau kunjungi: <strong>cekpenyewa.com/verifikasi-dokumen</strong></p>
+                    <p>3. Masukkan kode verifikasi di atas secara manual</p>
                 </div>
 
                 <p style="margin-top: 10px; font-size: 11px; color: #999;">
