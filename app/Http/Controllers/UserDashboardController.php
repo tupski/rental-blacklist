@@ -231,16 +231,14 @@ class UserDashboardController extends Controller
 
     private function getDetailPrice($jenisRental)
     {
-        // Map jenis rental to price
+        // Get prices from settings
         $priceMap = [
-            'Rental Mobil' => 1500,
-            'Rental Motor' => 1500,
-            'Rental Kamera' => 1000,
-            'Rental Alat Musik' => 800,
-            'Rental Elektronik' => 800,
+            'Rental Mobil' => (int) \App\Models\Setting::get('price_rental_mobil', 1500),
+            'Rental Motor' => (int) \App\Models\Setting::get('price_rental_motor', 1500),
+            'Kamera' => (int) \App\Models\Setting::get('price_kamera', 1000),
         ];
 
-        // Return specific price or default
-        return $priceMap[$jenisRental] ?? 800;
+        // Return specific price or default from settings
+        return $priceMap[$jenisRental] ?? (int) \App\Models\Setting::get('price_lainnya', 800);
     }
 }

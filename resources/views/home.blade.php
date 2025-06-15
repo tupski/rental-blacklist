@@ -452,10 +452,19 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                 @auth
                     @if(Auth::user()->role === 'user')
-                        <button type="button" class="btn btn-warning" id="unlockDetailBtn" onclick="confirmUnlockDetail()">
-                            <i class="fas fa-unlock me-2"></i>
-                            Buka Detail Lengkap
-                        </button>
+                        <div class="d-flex flex-column align-items-end">
+                            <button type="button" class="btn btn-outline-danger" id="unlockDetailBtn" onclick="confirmUnlockDetail()">
+                                <i class="fas fa-eye me-2"></i>
+                                Lihat Detail Lengkap
+                            </button>
+                            <div class="mt-2 text-end">
+                                <small class="text-danger fw-bold" id="unlockPrice">Rp 1.500</small>
+                                <i class="fas fa-exclamation-circle text-warning ms-1"
+                                   data-bs-toggle="tooltip"
+                                   data-bs-placement="top"
+                                   title="Data yang dibuka akan selamanya dapat diakses jika diperlukan tanpa perlu membayar lagi. Sekali buka, akses selamanya!"></i>
+                            </div>
+                        </div>
                     @else
                         <button type="button" class="btn btn-success" onclick="showFullAccess()">
                             <i class="fas fa-unlock me-2"></i>
@@ -544,6 +553,12 @@ $(document).ready(function() {
     let currentSearch = '';
     let currentDetailId = null;
     let currentDetailData = null;
+
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
 
     // Handle form submission
     $('#searchForm').on('submit', function(e) {
@@ -1015,6 +1030,9 @@ $(document).ready(function() {
 
         const price = getPriceByRental(currentDetailData.jenis_rental);
 
+        // Update price in modal footer
+        $('#unlockPrice').text('Rp ' + price.toLocaleString('id-ID'));
+
         $('#confirm-name').text(currentDetailData.nama_lengkap);
         $('#confirm-rental').text(currentDetailData.jenis_rental);
         $('#confirm-price').text('Rp ' + price.toLocaleString('id-ID'));
@@ -1034,7 +1052,7 @@ $(document).ready(function() {
         btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Memproses...');
 
         $.ajax({
-            url: `/user/unlock/${currentDetailId}`,
+            url: `/pengguna/buka/${currentDetailId}`,
             method: 'POST',
             data: {
                 _token: '{{ csrf_token() }}'
@@ -1154,13 +1172,11 @@ $(document).ready(function() {
 
     function getPriceByRental(rental) {
         const priceMap = {
-            'Rental Mobil': 1500,
-            'Rental Motor': 1500,
-            'Rental Kamera': 1000,
-            'Rental Alat Musik': 800,
-            'Rental Elektronik': 800
+            'Rental Mobil': {{ \App\Models\Setting::get('price_rental_mobil', 1500) }},
+            'Rental Motor': {{ \App\Models\Setting::get('price_rental_motor', 1500) }},
+            'Kamera': {{ \App\Models\Setting::get('price_kamera', 1000) }}
         };
-        return priceMap[rental] || 800;
+        return priceMap[rental] || {{ \App\Models\Setting::get('price_lainnya', 800) }};
     }
     @endif
     @endauth

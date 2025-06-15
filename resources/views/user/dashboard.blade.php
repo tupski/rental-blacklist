@@ -332,10 +332,10 @@
 
 <!-- Detail Modal -->
 <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="detailModalLabel">
+                <h5 class="modal-title" id="detailModalTitle">
                     <i class="fas fa-info-circle text-success me-2"></i>
                     Detail Blacklist
                 </h5>
@@ -344,7 +344,7 @@
             <div class="modal-body" id="detailContent">
                 <!-- Detail content will be loaded here -->
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" id="detailModalFooter">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     <i class="fas fa-times me-2"></i>Tutup
                 </button>
@@ -353,6 +353,7 @@
     </div>
 </div>
 
+@include('dashboard.blacklist.partials.detail-modal-content')
 @endsection
 
 @push('styles')
@@ -368,6 +369,12 @@
 <script>
 $(document).ready(function() {
     let currentUnlockId = null;
+
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
 
     // User search
     $('#userSearchForm').on('submit', function(e) {
@@ -440,13 +447,22 @@ $(document).ready(function() {
                     </button>
                     <span class="badge bg-success"><i class="fas fa-check me-1"></i>Sudah Dibuka</span>
                 </div>` :
-                `<button class="btn btn-sm btn-outline-primary unlock-btn"
-                         data-id="${item.id}"
-                         data-name="${item.nama_lengkap}"
-                         data-rental="${item.jenis_rental}"
-                         data-price="${item.price}">
-                    <i class="fas fa-eye me-1"></i>Lihat Detail (${priceFormatted})
-                 </button>`;
+                `<div class="d-grid gap-1">
+                    <button class="btn btn-sm btn-outline-danger unlock-btn"
+                             data-id="${item.id}"
+                             data-name="${item.nama_lengkap}"
+                             data-rental="${item.jenis_rental}"
+                             data-price="${item.price}">
+                        <i class="fas fa-eye me-1"></i>Lihat Detail
+                    </button>
+                    <div class="text-center">
+                        <small class="text-danger fw-bold">${priceFormatted}</small>
+                        <i class="fas fa-exclamation-circle text-warning ms-1"
+                           data-bs-toggle="tooltip"
+                           data-bs-placement="top"
+                           title="Data yang dibuka akan selamanya dapat diakses jika diperlukan tanpa perlu membayar lagi. Sekali buka, akses selamanya!"></i>
+                    </div>
+                </div>`;
 
             const cardClass = item.is_unlocked ? 'card mb-3 bg-light-success' : 'card mb-3';
 
@@ -488,6 +504,12 @@ $(document).ready(function() {
 
         $('#userResultsList').html(html);
         $('#userSearchResults').removeClass('d-none');
+
+        // Reinitialize tooltips after AJAX load
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
     }
 
     // Handle load more button click
@@ -523,7 +545,7 @@ $(document).ready(function() {
         btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Memproses...');
 
         $.ajax({
-            url: `/user/unlock/${currentUnlockId}`,
+            url: `/pengguna/buka/${currentUnlockId}`,
             method: 'POST',
             data: {
                 _token: '{{ csrf_token() }}'
@@ -617,54 +639,185 @@ $(document).ready(function() {
     };
 
     function showFullDetailModal(data, id) {
-        const content = `
-            <div class="alert alert-success">
-                <i class="fas fa-info-circle me-2"></i>
-                Data lengkap tanpa sensor - Anda telah membeli akses ke data ini
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <h6 class="fw-bold">Informasi Personal</h6>
-                    <table class="table table-borderless table-sm">
-                        <tr><td><strong>Nama:</strong></td><td>${data.nama_lengkap}</td></tr>
-                        <tr><td><strong>NIK:</strong></td><td>${data.nik}</td></tr>
-                        <tr><td><strong>No. HP:</strong></td><td>${data.no_hp}</td></tr>
-                        <tr><td><strong>Alamat:</strong></td><td>${data.alamat}</td></tr>
-                        <tr><td><strong>Jenis Kelamin:</strong></td><td>${data.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan'}</td></tr>
-                    </table>
+        // Use the same template as rental owner dashboard
+        let template = $('#detailModalTemplate').html();
+
+        // Build foto penyewa HTML
+        let fotoPenyewaHtml = '';
+        if (data.foto_penyewa && data.foto_penyewa.length > 0) {
+            fotoPenyewaHtml = '<div class="row g-3">';
+            data.foto_penyewa.forEach(function(file) {
+                const fileName = file.split('/').pop();
+                const fileUrl = `/storage/${file}`;
+                fotoPenyewaHtml += `
+                    <div class="col-md-4">
+                        <div class="card">
+                            <img src="${fileUrl}" class="card-img-top" style="height: 150px; object-fit: cover;"
+                                 onclick="showImageModal('${fileUrl}', '${fileName}')">
+                            <div class="card-body p-2">
+                                <small class="text-muted">${fileName}</small>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+            fotoPenyewaHtml += '</div>';
+        } else {
+            fotoPenyewaHtml = '<p class="text-muted">Tidak ada foto penyewa</p>';
+        }
+
+        // Build foto KTP/SIM HTML
+        let fotoKtpSimHtml = '';
+        if (data.foto_ktp_sim && data.foto_ktp_sim.length > 0) {
+            fotoKtpSimHtml = '<div class="row g-3">';
+            data.foto_ktp_sim.forEach(function(file) {
+                const fileName = file.split('/').pop();
+                const fileUrl = `/storage/${file}`;
+                fotoKtpSimHtml += `
+                    <div class="col-md-4">
+                        <div class="card">
+                            <img src="${fileUrl}" class="card-img-top" style="height: 150px; object-fit: cover;"
+                                 onclick="showImageModal('${fileUrl}', '${fileName}')">
+                            <div class="card-body p-2">
+                                <small class="text-muted">${fileName}</small>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+            fotoKtpSimHtml += '</div>';
+        } else {
+            fotoKtpSimHtml = '<p class="text-muted">Tidak ada foto KTP/SIM</p>';
+        }
+
+        // Build bukti HTML
+        let buktiHtml = '';
+        if (data.bukti && data.bukti.length > 0) {
+            buktiHtml = '<div class="row g-3">';
+            data.bukti.forEach(function(file) {
+                const fileName = file.split('/').pop();
+                const fileUrl = `/storage/${file}`;
+                const isImage = /\.(jpg|jpeg|png|gif)$/i.test(fileName);
+                const isVideo = /\.(mp4|avi|mov|wmv)$/i.test(fileName);
+
+                buktiHtml += `<div class="col-md-4">`;
+                if (isImage) {
+                    buktiHtml += `
+                        <div class="card">
+                            <img src="${fileUrl}" class="card-img-top" style="height: 150px; object-fit: cover;"
+                                 onclick="showImageModal('${fileUrl}', '${fileName}')">
+                            <div class="card-body p-2">
+                                <small class="text-muted">${fileName}</small>
+                            </div>
+                        </div>`;
+                } else if (isVideo) {
+                    buktiHtml += `
+                        <div class="card">
+                            <video controls class="card-img-top" style="height: 150px;">
+                                <source src="${fileUrl}" type="video/mp4">
+                                Browser Anda tidak mendukung video.
+                            </video>
+                            <div class="card-body p-2">
+                                <small class="text-muted">${fileName}</small>
+                            </div>
+                        </div>`;
+                } else {
+                    buktiHtml += `
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-file fa-3x text-muted mb-2"></i>
+                                <p class="small mb-2">${fileName}</p>
+                                <a href="${fileUrl}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-download me-1"></i>Download
+                                </a>
+                            </div>
+                        </div>`;
+                }
+                buktiHtml += `</div>`;
+            });
+            buktiHtml += '</div>';
+        } else {
+            buktiHtml = '<p class="text-muted">Tidak ada bukti</p>';
+        }
+
+        // Build jenis laporan HTML
+        let jenisLaporanHtml = '';
+        if (data.jenis_laporan && data.jenis_laporan.length > 0) {
+            data.jenis_laporan.forEach(function(jenis) {
+                jenisLaporanHtml += `<span class="badge bg-warning text-dark me-2 mb-2">${formatJenisLaporan(jenis)}</span>`;
+            });
+        }
+
+        // Build status penanganan HTML
+        let statusPenangananHtml = '';
+        if (data.status_penanganan && data.status_penanganan.length > 0) {
+            data.status_penanganan.forEach(function(status) {
+                statusPenangananHtml += `<span class="badge bg-info me-2 mb-2">${formatStatusPenanganan(status)}</span>`;
+            });
+        }
+
+        // Replace placeholders
+        const replacements = {
+            '{nama_lengkap}': data.nama_lengkap || 'N/A',
+            '{nik}': data.nik || 'N/A',
+            '{jenis_kelamin_formatted}': data.jenis_kelamin_formatted || 'N/A',
+            '{no_hp}': data.no_hp || 'N/A',
+            '{alamat}': data.alamat || 'N/A',
+            '{foto_penyewa_html}': fotoPenyewaHtml,
+            '{foto_ktp_sim_html}': fotoKtpSimHtml,
+            '{nama_perusahaan_rental}': data.nama_perusahaan_rental || 'N/A',
+            '{nama_penanggung_jawab}': data.nama_penanggung_jawab || 'N/A',
+            '{no_wa_pelapor}': data.no_wa_pelapor || 'N/A',
+            '{email_pelapor}': data.email_pelapor || 'N/A',
+            '{alamat_usaha}': data.alamat_usaha || 'N/A',
+            '{website_usaha_link}': data.website_usaha ? `<a href="${data.website_usaha}" target="_blank">${data.website_usaha}</a>` : 'N/A',
+            '{jenis_rental}': data.jenis_rental || 'N/A',
+            '{tanggal_sewa_formatted}': data.tanggal_sewa_formatted || 'N/A',
+            '{tanggal_kejadian_formatted}': data.tanggal_kejadian_formatted || 'N/A',
+            '{jenis_kendaraan}': data.jenis_kendaraan || 'N/A',
+            '{nomor_polisi}': data.nomor_polisi || 'N/A',
+            '{nilai_kerugian_formatted}': data.nilai_kerugian_formatted || 'N/A',
+            '{jenis_laporan_html}': jenisLaporanHtml,
+            '{kronologi}': data.kronologi || 'N/A',
+            '{status_penanganan_html}': statusPenangananHtml,
+            '{status_lainnya}': data.status_lainnya || 'N/A',
+            '{bukti_html}': buktiHtml,
+            '{persetujuan_formatted}': data.persetujuan ? 'Ya' : 'Tidak',
+            '{nama_pelapor_ttd}': data.nama_pelapor_ttd || 'N/A',
+            '{tanggal_pelaporan_formatted}': data.tanggal_pelaporan_formatted || 'N/A',
+            '{tipe_pelapor_formatted}': data.tipe_pelapor === 'rental_owner' ? 'Pemilik Rental' : 'Tamu',
+            '{status_validitas_badge}': `<span class="badge ${data.status_validitas === 'Valid' ? 'bg-success' : data.status_validitas === 'Pending' ? 'bg-warning' : 'bg-danger'}">${data.status_validitas}</span>`,
+            '{jumlah_laporan}': data.jumlah_laporan || 0,
+            '{pelapor}': data.pelapor || 'N/A',
+            '{created_at}': data.created_at || 'N/A'
+        };
+
+        Object.keys(replacements).forEach(key => {
+            template = template.replace(new RegExp(key, 'g'), replacements[key]);
+        });
+
+        $('#detailContent').html(template);
+
+        // Update modal title
+        $('#detailModalTitle').html('<i class="fas fa-check-circle text-success me-2"></i>Detail Lengkap - Data Terbuka');
+
+        // Update modal footer with print and share buttons
+        $('#detailModalFooter').html(`
+            <div class="d-flex justify-content-between w-100">
+                <div>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Tutup
+                    </button>
                 </div>
-                <div class="col-md-6">
-                    <h6 class="fw-bold">Informasi Laporan</h6>
-                    <table class="table table-borderless table-sm">
-                        <tr><td><strong>Jenis Rental:</strong></td><td>${data.jenis_rental}</td></tr>
-                        <tr><td><strong>Jenis Laporan:</strong></td><td>${Array.isArray(data.jenis_laporan) ? data.jenis_laporan.join(', ') : data.jenis_laporan}</td></tr>
-                        <tr><td><strong>Tanggal Kejadian:</strong></td><td>${data.tanggal_kejadian}</td></tr>
-                        <tr><td><strong>Total Laporan:</strong></td><td>${data.jumlah_laporan}</td></tr>
-                        <tr><td><strong>Pelapor:</strong></td><td>${data.pelapor}</td></tr>
-                    </table>
-                </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col-12">
-                    <h6 class="fw-bold">Kronologi Kejadian</h6>
-                    <div class="alert alert-warning">
-                        ${data.kronologi}
-                    </div>
-                </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col-12 text-center">
-                    <button onclick="printDetail(${id})" class="btn btn-primary me-2">
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-primary" onclick="printDetail(${id})">
                         <i class="fas fa-print me-2"></i>Print
                     </button>
-                    <button onclick="downloadPDF(${id})" class="btn btn-danger">
+                    <button type="button" class="btn btn-success" onclick="downloadPDF(${id})">
                         <i class="fas fa-file-pdf me-2"></i>Download PDF
                     </button>
                 </div>
             </div>
-        `;
+        `);
 
-        $('#detailContent').html(content);
         $('#detailModal').modal('show');
     }
 
@@ -697,13 +850,59 @@ $(document).ready(function() {
 
     function getPriceByRental(rental) {
         const priceMap = {
-            'Rental Mobil': 1500,
-            'Rental Motor': 1500,
-            'Rental Kamera': 1000,
-            'Rental Alat Musik': 800,
-            'Rental Elektronik': 800
+            'Rental Mobil': {{ \App\Models\Setting::get('price_rental_mobil', 1500) }},
+            'Rental Motor': {{ \App\Models\Setting::get('price_rental_motor', 1500) }},
+            'Kamera': {{ \App\Models\Setting::get('price_kamera', 1000) }}
         };
-        return priceMap[rental] || 800;
+        return priceMap[rental] || {{ \App\Models\Setting::get('price_lainnya', 800) }};
+    }
+
+    // Helper functions for formatting
+    function formatJenisLaporan(jenis) {
+        const mapping = {
+            'tidak_mengembalikan': 'Tidak Mengembalikan',
+            'merusak_barang': 'Merusak Barang',
+            'tidak_membayar': 'Tidak Membayar',
+            'menyalahgunakan': 'Menyalahgunakan',
+            'lainnya': 'Lainnya'
+        };
+        return mapping[jenis] || jenis;
+    }
+
+    function formatStatusPenanganan(status) {
+        const mapping = {
+            'laporan_polisi': 'Laporan Polisi',
+            'mediasi': 'Mediasi',
+            'tuntutan_hukum': 'Tuntutan Hukum',
+            'blacklist_internal': 'Blacklist Internal',
+            'tidak_ada_tindakan': 'Tidak Ada Tindakan'
+        };
+        return mapping[status] || status;
+    }
+
+    // Image modal
+    window.showImageModal = function(imageSrc, fileName) {
+        $('#modalImage').attr('src', imageSrc);
+        $('#downloadImageLink').attr('href', imageSrc);
+        $('#imageModalTitle').text(fileName || 'Lihat Gambar');
+        $('#imageModal').modal('show');
+    };
+
+    function showAlert(type, message) {
+        const alertHtml = `
+            <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+
+        // Insert at top of container
+        $('.container').first().prepend(alertHtml);
+
+        // Auto dismiss after 5 seconds
+        setTimeout(function() {
+            $('.alert').alert('close');
+        }, 5000);
     }
 });
 </script>

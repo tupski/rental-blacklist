@@ -367,21 +367,66 @@ class PublicController extends Controller
             ], 403);
         }
 
+        // Format data lengkap sesuai dengan semua field dari form lapor
+        $data = [
+            'id' => $blacklist->id,
+            // Informasi Penyewa
+            'nama_lengkap' => $blacklist->nama_lengkap,
+            'nik' => $blacklist->nik,
+            'jenis_kelamin' => $blacklist->jenis_kelamin,
+            'jenis_kelamin_formatted' => $blacklist->jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan',
+            'no_hp' => $blacklist->no_hp,
+            'alamat' => $blacklist->alamat,
+
+            // Foto Penyewa dan KTP/SIM
+            'foto_penyewa' => $blacklist->foto_penyewa ? json_decode($blacklist->foto_penyewa, true) : [],
+            'foto_ktp_sim' => $blacklist->foto_ktp_sim ? json_decode($blacklist->foto_ktp_sim, true) : [],
+
+            // Informasi Pelapor
+            'nama_perusahaan_rental' => $blacklist->nama_perusahaan_rental,
+            'nama_penanggung_jawab' => $blacklist->nama_penanggung_jawab,
+            'no_wa_pelapor' => $blacklist->no_wa_pelapor,
+            'email_pelapor' => $blacklist->email_pelapor,
+            'alamat_usaha' => $blacklist->alamat_usaha,
+            'website_usaha' => $blacklist->website_usaha,
+
+            // Detail Masalah
+            'jenis_rental' => $blacklist->jenis_rental,
+            'tanggal_sewa' => $blacklist->tanggal_sewa,
+            'tanggal_sewa_formatted' => $blacklist->tanggal_sewa ? $blacklist->tanggal_sewa->format('d/m/Y') : null,
+            'tanggal_kejadian' => $blacklist->tanggal_kejadian,
+            'tanggal_kejadian_formatted' => $blacklist->tanggal_kejadian->format('d/m/Y'),
+            'jenis_kendaraan' => $blacklist->jenis_kendaraan,
+            'nomor_polisi' => $blacklist->nomor_polisi,
+            'nilai_kerugian' => $blacklist->nilai_kerugian,
+            'nilai_kerugian_formatted' => $blacklist->nilai_kerugian ? 'Rp ' . number_format($blacklist->nilai_kerugian, 0, ',', '.') : null,
+            'jenis_laporan' => $blacklist->jenis_laporan ? json_decode($blacklist->jenis_laporan, true) : [],
+            'kronologi' => $blacklist->kronologi,
+
+            // Status Penanganan
+            'status_penanganan' => $blacklist->status_penanganan ? json_decode($blacklist->status_penanganan, true) : [],
+            'status_lainnya' => $blacklist->status_lainnya,
+
+            // Bukti Pendukung
+            'bukti' => $blacklist->bukti ? json_decode($blacklist->bukti, true) : [],
+
+            // Persetujuan
+            'persetujuan' => $blacklist->persetujuan,
+            'nama_pelapor_ttd' => $blacklist->nama_pelapor_ttd,
+            'tanggal_pelaporan' => $blacklist->tanggal_pelaporan,
+            'tanggal_pelaporan_formatted' => $blacklist->tanggal_pelaporan ? $blacklist->tanggal_pelaporan->format('d/m/Y') : null,
+            'tipe_pelapor' => $blacklist->tipe_pelapor,
+
+            // Informasi Sistem
+            'status_validitas' => $blacklist->status_validitas,
+            'jumlah_laporan' => RentalBlacklist::countReportsByNik($blacklist->nik),
+            'pelapor' => $blacklist->user->name,
+            'created_at' => $blacklist->created_at->format('d/m/Y H:i'),
+        ];
+
         return response()->json([
             'success' => true,
-            'data' => [
-                'nama_lengkap' => $blacklist->nama_lengkap,
-                'nik' => $blacklist->nik,
-                'no_hp' => $blacklist->no_hp,
-                'alamat' => $blacklist->alamat,
-                'jenis_kelamin' => $blacklist->jenis_kelamin,
-                'jenis_rental' => $blacklist->jenis_rental,
-                'jenis_laporan' => $blacklist->jenis_laporan,
-                'tanggal_kejadian' => $blacklist->tanggal_kejadian->format('d/m/Y'),
-                'kronologi' => $blacklist->kronologi,
-                'jumlah_laporan' => RentalBlacklist::countReportsByNik($blacklist->nik),
-                'pelapor' => $blacklist->user->name
-            ]
+            'data' => $data
         ]);
     }
 
