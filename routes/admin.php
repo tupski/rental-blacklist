@@ -70,6 +70,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('pengguna/cek-email', [AdminUserController::class, 'checkEmail'])->name('pengguna.cek-email');
     Route::post('pengguna/{user}/ubah-status', [AdminUserController::class, 'toggleStatus'])->name('pengguna.ubah-status');
     Route::post('pengguna/{user}/reset-kata-sandi', [AdminUserController::class, 'resetPassword'])->name('pengguna.reset-kata-sandi');
+    Route::post('pengguna/{user}/ban', [AdminUserController::class, 'ban'])->name('pengguna.ban');
+    Route::post('pengguna/{user}/unban', [AdminUserController::class, 'unban'])->name('pengguna.unban');
 
     // Guest Reports Management
     Route::resource('laporan-tamu', AdminGuestReportController::class)->names([

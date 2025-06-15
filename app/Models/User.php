@@ -34,6 +34,10 @@ class User extends Authenticatable
         'nik',
         'no_hp',
         'alamat',
+        'is_banned',
+        'banned_reason',
+        'banned_at',
+        'banned_by',
     ];
 
     /**
@@ -56,6 +60,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'approved_at' => 'datetime',
+            'banned_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
@@ -257,6 +262,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if account is banned
+     */
+    public function isBanned()
+    {
+        return $this->is_banned;
+    }
+
+    /**
      * Approve account
      */
     public function approve($approvedBy = null)
@@ -279,11 +292,45 @@ class User extends Authenticatable
     }
 
     /**
+     * Ban account
+     */
+    public function ban($reason, $bannedBy = null)
+    {
+        $this->update([
+            'is_banned' => true,
+            'banned_reason' => $reason,
+            'banned_at' => now(),
+            'banned_by' => $bannedBy
+        ]);
+    }
+
+    /**
+     * Unban account
+     */
+    public function unban()
+    {
+        $this->update([
+            'is_banned' => false,
+            'banned_reason' => null,
+            'banned_at' => null,
+            'banned_by' => null
+        ]);
+    }
+
+    /**
      * Get approved by user
      */
     public function approvedBy()
     {
         return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    /**
+     * Get banned by user
+     */
+    public function bannedBy()
+    {
+        return $this->belongsTo(User::class, 'banned_by');
     }
 
     /**
@@ -364,6 +411,11 @@ class User extends Authenticatable
      */
     public function canAccessFullFeatures()
     {
+        // Must not be banned
+        if ($this->isBanned()) {
+            return false;
+        }
+
         // Must be active
         if (!$this->isActive()) {
             return false;

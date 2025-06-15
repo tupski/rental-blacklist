@@ -61,7 +61,6 @@
                                                 Untuk mengirim email sungguhan, ubah <code>MAIL_MAILER=smtp</code> di file .env.
                                             </div>
                                         @endif
-                                    <div class="card-body">
                                         <div class="row">
                                             @foreach($settings['smtp'] as $setting)
                                                 <div class="col-md-6">
@@ -190,7 +189,11 @@
                                                 </div>
                                             @elseif($template->key === 'email_template_account_suspended')
                                                 <div class="alert alert-info">
-                                                    <strong>Variabel yang tersedia:</strong> @{{name}}, @{{email}}, @{{reason}}
+                                                    <strong>Variabel yang tersedia:</strong> @{{name}}, @{{email}}, @{{reason}}, @{{date}}, @{{admin_contact}}
+                                                </div>
+                                            @elseif($template->key === 'email_template_account_deleted')
+                                                <div class="alert alert-info">
+                                                    <strong>Variabel yang tersedia:</strong> @{{name}}, @{{email}}, @{{date}}
                                                 </div>
                                             @elseif($template->key === 'email_template_topup')
                                                 <div class="alert alert-info">

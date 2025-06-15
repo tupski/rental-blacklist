@@ -200,11 +200,19 @@ class SettingsSeeder extends Seeder
             ],
             [
                 'key' => 'email_template_account_suspended',
-                'value' => '<h2>Akun Ditangguhkan - CekPenyewa.com</h2><p>Halo {{name}},</p><p>Kami informasikan bahwa akun Anda di CekPenyewa.com telah ditangguhkan sementara.</p><p><strong>Alasan:</strong> {{reason}}</p><p>Jika Anda merasa ini adalah kesalahan atau ingin mengajukan banding, silakan hubungi tim support kami.</p><p>Terima kasih atas pengertian Anda.</p>',
+                'value' => '<h2>Akun Ditangguhkan - CekPenyewa.com</h2><p>Halo {{name}},</p><p>Kami informasikan bahwa akun Anda di CekPenyewa.com telah ditangguhkan sementara.</p><p><strong>Alasan:</strong> {{reason}}</p><p><strong>Tanggal Penangguhan:</strong> {{date}}</p><p>Jika Anda merasa ini adalah kesalahan atau ingin mengajukan banding, silakan hubungi tim support kami melalui:</p><ul><li>Email: support@cekpenyewa.com</li><li>WhatsApp: {{admin_contact}}</li></ul><p>Terima kasih atas pengertian Anda.</p>',
                 'type' => 'wysiwyg',
                 'group' => 'email_templates',
                 'label' => 'Template Akun Ditangguhkan',
                 'description' => 'Template untuk email notifikasi akun ditangguhkan'
+            ],
+            [
+                'key' => 'email_template_account_deleted',
+                'value' => '<h2>Konfirmasi Penghapusan Akun - CekPenyewa.com</h2><p>Halo {{name}},</p><p>Akun Anda di CekPenyewa.com telah berhasil dihapus sesuai permintaan Anda.</p><p><strong>Detail Akun yang Dihapus:</strong></p><ul><li><strong>Email:</strong> {{email}}</li><li><strong>Tanggal Penghapusan:</strong> {{date}}</li></ul><p>Semua data pribadi Anda telah dihapus dari sistem kami sesuai dengan kebijakan privasi.</p><p>Jika Anda ingin bergabung kembali di masa depan, Anda dapat mendaftar ulang dengan email yang sama.</p><p>Terima kasih telah menggunakan layanan CekPenyewa.com.</p>',
+                'type' => 'wysiwyg',
+                'group' => 'email_templates',
+                'label' => 'Template Hapus Akun',
+                'description' => 'Template untuk email konfirmasi penghapusan akun'
             ],
             [
                 'key' => 'email_template_topup',

@@ -38,7 +38,11 @@
                     @endif
                 </td>
                 <td class="text-center">
-                    @if($user->email_verified_at)
+                    @if($user->isBanned())
+                        <span class="badge badge-danger px-3 py-2">
+                            <i class="fas fa-ban"></i> BANNED
+                        </span>
+                    @elseif($user->email_verified_at)
                         <span class="badge badge-success px-3 py-2">
                             <i class="fas fa-check-circle"></i> Terverifikasi
                         </span>
@@ -130,7 +134,11 @@
                         <span class="badge badge-info mb-2 px-3 py-2">User Biasa</span>
                     @endif
                     <br>
-                    @if($user->email_verified_at)
+                    @if($user->isBanned())
+                        <span class="badge badge-danger px-3 py-2">
+                            <i class="fas fa-ban"></i> BANNED
+                        </span>
+                    @elseif($user->email_verified_at)
                         <span class="badge badge-success px-3 py-2">
                             <i class="fas fa-check-circle"></i> Terverifikasi
                         </span>
@@ -163,6 +171,22 @@
                             </form>
                             @if($user->role !== 'admin')
                                 <div class="dropdown-divider"></div>
+                                @if($user->isBanned())
+                                    <form action="{{ route('admin.pengguna.unban', $user) }}"
+                                          method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item text-dark font-weight-medium"
+                                                onclick="return confirm('Unban user ini?')">
+                                            <i class="fas fa-unlock text-success"></i> Unban User
+                                        </button>
+                                    </form>
+                                @else
+                                    <button type="button" class="dropdown-item text-dark font-weight-medium"
+                                            data-toggle="modal" data-target="#banModal{{ $user->id }}">
+                                        <i class="fas fa-ban text-danger"></i> Ban User
+                                    </button>
+                                @endif
+                                <div class="dropdown-divider"></div>
                                 <form action="{{ route('admin.pengguna.hapus', $user) }}"
                                       method="POST" class="d-inline">
                                     @csrf
@@ -187,3 +211,43 @@
     </div>
     @endforelse
 </div>
+
+<!-- Ban User Modals -->
+@foreach($users as $user)
+    @if($user->role !== 'admin' && !$user->isBanned())
+        <div class="modal fade" id="banModal{{ $user->id }}" tabindex="-1" role="dialog" aria-labelledby="banModalLabel{{ $user->id }}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="banModalLabel{{ $user->id }}">Ban User: {{ $user->name }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form action="{{ route('admin.pengguna.ban', $user) }}" method="POST">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>
+                                <strong>Peringatan!</strong> User yang dibanned tidak akan bisa mengakses sistem dan akan menerima email notifikasi.
+                            </div>
+
+                            <div class="form-group">
+                                <label for="reason{{ $user->id }}">Alasan Ban <span class="text-danger">*</span></label>
+                                <textarea name="reason" id="reason{{ $user->id }}" class="form-control" rows="4"
+                                          placeholder="Masukkan alasan mengapa user ini dibanned..." required></textarea>
+                                <small class="form-text text-muted">Alasan ini akan dikirimkan ke email user.</small>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-ban"></i> Ban User
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
+@endforeach

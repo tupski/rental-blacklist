@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use App\Notifications\AccountBannedNotification;
 
 class UserController extends Controller
 {
@@ -163,6 +165,51 @@ class UserController extends Controller
         // Implementasi toggle status jika diperlukan
         return redirect()->back()
             ->with('success', 'Status user berhasil diubah.');
+    }
+
+    public function ban(Request $request, User $user)
+    {
+        $request->validate([
+            'reason' => 'required|string|max:500'
+        ]);
+
+        if ($user->role === 'admin') {
+            return redirect()->back()
+                ->with('error', 'Admin tidak dapat dibanned.');
+        }
+
+        if ($user->isBanned()) {
+            return redirect()->back()
+                ->with('error', 'User sudah dalam status banned.');
+        }
+
+        // Ban the user
+        $user->ban($request->reason, Auth::id());
+
+        // Send notification email
+        try {
+            $user->notify(new AccountBannedNotification($request->reason, Auth::user()->name));
+        } catch (\Exception $e) {
+            // Log error but don't fail the ban process
+            \Log::error('Failed to send ban notification email: ' . $e->getMessage());
+        }
+
+        return redirect()->back()
+            ->with('success', "User {$user->name} berhasil dibanned.");
+    }
+
+    public function unban(User $user)
+    {
+        if (!$user->isBanned()) {
+            return redirect()->back()
+                ->with('error', 'User tidak dalam status banned.');
+        }
+
+        // Unban the user
+        $user->unban();
+
+        return redirect()->back()
+            ->with('success', "User {$user->name} berhasil di-unban.");
     }
 
     public function resetPassword(User $user)
