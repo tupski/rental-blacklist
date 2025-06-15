@@ -87,25 +87,52 @@
             margin-bottom: 20px;
         }
         @media print {
-            body {
-                margin: 0;
-            }
-            .no-print {
-                display: none;
-            }
+            body { margin: 0; }
+            .section { page-break-inside: avoid; }
+            .no-print { display: none; }
+        }
+        .print-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #da3544;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .print-button:hover {
+            background-color: #c82333;
         }
     </style>
 </head>
 <body>
-    <div class="content">
-        <div class="header">
-            <h1>SISTEM BLACKLIST RENTAL INDONESIA</h1>
-            <p>Detail Laporan Blacklist</p>
-            <p>Dicetak pada: {{ now()->format('d/m/Y H:i:s') }}</p>
+    <button class="print-button no-print" onclick="window.print()">🖨️ Print</button>
+    <div class="watermark">CEKPENYEWA.COM</div>
+
+    <div class="header">
+        <div class="logo">CekPenyewa</div>
+        <div class="domain">cekpenyewa.com</div>
+        <div class="subtitle">Sistem Informasi Blacklist Rental Nasional</div>
+        <div class="company-info">
+            Dikembangkan oleh <strong>PT. Indo Web Solution</strong><br>
+            Platform Terpercaya untuk Verifikasi Penyewa Rental di Indonesia
         </div>
+        <div class="print-info">
+            <strong>Tanggal Print:</strong> {{ \App\Helpers\DateHelper::formatIndonesian(now(), 'l, d F Y') }} - {{ now()->format('H:i') }} WIB<br>
+            <strong>ID Laporan:</strong> #{{ $blacklist->id }} | <strong>Status:</strong>
+            <span class="badge badge-{{ $blacklist->status_validitas === 'Valid' ? 'success' : ($blacklist->status_validitas === 'Pending' ? 'warning' : 'danger') }}">
+                {{ $blacklist->status_validitas }}
+            </span>
+        </div>
+    </div>
 
         <div class="warning">
-            <strong>PERINGATAN:</strong> Dokumen ini berisi informasi sensitif dan hanya untuk keperluan verifikasi rental. 
+            <strong>PERINGATAN:</strong> Dokumen ini berisi informasi sensitif dan hanya untuk keperluan verifikasi rental.
             Dilarang menyebarluaskan atau menggunakan data ini untuk tujuan lain.
         </div>
 

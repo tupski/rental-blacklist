@@ -454,6 +454,6 @@ class PublicController extends Controller
         }
 
         $pdf = Pdf::loadView('public.pdf-detail', compact('blacklist'));
-        return $pdf->download('blacklist-detail-' . $blacklist->nik . '.pdf');
+        return $pdf->download('laporan-blacklist-' . $blacklist->nik . '-' . date('Y-m-d') . '.pdf');
     }
 }

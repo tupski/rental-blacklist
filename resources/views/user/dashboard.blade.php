@@ -376,6 +376,16 @@ $(document).ready(function() {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
+    // Check if there's a detail parameter in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const detailId = urlParams.get('detail');
+    if (detailId) {
+        // Auto-show detail modal for the specified ID
+        showUserDetail(detailId);
+        // Clean URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
     // User search
     $('#userSearchForm').on('submit', function(e) {
         e.preventDefault();

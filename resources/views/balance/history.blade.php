@@ -92,7 +92,7 @@
                         <form method="GET" class="row g-3">
                             <div class="col-md-3">
                                 <label class="form-label">Tipe Transaksi</label>
-                                <select name="jenis" class="form-select">
+                                <select name="type" class="form-select">
                                     <option value="">Semua</option>
                                     <option value="topup" {{ request('type') == 'topup' ? 'selected' : '' }}>Topup</option>
                                     <option value="usage" {{ request('type') == 'usage' ? 'selected' : '' }}>Penggunaan</option>
@@ -182,13 +182,18 @@
                                             <td>
                                                 @if($transaction->reference_type === 'App\Models\TopupRequest' && $transaction->reference_id)
                                                     <div class="btn-group btn-group-sm">
-                                                        <button type="button" class="btn btn-outline-primary" onclick="viewInvoice({{ $transaction->reference_id }})">
+                                                        <button type="button" class="btn btn-outline-primary" onclick="viewInvoice({{ $transaction->reference_id }})" title="Lihat Invoice">
                                                             <i class="fas fa-eye"></i>
                                                         </button>
-                                                        <a href="{{ route('faktur.unduh', $transaction->reference_id) }}" class="btn btn-outline-success" target="_blank">
+                                                        <a href="{{ route('faktur.unduh', $transaction->reference_id) }}" class="btn btn-outline-success" target="_blank" title="Download Invoice">
                                                             <i class="fas fa-download"></i>
                                                         </a>
                                                     </div>
+                                                @elseif($transaction->type === 'usage' && $transaction->reference_type === 'App\Models\RentalBlacklist' && $transaction->reference_id)
+                                                    <button type="button" class="btn btn-outline-info btn-sm" onclick="viewUnlockedDetail({{ $transaction->reference_id }})" title="Lihat Detail Data">
+                                                        <i class="fas fa-eye me-1"></i>
+                                                        Lihat Detail
+                                                    </button>
                                                 @else
                                                     <span class="text-muted">-</span>
                                                 @endif
@@ -271,12 +276,12 @@ function viewInvoice(topupId) {
 
     // Load invoice data
     $.ajax({
-        url: `/invoice/${topupId}`,
+        url: `/faktur/${topupId}`,
         method: 'GET',
         success: function(response) {
             if (response.success) {
                 displayInvoice(response.data);
-                $('#downloadInvoiceBtn').attr('onclick', `window.open('/invoice/${topupId}/download', '_blank')`);
+                $('#downloadInvoiceBtn').attr('onclick', `window.open('/faktur/${topupId}/unduh', '_blank')`);
             } else {
                 $('#invoiceContent').html(`
                     <div class="alert alert-danger">
@@ -378,6 +383,12 @@ function displayInvoice(data) {
     `;
 
     $('#invoiceContent').html(html);
+}
+
+// Function to view unlocked detail data
+function viewUnlockedDetail(blacklistId) {
+    // Redirect to user dashboard with detail modal
+    window.location.href = `/pengguna/dasbor?detail=${blacklistId}`;
 }
 </script>
 @endpush
