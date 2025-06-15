@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.main')
 
 @section('title', 'Verifikasi Dokumen')
 
@@ -40,17 +40,17 @@
                     <div class="card-body p-5">
                         <form method="POST" action="{{ route('verifikasi.verify') }}">
                             @csrf
-                            
+
                             <div class="mb-4">
                                 <label for="verification_code" class="form-label fw-bold">
                                     <i class="fas fa-barcode me-2 text-primary"></i>
                                     Kode Verifikasi
                                 </label>
-                                <input 
-                                    type="text" 
-                                    class="form-control form-control-lg @error('verification_code') is-invalid @enderror" 
-                                    id="verification_code" 
-                                    name="verification_code" 
+                                <input
+                                    type="text"
+                                    class="form-control form-control-lg @error('verification_code') is-invalid @enderror"
+                                    id="verification_code"
+                                    name="verification_code"
                                     placeholder="Contoh: ABC12345-DEF67890-GHI12345"
                                     value="{{ old('verification_code') }}"
                                     style="font-family: 'Courier New', monospace; letter-spacing: 1px;"
@@ -85,7 +85,7 @@
                                     <h5 class="card-title mb-0">Apa itu Kode Verifikasi?</h5>
                                 </div>
                                 <p class="card-text">
-                                    Kode verifikasi adalah kode unik yang terdapat pada setiap dokumen laporan blacklist 
+                                    Kode verifikasi adalah kode unik yang terdapat pada setiap dokumen laporan blacklist
                                     yang dicetak atau diunduh dari sistem kami untuk memastikan keaslian dokumen.
                                 </p>
                             </div>
@@ -99,7 +99,7 @@
                                     <h5 class="card-title mb-0">Dimana Menemukan Kode?</h5>
                                 </div>
                                 <p class="card-text">
-                                    Kode verifikasi dapat ditemukan dalam bentuk barcode dan teks pada bagian footer 
+                                    Kode verifikasi dapat ditemukan dalam bentuk barcode dan teks pada bagian footer
                                     dokumen laporan blacklist yang telah dicetak atau diunduh.
                                 </p>
                             </div>
@@ -116,7 +116,7 @@
                         <div class="flex-grow-1 ms-3">
                             <h6 class="alert-heading">Keamanan Dokumen</h6>
                             <p class="mb-0">
-                                Setiap dokumen yang diverifikasi akan tercatat dalam sistem kami untuk keperluan audit. 
+                                Setiap dokumen yang diverifikasi akan tercatat dalam sistem kami untuk keperluan audit.
                                 Pastikan Anda hanya memverifikasi dokumen yang sah dan diperlukan.
                             </p>
                         </div>
@@ -134,7 +134,7 @@ $(document).ready(function() {
     // Auto format verification code input
     $('#verification_code').on('input', function() {
         let value = $(this).val().toUpperCase().replace(/[^A-Z0-9]/g, '');
-        
+
         // Add dashes every 8 characters
         if (value.length > 8) {
             value = value.substring(0, 8) + '-' + value.substring(8);
@@ -142,15 +142,15 @@ $(document).ready(function() {
         if (value.length > 17) {
             value = value.substring(0, 17) + '-' + value.substring(17);
         }
-        
+
         // Limit to 26 characters (8-8-8 + 2 dashes)
         if (value.length > 26) {
             value = value.substring(0, 26);
         }
-        
+
         $(this).val(value);
     });
-    
+
     // Auto dismiss alerts after 5 seconds
     setTimeout(function() {
         $('.alert').alert('close');

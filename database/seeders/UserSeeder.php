@@ -27,6 +27,7 @@ class UserSeeder extends Seeder
             'email' => 'rental@example.com',
             'password' => bcrypt('rental123'),
             'email_verified_at' => now(),
+            'role' => 'pengusaha_rental',
         ]);
 
         // User Biasa Account
@@ -44,6 +45,7 @@ class UserSeeder extends Seeder
             'email' => 'demo1@rental.com',
             'password' => bcrypt('password'),
             'email_verified_at' => now(),
+            'role' => 'pengusaha_rental',
         ]);
 
         \App\Models\User::create([
@@ -51,6 +53,7 @@ class UserSeeder extends Seeder
             'email' => 'demo2@rental.com',
             'password' => bcrypt('password'),
             'email_verified_at' => now(),
+            'role' => 'pengusaha_rental',
         ]);
     }
 }

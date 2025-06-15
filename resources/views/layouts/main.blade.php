@@ -370,6 +370,13 @@
                             Sponsor
                         </a>
                     </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('verifikasi.*') ? 'active fw-bold' : '' }}" href="{{ route('verifikasi.index') }}">
+                            <i class="fas fa-shield-alt me-1"></i>
+                            Verifikasi
+                        </a>
+                    </li>
                     @auth
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('dasbor*') ? 'active fw-bold' : '' }}" href="{{ route('dasbor') }}">

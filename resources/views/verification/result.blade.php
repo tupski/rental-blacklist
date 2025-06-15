@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.main')
 
 @section('title', 'Hasil Verifikasi Dokumen')
 
@@ -198,7 +198,7 @@
                         <div class="flex-grow-1 ms-3">
                             <h6 class="alert-heading">Penting!</h6>
                             <p class="mb-0">
-                                Verifikasi ini hanya memastikan bahwa dokumen adalah asli dari sistem CekPenyewa.com. 
+                                Verifikasi ini hanya memastikan bahwa dokumen adalah asli dari sistem CekPenyewa.com.
                                 Untuk keperluan hukum atau bisnis, pastikan untuk melakukan verifikasi tambahan sesuai kebutuhan.
                             </p>
                         </div>
