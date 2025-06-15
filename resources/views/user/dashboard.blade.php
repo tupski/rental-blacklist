@@ -119,6 +119,7 @@
                                     placeholder="Masukkan NIK atau Nama Lengkap (min 3 karakter)"
                                     class="form-control"
                                     minlength="3"
+                                    value="{{ $searchQuery ?? '' }}"
                                 >
                                 <button
                                     type="submit"
@@ -396,9 +397,17 @@ $(document).ready(function() {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
-    // Check if there's a detail parameter in URL
+    // Check if there's a search parameter in URL
     const urlParams = new URLSearchParams(window.location.search);
+    const searchParam = urlParams.get('cari');
     const detailId = urlParams.get('detail');
+
+    if (searchParam) {
+        // Auto-perform search from URL
+        $('#userSearchInput').val(searchParam);
+        performUserSearch();
+    }
+
     if (detailId) {
         // Auto-show detail modal for the specified ID
         showUserDetail(detailId);
@@ -425,7 +434,21 @@ $(document).ready(function() {
 
         currentUserSearchQuery = search;
         currentUserPage = 1;
+
+        // Update URL with search parameter
+        updateURL(search);
+
         loadUserSearchResults(true);
+    }
+
+    function updateURL(search) {
+        const url = new URL(window.location);
+        if (search) {
+            url.searchParams.set('cari', search);
+        } else {
+            url.searchParams.delete('cari');
+        }
+        window.history.pushState({}, '', url);
     }
 
     function loadUserSearchResults(isNewSearch = false) {

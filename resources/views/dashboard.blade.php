@@ -125,6 +125,7 @@
                                     placeholder="Masukkan NIK atau Nama Lengkap"
                                     class="form-control"
                                     minlength="3"
+                                    value="{{ $searchQuery ?? '' }}"
                                 >
                                 <button
                                     type="submit"
@@ -362,6 +363,16 @@
 @push('scripts')
 <script>
 $(document).ready(function() {
+    // Check if there's a search parameter in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchParam = urlParams.get('cari');
+
+    if (searchParam) {
+        // Auto-perform search from URL
+        $('#dashboardSearchInput').val(searchParam);
+        performDashboardSearch();
+    }
+
     // Dashboard search
     $('#dashboardSearchForm').on('submit', function(e) {
         e.preventDefault();
@@ -381,7 +392,21 @@ $(document).ready(function() {
 
         currentDashboardSearchQuery = search;
         currentDashboardPage = 1;
+
+        // Update URL with search parameter
+        updateURL(search);
+
         loadDashboardSearchResults(true);
+    }
+
+    function updateURL(search) {
+        const url = new URL(window.location);
+        if (search) {
+            url.searchParams.set('cari', search);
+        } else {
+            url.searchParams.delete('cari');
+        }
+        window.history.pushState({}, '', url);
     }
 
     function loadDashboardSearchResults(isNewSearch = false) {

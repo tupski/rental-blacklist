@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class UserDashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
 
@@ -46,7 +46,10 @@ class UserDashboardController extends Controller
                 ];
             });
 
-        return view('user.dashboard', compact('stats', 'recentReports'));
+        // Handle search from URL parameter
+        $searchQuery = $request->get('cari');
+
+        return view('user.dashboard', compact('stats', 'recentReports', 'searchQuery'));
     }
 
     public function search(Request $request)
