@@ -75,7 +75,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('pengguna/{user}/unban', [AdminUserController::class, 'unban'])->name('pengguna.unban');
 
     // Guest Reports Management
-    Route::resource('laporan-tamu', AdminGuestReportController::class)->names([
+    Route::resource('laporan-tamu', AdminGuestReportController::class)->parameters([
+        'laporan-tamu' => 'guestReport'
+    ])->names([
         'index' => 'laporan-tamu.indeks',
         'create' => 'laporan-tamu.buat',
         'store' => 'laporan-tamu.simpan',

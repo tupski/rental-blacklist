@@ -196,7 +196,7 @@
                         @elseif($guestReport->status === 'rejected')
                             <span class="badge badge-danger badge-lg">Rejected</span>
                         @else
-                            <span class="badge badge-secondary badge-lg">{{ ucfirst($guestReport->status) }}</span>
+                            <span class="badge badge-secondary badge-lg">{{ ucfirst($guestReport->status ?? 'pending') }}</span>
                         @endif
                     </div>
                 </div>

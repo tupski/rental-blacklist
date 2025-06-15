@@ -156,7 +156,7 @@
                                 <td>{{ $report->nama_pelapor }}</td>
                                 <td>{{ $report->created_at->format('d/m/Y') }}</td>
                                 <td>
-                                    <a href="{{ route('admin.laporan-tamu.tampil', $report->id) }}" class="btn btn-xs btn-info">
+                                    <a href="{{ route('admin.laporan-tamu.tampil', $report) }}" class="btn btn-xs btn-info">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                 </td>

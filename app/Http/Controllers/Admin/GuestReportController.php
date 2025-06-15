@@ -38,7 +38,7 @@ class GuestReportController extends Controller
             'admin_notes' => $request->admin_notes,
         ]);
 
-        return redirect()->route('admin.guest-reports.index')
+        return redirect()->route('admin.laporan-tamu.indeks')
             ->with('success', 'Laporan guest berhasil diperbarui.');
     }
 
@@ -46,7 +46,7 @@ class GuestReportController extends Controller
     {
         $guestReport->delete();
 
-        return redirect()->route('admin.guest-reports.index')
+        return redirect()->route('admin.laporan-tamu.indeks')
             ->with('success', 'Laporan guest berhasil dihapus.');
     }
 
@@ -58,9 +58,16 @@ class GuestReportController extends Controller
             ->with('success', 'Laporan guest berhasil disetujui.');
     }
 
-    public function reject(GuestReport $guestReport)
+    public function reject(Request $request, GuestReport $guestReport)
     {
-        $guestReport->update(['status' => 'rejected']);
+        $request->validate([
+            'catatan_admin' => 'required|string|max:1000',
+        ]);
+
+        $guestReport->update([
+            'status' => 'rejected',
+            'catatan_admin' => $request->catatan_admin,
+        ]);
 
         return redirect()->back()
             ->with('success', 'Laporan guest berhasil ditolak.');

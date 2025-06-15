@@ -69,7 +69,7 @@
                                 <td>{{ $report->created_at->format('d/m/Y H:i') }}</td>
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <a href="{{ route('admin.laporan-tamu.tampil', $report->id) }}"
+                                        <a href="{{ route('admin.laporan-tamu.tampil', $report) }}"
                                            class="btn btn-info btn-sm" title="Lihat Detail">
                                             <i class="fas fa-eye"></i>
                                         </a>
@@ -90,7 +90,7 @@
                                             <i class="fas fa-edit"></i>
                                         </a>
 
-                                        <form action="{{ route('admin.laporan-tamu.hapus', $report->id) }}"
+                                        <form action="{{ route('admin.laporan-tamu.hapus', $report) }}"
                                               method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
@@ -207,8 +207,8 @@
                 @csrf
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="admin_notes">Alasan Penolakan <span class="text-danger">*</span></label>
-                        <textarea class="form-control" id="admin_notes" name="admin_notes"
+                        <label for="catatan_admin">Alasan Penolakan <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="catatan_admin" name="catatan_admin"
                                   rows="3" required placeholder="Masukkan alasan penolakan..."></textarea>
                     </div>
                 </div>
