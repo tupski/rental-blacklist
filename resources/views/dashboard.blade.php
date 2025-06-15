@@ -500,7 +500,7 @@ $(document).ready(function() {
 
         // Fetch detail data
         $.ajax({
-            url: `/api/blacklist/${id}`,
+            url: `/rental/blacklist/${id}`,
             method: 'GET',
             success: function(response) {
                 if (response.success) {

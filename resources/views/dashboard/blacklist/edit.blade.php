@@ -147,10 +147,12 @@
                                 class="form-select"
                             >
                                 <option value="">Pilih Jenis Rental</option>
-                                <option value="Mobil" {{ $blacklist->jenis_rental === 'Mobil' ? 'selected' : '' }}>Mobil</option>
-                                <option value="Motor" {{ $blacklist->jenis_rental === 'Motor' ? 'selected' : '' }}>Motor</option>
-                                <option value="Kamera" {{ $blacklist->jenis_rental === 'Kamera' ? 'selected' : '' }}>Kamera</option>
-                                <option value="Alat Elektronik" {{ $blacklist->jenis_rental === 'Alat Elektronik' ? 'selected' : '' }}>Alat Elektronik</option>
+                                <option value="Rental Mobil" {{ $blacklist->jenis_rental === 'Rental Mobil' ? 'selected' : '' }}>Rental Mobil</option>
+                                <option value="Rental Motor" {{ $blacklist->jenis_rental === 'Rental Motor' ? 'selected' : '' }}>Rental Motor</option>
+                                <option value="Rental Kamera" {{ $blacklist->jenis_rental === 'Rental Kamera' ? 'selected' : '' }}>Rental Kamera</option>
+                                <option value="Rental Alat Musik" {{ $blacklist->jenis_rental === 'Rental Alat Musik' ? 'selected' : '' }}>Rental Alat Musik</option>
+                                <option value="Rental Elektronik" {{ $blacklist->jenis_rental === 'Rental Elektronik' ? 'selected' : '' }}>Rental Elektronik</option>
+                                <option value="Rental Alat Berat" {{ $blacklist->jenis_rental === 'Rental Alat Berat' ? 'selected' : '' }}>Rental Alat Berat</option>
                                 <option value="Lainnya" {{ $blacklist->jenis_rental === 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
                             </select>
                             <div class="invalid-feedback d-none" id="jenis_rental_error"></div>
@@ -182,52 +184,44 @@
                     </h6>
 
                     <div class="row g-3">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-check">
-                                <input type="checkbox" name="jenis_laporan[]" value="percobaan_penipuan"
-                                       {{ in_array('percobaan_penipuan', $blacklist->jenis_laporan) ? 'checked' : '' }}
-                                       class="form-check-input" id="percobaan_penipuan">
-                                <label class="form-check-label" for="percobaan_penipuan">Percobaan Penipuan</label>
+                                <input type="checkbox" name="jenis_laporan[]" value="Tidak Mengembalikan"
+                                       {{ in_array('Tidak Mengembalikan', $blacklist->jenis_laporan ?? []) ? 'checked' : '' }}
+                                       class="form-check-input" id="tidak_mengembalikan">
+                                <label class="form-check-label" for="tidak_mengembalikan">Tidak Mengembalikan</label>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-check">
-                                <input type="checkbox" name="jenis_laporan[]" value="penipuan"
-                                       {{ in_array('penipuan', $blacklist->jenis_laporan) ? 'checked' : '' }}
-                                       class="form-check-input" id="penipuan">
-                                <label class="form-check-label" for="penipuan">Penipuan</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-check">
-                                <input type="checkbox" name="jenis_laporan[]" value="tidak_mengembalikan_barang"
-                                       {{ in_array('tidak_mengembalikan_barang', $blacklist->jenis_laporan) ? 'checked' : '' }}
-                                       class="form-check-input" id="tidak_mengembalikan_barang">
-                                <label class="form-check-label" for="tidak_mengembalikan_barang">Tidak Mengembalikan Barang</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-check">
-                                <input type="checkbox" name="jenis_laporan[]" value="identitas_palsu"
-                                       {{ in_array('identitas_palsu', $blacklist->jenis_laporan) ? 'checked' : '' }}
-                                       class="form-check-input" id="identitas_palsu">
-                                <label class="form-check-label" for="identitas_palsu">Identitas Palsu</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-check">
-                                <input type="checkbox" name="jenis_laporan[]" value="sindikat"
-                                       {{ in_array('sindikat', $blacklist->jenis_laporan) ? 'checked' : '' }}
-                                       class="form-check-input" id="sindikat">
-                                <label class="form-check-label" for="sindikat">Sindikat</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-check">
-                                <input type="checkbox" name="jenis_laporan[]" value="merusak_barang"
-                                       {{ in_array('merusak_barang', $blacklist->jenis_laporan) ? 'checked' : '' }}
+                                <input type="checkbox" name="jenis_laporan[]" value="Merusak Barang"
+                                       {{ in_array('Merusak Barang', $blacklist->jenis_laporan ?? []) ? 'checked' : '' }}
                                        class="form-check-input" id="merusak_barang">
                                 <label class="form-check-label" for="merusak_barang">Merusak Barang</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input type="checkbox" name="jenis_laporan[]" value="Tidak Bayar"
+                                       {{ in_array('Tidak Bayar', $blacklist->jenis_laporan ?? []) ? 'checked' : '' }}
+                                       class="form-check-input" id="tidak_bayar">
+                                <label class="form-check-label" for="tidak_bayar">Tidak Bayar</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input type="checkbox" name="jenis_laporan[]" value="Kabur"
+                                       {{ in_array('Kabur', $blacklist->jenis_laporan ?? []) ? 'checked' : '' }}
+                                       class="form-check-input" id="kabur">
+                                <label class="form-check-label" for="kabur">Kabur</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input type="checkbox" name="jenis_laporan[]" value="Lainnya"
+                                       {{ in_array('Lainnya', $blacklist->jenis_laporan ?? []) ? 'checked' : '' }}
+                                       class="form-check-input" id="lainnya">
+                                <label class="form-check-label" for="lainnya">Lainnya</label>
                             </div>
                         </div>
                     </div>

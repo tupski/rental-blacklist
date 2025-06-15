@@ -125,6 +125,20 @@ Route::middleware(['auth', 'verified', 'role:pengusaha_rental'])->group(function
     // Dashboard
     Route::get('/rental/dasbor', [DashboardController::class, 'index'])->name('rental.dasbor');
 
+    // Blacklist detail for rental owners
+    Route::get('/rental/blacklist/{id}', function ($id) {
+        $blacklist = \App\Models\RentalBlacklist::with('user')->find($id);
+
+        if (!$blacklist) {
+            return response()->json(['success' => false, 'message' => 'Data not found'], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $blacklist
+        ]);
+    })->name('rental.blacklist.detail');
+
     // API Key management
     Route::prefix('kunci-api')->name('kunci-api.')->group(function () {
         Route::get('/', [App\Http\Controllers\ApiKeyController::class, 'show'])->name('tampil');
