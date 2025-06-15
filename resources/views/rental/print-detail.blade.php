@@ -459,7 +459,7 @@
 
             <!-- QR Code -->
             <div style="margin: 15px 0;">
-                <img src="data:image/png;base64,{{ $qrCode }}" alt="QR Code Verifikasi" style="width: 120px; height: 120px; border: 1px solid #ddd; border-radius: 8px;">
+                <img src="data:image/png;base64,{{ $qrCodeBase64 }}" alt="QR Code Verifikasi" style="width: 120px; height: 120px; border: 1px solid #ddd; border-radius: 8px;">
             </div>
 
             <!-- Verification Code -->

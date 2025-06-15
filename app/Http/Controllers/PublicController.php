@@ -9,7 +9,9 @@ use App\Models\Sponsor;
 use App\Models\DocumentVerification;
 use App\Helpers\PhoneHelper;
 use Barryvdh\DomPDF\Facade\Pdf;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
+use Endroid\QrCode\Writer\Result\ResultInterface;
 
 class PublicController extends Controller
 {
@@ -362,9 +364,13 @@ class PublicController extends Controller
 
         // Generate QR Code with verification URL
         $verificationUrl = route('verifikasi.index', ['kode' => $verificationCode]);
-        $qrCode = base64_encode(QrCode::format('png')->size(200)->generate($verificationUrl));
+        $qrCode = new QrCode($verificationUrl);
 
-        return view('public.print-detail', compact('blacklist', 'verificationCode', 'qrCode', 'verificationUrl'));
+        $writer = new PngWriter();
+        $result = $writer->write($qrCode);
+        $qrCodeBase64 = base64_encode($result->getString());
+
+        return view('public.print-detail', compact('blacklist', 'verificationCode', 'qrCodeBase64', 'verificationUrl'));
     }
 
     public function downloadPDF($id)
@@ -399,7 +405,11 @@ class PublicController extends Controller
 
         // Generate QR Code with verification URL
         $verificationUrl = route('verifikasi.index', ['kode' => $verificationCode]);
-        $qrCode = base64_encode(QrCode::format('png')->size(200)->generate($verificationUrl));
+        $qrCode = new QrCode($verificationUrl);
+
+        $writer = new PngWriter();
+        $result = $writer->write($qrCode);
+        $qrCodeBase64 = base64_encode($result->getString());
 
         // Generate filename: laporan-penyewa-nama-penyewa-tanggalcetak-jamcetak.pdf
         $namaPenyewa = str_replace(' ', '-', strtolower($blacklist->nama_lengkap));
@@ -408,7 +418,7 @@ class PublicController extends Controller
         $jamCetak = now()->format('His');
         $filename = "laporan-penyewa-{$namaPenyewa}-{$tanggalCetak}-{$jamCetak}.pdf";
 
-        $pdf = Pdf::loadView('public.pdf-detail', compact('blacklist', 'verificationCode', 'qrCode', 'verificationUrl'));
+        $pdf = Pdf::loadView('public.pdf-detail', compact('blacklist', 'verificationCode', 'qrCodeBase64', 'verificationUrl'));
         return $pdf->download($filename);
     }
 }
