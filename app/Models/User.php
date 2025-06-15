@@ -190,7 +190,7 @@ class User extends Authenticatable
     public function hasUnlockedNik($nik)
     {
         return UserUnlock::where('user_id', $this->id)
-            ->whereHas('rentalBlacklist', function($query) use ($nik) {
+            ->whereHas('blacklist', function($query) use ($nik) {
                 $query->where('nik', $nik);
             })
             ->exists();

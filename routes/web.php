@@ -153,6 +153,7 @@ Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
     Route::get('/isi-saldo/konfirmasi/{invoice}', [TopupController::class, 'confirm'])->name('isi-saldo.konfirmasi');
     Route::post('/isi-saldo/unggah-bukti/{invoice}', [TopupController::class, 'uploadProof'])->name('isi-saldo.unggah-bukti');
     Route::get('/saldo/riwayat', [BalanceController::class, 'history'])->name('saldo.riwayat');
+    Route::get('/saldo/riwayat/export-pdf', [BalanceController::class, 'exportPDF'])->name('saldo.export-pdf');
 });
 
 // Include authentication routes
