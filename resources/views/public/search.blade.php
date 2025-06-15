@@ -293,6 +293,9 @@
                         <label for="publicPasswordConfirmation" class="form-label">Konfirmasi Password</label>
                         <input type="password" class="form-control" id="publicPasswordConfirmation" name="password_confirmation"
                                placeholder="Ulangi password" required>
+                        <div class="invalid-feedback" id="publicPasswordMismatch" style="display: none;">
+                            Password dan konfirmasi password tidak cocok
+                        </div>
                     </div>
 
                     <div class="mb-3">
@@ -829,8 +832,26 @@ $(document).ready(function() {
         // Reset form
         $('#publicShareForm')[0].reset();
         $('#publicShareResult').addClass('d-none');
+        $('#publicPasswordMismatch').hide();
+        $('#publicPasswordConfirmation').removeClass('is-invalid');
         $('#publicShareModal').modal('show');
     };
+
+    // Real-time password validation for public form
+    $('#publicPassword, #publicPasswordConfirmation').on('input', function() {
+        const password = $('#publicPassword').val();
+        const confirmation = $('#publicPasswordConfirmation').val();
+
+        if (confirmation.length > 0) {
+            if (password !== confirmation) {
+                $('#publicPasswordConfirmation').addClass('is-invalid');
+                $('#publicPasswordMismatch').show();
+            } else {
+                $('#publicPasswordConfirmation').removeClass('is-invalid');
+                $('#publicPasswordMismatch').hide();
+            }
+        }
+    });
 
     // Handle public share form submission
     $('#createPublicShareBtn').on('click', function() {
@@ -883,9 +904,14 @@ $(document).ready(function() {
             error: function(xhr) {
                 console.error('Share error:', xhr);
                 let errorMessage = 'Terjadi kesalahan saat membuat link';
-                if (xhr.responseJSON && xhr.responseJSON.errors) {
-                    const errors = Object.values(xhr.responseJSON.errors).flat();
-                    errorMessage = errors.join(', ');
+                if (xhr.responseJSON) {
+                    if (xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    if (xhr.responseJSON.errors) {
+                        const errors = Object.values(xhr.responseJSON.errors).flat();
+                        errorMessage += '\n\nDetail error:\n' + errors.join('\n');
+                    }
                 }
                 alert(errorMessage);
             },

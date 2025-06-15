@@ -416,6 +416,9 @@
                         <label for="password_confirmation" class="form-label">Konfirmasi Password</label>
                         <input type="password" class="form-control" id="password_confirmation" name="password_confirmation"
                                placeholder="Ulangi password" required>
+                        <div class="invalid-feedback" id="passwordMismatch" style="display: none;">
+                            Password dan konfirmasi password tidak cocok
+                        </div>
                     </div>
 
                     <div class="mb-3">
@@ -526,6 +529,9 @@
                         <label for="userPasswordConfirmation" class="form-label">Konfirmasi Password</label>
                         <input type="password" class="form-control" id="userPasswordConfirmation" name="password_confirmation"
                                placeholder="Ulangi password" required>
+                        <div class="invalid-feedback" id="userPasswordMismatch" style="display: none;">
+                            Password dan konfirmasi password tidak cocok
+                        </div>
                     </div>
 
                     <div class="mb-3">
@@ -855,8 +861,26 @@ $(document).ready(function() {
         // Reset form
         $('#shareForm')[0].reset();
         $('#shareResult').addClass('d-none');
+        $('#passwordMismatch').hide();
+        $('#password_confirmation').removeClass('is-invalid');
         $('#shareModal').modal('show');
     };
+
+    // Real-time password validation
+    $('#password, #password_confirmation').on('input', function() {
+        const password = $('#password').val();
+        const confirmation = $('#password_confirmation').val();
+
+        if (confirmation.length > 0) {
+            if (password !== confirmation) {
+                $('#password_confirmation').addClass('is-invalid');
+                $('#passwordMismatch').show();
+            } else {
+                $('#password_confirmation').removeClass('is-invalid');
+                $('#passwordMismatch').hide();
+            }
+        }
+    });
 
     // Handle share form submission
     $('#createShareBtn').on('click', function() {
@@ -909,9 +933,14 @@ $(document).ready(function() {
             error: function(xhr) {
                 console.error('Share error:', xhr);
                 let errorMessage = 'Terjadi kesalahan saat membuat link';
-                if (xhr.responseJSON && xhr.responseJSON.errors) {
-                    const errors = Object.values(xhr.responseJSON.errors).flat();
-                    errorMessage = errors.join(', ');
+                if (xhr.responseJSON) {
+                    if (xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    if (xhr.responseJSON.errors) {
+                        const errors = Object.values(xhr.responseJSON.errors).flat();
+                        errorMessage += '\n\nDetail error:\n' + errors.join('\n');
+                    }
                 }
                 alert(errorMessage);
             },
@@ -1021,8 +1050,26 @@ $(document).ready(function() {
         // Reset form
         $('#userShareForm')[0].reset();
         $('#userShareResult').addClass('d-none');
+        $('#userPasswordMismatch').hide();
+        $('#userPasswordConfirmation').removeClass('is-invalid');
         $('#userShareModal').modal('show');
     };
+
+    // Real-time password validation for user form
+    $('#userPassword, #userPasswordConfirmation').on('input', function() {
+        const password = $('#userPassword').val();
+        const confirmation = $('#userPasswordConfirmation').val();
+
+        if (confirmation.length > 0) {
+            if (password !== confirmation) {
+                $('#userPasswordConfirmation').addClass('is-invalid');
+                $('#userPasswordMismatch').show();
+            } else {
+                $('#userPasswordConfirmation').removeClass('is-invalid');
+                $('#userPasswordMismatch').hide();
+            }
+        }
+    });
 
     // Handle user share form submission
     $('#createUserShareBtn').on('click', function() {
@@ -1075,9 +1122,14 @@ $(document).ready(function() {
             error: function(xhr) {
                 console.error('Share error:', xhr);
                 let errorMessage = 'Terjadi kesalahan saat membuat link';
-                if (xhr.responseJSON && xhr.responseJSON.errors) {
-                    const errors = Object.values(xhr.responseJSON.errors).flat();
-                    errorMessage = errors.join(', ');
+                if (xhr.responseJSON) {
+                    if (xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    if (xhr.responseJSON.errors) {
+                        const errors = Object.values(xhr.responseJSON.errors).flat();
+                        errorMessage += '\n\nDetail error:\n' + errors.join('\n');
+                    }
                 }
                 alert(errorMessage);
             },

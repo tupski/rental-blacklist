@@ -7,7 +7,7 @@ use App\Models\SharedReport;
 use App\Models\RentalBlacklist;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Carbon\Carbon;
+
 
 class SharedReportController extends Controller
 {
@@ -31,7 +31,16 @@ class SharedReportController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
+                'message' => 'Validasi gagal',
                 'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Additional check for password confirmation
+        if ($request->password !== $request->password_confirmation) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Password dan konfirmasi password tidak cocok'
             ], 422);
         }
 
@@ -135,7 +144,7 @@ class SharedReportController extends Controller
 
         // Regular user can only share if they have unlocked the data
         if ($user->role === 'pengguna') {
-            return $user->hasUnlockedData($blacklist->id) || 
+            return $user->hasUnlockedData($blacklist->id) ||
                    $user->hasUnlockedNik($blacklist->nik);
         }
 
