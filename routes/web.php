@@ -88,11 +88,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/profil', [ProfileController::class, 'edit'])->name('profil.edit');
     Route::patch('/profil', [ProfileController::class, 'update'])->name('profil.perbarui');
     Route::delete('/profil', [ProfileController::class, 'destroy'])->name('profil.hapus');
+    Route::post('/profil/verify-password', [ProfileController::class, 'verifyPassword'])->name('profil.verify-password');
 
     // Blacklist management (accessible by all authenticated users)
     Route::prefix('dasbor/daftar-hitam')->name('dasbor.daftar-hitam.')->group(function () {
         Route::get('/', [BlacklistController::class, 'index'])->name('indeks');
-        Route::get('/buat', [BlacklistController::class, 'create'])->name('buat');
+        // Redirect /buat ke /lapor
+        Route::get('/buat', function () {
+            return redirect()->route('laporan.buat');
+        })->name('buat');
         Route::post('/', [BlacklistController::class, 'store'])->name('simpan');
         Route::get('/{id}', [BlacklistController::class, 'show'])->name('tampil');
         Route::get('/{id}/edit', [BlacklistController::class, 'edit'])->name('edit');

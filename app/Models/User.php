@@ -103,6 +103,12 @@ class User extends Authenticatable
         return $this->hasMany(UserUnlock::class);
     }
 
+    // Relasi rental registration
+    public function rentalRegistration()
+    {
+        return $this->hasOne(RentalRegistration::class);
+    }
+
     // Get current balance
     public function getCurrentBalance()
     {

@@ -6,6 +6,7 @@ use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
@@ -65,5 +66,27 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    /**
+     * Verify user password for viewing legalitas documents.
+     */
+    public function verifyPassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|string'
+        ]);
+
+        if (!Hash::check($request->password, Auth::user()->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Password salah'
+            ], 422);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Password benar'
+        ]);
     }
 }

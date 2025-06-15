@@ -37,52 +37,56 @@
         </div>
 
         <!-- Profile Forms -->
-        <div class="row g-4">
-            <!-- Update Profile Information -->
-            <div class="col-lg-6">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-header bg-light border-0">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-user text-primary me-2"></i>
-                            Informasi Profile
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        @include('profile.partials.update-profile-information-form')
+        @if(Auth::user()->role === 'pengusaha_rental')
+            @include('profile.partials.rental-owner-profile')
+        @else
+            <div class="row g-4">
+                <!-- Update Profile Information -->
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-light border-0">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-user text-primary me-2"></i>
+                                Informasi Profile
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            @include('profile.partials.update-profile-information-form')
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Update Password -->
-            <div class="col-lg-6">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-header bg-light border-0">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-lock text-warning me-2"></i>
-                            Ubah Password
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        @include('profile.partials.update-password-form')
+                <!-- Update Password -->
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-light border-0">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-lock text-warning me-2"></i>
+                                Ubah Password
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            @include('profile.partials.update-password-form')
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Delete Account -->
-            <div class="col-12">
-                <div class="card border-0 shadow-sm border-danger">
-                    <div class="card-header bg-danger bg-opacity-10 border-0">
-                        <h5 class="card-title mb-0 text-danger">
-                            <i class="fas fa-exclamation-triangle text-danger me-2"></i>
-                            Zona Berbahaya
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        @include('profile.partials.delete-user-form')
+                <!-- Delete Account -->
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm border-danger">
+                        <div class="card-header bg-danger bg-opacity-10 border-0">
+                            <h5 class="card-title mb-0 text-danger">
+                                <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+                                Zona Berbahaya
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            @include('profile.partials.delete-user-form')
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        @endif
     </div>
 </div>
 @endsection

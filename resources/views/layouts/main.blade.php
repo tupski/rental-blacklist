@@ -358,29 +358,12 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('beranda') ? 'active fw-bold' : '' }}" href="{{ route('beranda') }}">
-                            <i class="fas fa-search me-1"></i>
-                            Cari Blacklist
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('report.*') ? 'active fw-bold' : '' }}" href="{{ route('laporan.buat') }}">
                             <i class="fas fa-exclamation-triangle me-1"></i>
                             Lapor
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('rental.*') ? 'active fw-bold' : '' }}" href="{{ route('rental.daftar') }}">
-                            <i class="fas fa-store me-1"></i>
-                            Daftar Rental
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('api.*') ? 'active fw-bold' : '' }}" href="{{ route('api.dokumentasi') }}">
-                            <i class="fas fa-code me-1"></i>
-                            API
-                        </a>
-                    </li>
+
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('sponsor.*') ? 'active fw-bold' : '' }}" href="{{ route('sponsor.indeks') }}">
                             <i class="fas fa-handshake me-1"></i>
@@ -403,9 +386,19 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
                                 <i class="fas fa-user me-1"></i>
-                                {{ Auth::user()->name }}
-                                @if(Auth::user()->role === 'user')
-                                    <span class="badge bg-success ms-2">{{ Auth::user()->getFormattedBalance() }}</span>
+                                @if(Auth::user()->role === 'pengusaha_rental')
+                                    @php
+                                        $rentalRegistration = Auth::user()->rentalRegistration;
+                                        $displayName = $rentalRegistration && $rentalRegistration->nama_rental
+                                            ? $rentalRegistration->nama_rental
+                                            : Auth::user()->name;
+                                    @endphp
+                                    {{ $displayName }}
+                                @else
+                                    {{ Auth::user()->name }}
+                                    @if(Auth::user()->role === 'user')
+                                        <span class="badge bg-success ms-2">{{ Auth::user()->getFormattedBalance() }}</span>
+                                    @endif
                                 @endif
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
@@ -441,8 +434,8 @@
                                     <li><a class="dropdown-item" href="{{ route('rental.dasbor') }}">
                                         <i class="fas fa-tachometer-alt me-2"></i>Dashboard Rental
                                     </a></li>
-                                    <li><a class="dropdown-item" href="{{ route('kunci-api.tampil') }}">
-                                        <i class="fas fa-key me-2"></i>API Key
+                                    <li><a class="dropdown-item" href="{{ route('api.dokumentasi') }}">
+                                        <i class="fas fa-code me-2"></i>Dokumentasi API
                                     </a></li>
                                 @endif
                                 <li><hr class="dropdown-divider"></li>
