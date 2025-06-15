@@ -28,7 +28,20 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dasbor', absolute: false));
+        // Clear any problematic intended URL and redirect based on role
+        $user = auth()->user();
+        $request->session()->forget('url.intended');
+
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.dasbor');
+        } elseif ($user->role === 'pengusaha_rental') {
+            return redirect()->route('rental.dasbor');
+        } elseif ($user->role === 'user') {
+            return redirect()->route('pengguna.dasbor');
+        }
+
+        // Default fallback
+        return redirect()->route('beranda');
     }
 
     /**

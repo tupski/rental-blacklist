@@ -61,6 +61,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/dasbor', function () {
         $user = auth()->user();
 
+        // Clear any intended URL to prevent redirect loops
+        session()->forget('url.intended');
+
         if ($user->role === 'admin') {
             return redirect()->route('admin.dasbor');
         } elseif ($user->role === 'pengusaha_rental') {
