@@ -360,20 +360,23 @@ $(document).ready(function() {
             url: '{{ route('dasbor.daftar-hitam.indeks') }}',
             method: 'GET',
             data: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
             success: function(response) {
                 console.log('Response received:', response);
                 if (response.success) {
-                    updateTable(response.data);
+                    updateMyReportsTable(response.my_reports);
+                    updateAllReportsTable(response.all_reports);
                     updatePagination(response.pagination);
                 } else {
-                    // Jika tidak ada response.html, reload halaman
+                    // Jika tidak ada response yang valid, reload halaman
                     location.reload();
                 }
             },
             error: function(xhr) {
                 console.error('Load error:', xhr);
-                // Reload halaman jika ada error
-                location.reload();
+                alert('Terjadi kesalahan saat memuat data. Silakan coba lagi.');
             },
             complete: function() {
                 $('#loading').addClass('d-none');
@@ -381,7 +384,60 @@ $(document).ready(function() {
         });
     }
 
-    function updateTable(data) {
+    function updateMyReportsTable(data) {
+        let html = '';
+        if (data.length > 0) {
+            data.forEach(function(item) {
+                const statusClass = item.status_validitas === 'Valid' ? 'bg-success' :
+                                   item.status_validitas === 'Pending' ? 'bg-warning' :
+                                   'bg-danger';
+
+                html += `
+                    <tr>
+                        <td>
+                            <div class="fw-medium">${item.nama_lengkap}</div>
+                            <small class="text-muted">${item.no_hp}</small>
+                        </td>
+                        <td>${item.nik}</td>
+                        <td>${item.jenis_rental}</td>
+                        <td>
+                            <span class="badge ${statusClass}">
+                                ${item.status_validitas}
+                            </span>
+                        </td>
+                        <td>
+                            <small class="text-muted">${new Date(item.created_at).toLocaleDateString('id-ID')}</small>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <button onclick="showDetail(${item.id})" class="btn btn-outline-primary btn-sm" title="Lihat Detail">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <a href="/dasbor/daftar-hitam/${item.id}/edit" class="btn btn-outline-success btn-sm" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button onclick="deleteBlacklist(${item.id})" class="btn btn-outline-danger btn-sm" title="Hapus">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+        } else {
+            html = `
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">
+                        Anda belum memiliki laporan
+                    </td>
+                </tr>
+            `;
+        }
+
+        $('#myReportsTableBody').html(html);
+    }
+
+    function updateAllReportsTable(data) {
         let html = '';
         if (data.length > 0) {
             data.forEach(function(item) {
@@ -430,14 +486,105 @@ $(document).ready(function() {
             html = `
                 <tr>
                     <td colspan="7" class="text-center text-muted py-4">
-                        Tidak ada data ditemukan
+                        Belum ada data laporan
                     </td>
                 </tr>
             `;
         }
 
-        $('#blacklistTableBody').html(html);
+        $('#allReportsTableBody').html(html);
     }
+
+    function updatePagination(pagination) {
+        // Update pagination for My Reports
+        if (pagination.my_reports) {
+            updateTabPagination('my-reports', pagination.my_reports);
+        }
+
+        // Update pagination for All Reports
+        if (pagination.all_reports) {
+            updateTabPagination('all-reports', pagination.all_reports);
+        }
+    }
+
+    function updateTabPagination(tabId, paginationData) {
+        const container = $(`#${tabId} .card-footer`);
+
+        if (paginationData.last_page > 1) {
+            let paginationHtml = '<nav aria-label="Page navigation"><ul class="pagination pagination-sm justify-content-center mb-0">';
+
+            // Previous button
+            if (paginationData.current_page > 1) {
+                paginationHtml += `<li class="page-item">
+                    <a class="page-link" href="#" onclick="loadPage('${tabId}', ${paginationData.current_page - 1})">Previous</a>
+                </li>`;
+            }
+
+            // Page numbers
+            for (let i = 1; i <= paginationData.last_page; i++) {
+                const activeClass = i === paginationData.current_page ? 'active' : '';
+                paginationHtml += `<li class="page-item ${activeClass}">
+                    <a class="page-link" href="#" onclick="loadPage('${tabId}', ${i})">${i}</a>
+                </li>`;
+            }
+
+            // Next button
+            if (paginationData.current_page < paginationData.last_page) {
+                paginationHtml += `<li class="page-item">
+                    <a class="page-link" href="#" onclick="loadPage('${tabId}', ${paginationData.current_page + 1})">Next</a>
+                </li>`;
+            }
+
+            paginationHtml += '</ul></nav>';
+
+            if (container.length === 0) {
+                $(`#${tabId}`).append('<div class="card-footer bg-light">' + paginationHtml + '</div>');
+            } else {
+                container.html(paginationHtml);
+            }
+        } else {
+            container.remove();
+        }
+    }
+
+    window.loadPage = function(tabId, page) {
+        const pageParam = tabId === 'my-reports' ? 'my_page' : 'all_page';
+        const formData = {
+            search: $('#searchFilter').val(),
+            jenis_rental: $('#jenisRentalFilter').val(),
+            status: $('#statusFilter').val(),
+            [pageParam]: page
+        };
+
+        $('#loading').removeClass('d-none');
+
+        $.ajax({
+            url: '{{ route('dasbor.daftar-hitam.indeks') }}',
+            method: 'GET',
+            data: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            success: function(response) {
+                if (response.success) {
+                    if (tabId === 'my-reports') {
+                        updateMyReportsTable(response.my_reports);
+                        updateTabPagination('my-reports', response.pagination.my_reports);
+                    } else {
+                        updateAllReportsTable(response.all_reports);
+                        updateTabPagination('all-reports', response.pagination.all_reports);
+                    }
+                }
+            },
+            error: function(xhr) {
+                console.error('Pagination error:', xhr);
+                alert('Terjadi kesalahan saat memuat halaman');
+            },
+            complete: function() {
+                $('#loading').addClass('d-none');
+            }
+        });
+    };
 
     let currentReportId = null;
 
@@ -445,38 +592,124 @@ $(document).ready(function() {
     window.showDetail = function(id) {
         currentReportId = id;
 
+        // Show modal first
+        $('#detailModal').modal('show');
+        $('#detailContent').html('<div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-2x"></i><p class="mt-2">Memuat data...</p></div>');
+
         $.ajax({
             url: `/dasbor/daftar-hitam/${id}`,
             method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
             success: function(response) {
                 if (response.success) {
                     const data = response.data;
                     displayDetailModal(data);
+                } else {
+                    $('#detailContent').html('<div class="alert alert-danger">Gagal memuat data</div>');
                 }
             },
             error: function(xhr) {
                 console.error('Detail error:', xhr);
-                alert('Terjadi kesalahan saat memuat detail');
+                $('#detailContent').html('<div class="alert alert-danger">Terjadi kesalahan saat memuat detail</div>');
             }
         });
     };
 
     function displayDetailModal(data) {
+        // Get template
+        let template = $('#detailModalTemplate').html();
+
+        // Helper functions
+        function formatJenisLaporan(jenis) {
+            const mapping = {
+                'Tidak Mengembalikan': 'Tidak Mengembalikan',
+                'Merusak Barang': 'Merusak Barang',
+                'Tidak Bayar': 'Tidak Bayar',
+                'Kabur': 'Kabur',
+                'Lainnya': 'Lainnya'
+            };
+            return mapping[jenis] || jenis;
+        }
+
+        function formatStatusPenanganan(status) {
+            const mapping = {
+                'Lapor Polisi': 'Lapor Polisi',
+                'Mediasi': 'Mediasi',
+                'Blacklist': 'Blacklist',
+                'Lainnya': 'Lainnya'
+            };
+            return mapping[status] || status;
+        }
+
+        // Format jenis laporan
         let jenisLaporanHtml = '';
         if (data.jenis_laporan && data.jenis_laporan.length > 0) {
             data.jenis_laporan.forEach(function(jenis) {
                 jenisLaporanHtml += `<span class="badge bg-warning text-dark me-2 mb-2">${formatJenisLaporan(jenis)}</span>`;
             });
+        } else {
+            jenisLaporanHtml = 'Tidak ada data';
         }
 
+        // Format status penanganan
         let statusPenangananHtml = '';
         if (data.status_penanganan && data.status_penanganan.length > 0) {
             data.status_penanganan.forEach(function(status) {
                 statusPenangananHtml += `<span class="badge bg-info me-2 mb-2">${formatStatusPenanganan(status)}</span>`;
             });
+        } else {
+            statusPenangananHtml = 'Tidak ada data';
         }
 
-        // Bukti files
+        // Format foto penyewa
+        let fotoPenyewaHtml = '';
+        if (data.foto_penyewa && data.foto_penyewa.length > 0) {
+            fotoPenyewaHtml = '<div class="row g-3">';
+            data.foto_penyewa.forEach(function(file) {
+                const fileName = file.split('/').pop();
+                const fileUrl = `/storage/${file}`;
+                fotoPenyewaHtml += `
+                    <div class="col-md-4">
+                        <div class="card">
+                            <img src="${fileUrl}" class="card-img-top" style="height: 150px; object-fit: cover;"
+                                 onclick="showImageModal('${fileUrl}', '${fileName}')">
+                            <div class="card-body p-2">
+                                <small class="text-muted">${fileName}</small>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+            fotoPenyewaHtml += '</div>';
+        } else {
+            fotoPenyewaHtml = '<p class="text-muted">Tidak ada foto penyewa</p>';
+        }
+
+        // Format foto KTP/SIM
+        let fotoKtpSimHtml = '';
+        if (data.foto_ktp_sim && data.foto_ktp_sim.length > 0) {
+            fotoKtpSimHtml = '<div class="row g-3">';
+            data.foto_ktp_sim.forEach(function(file) {
+                const fileName = file.split('/').pop();
+                const fileUrl = `/storage/${file}`;
+                fotoKtpSimHtml += `
+                    <div class="col-md-4">
+                        <div class="card">
+                            <img src="${fileUrl}" class="card-img-top" style="height: 150px; object-fit: cover;"
+                                 onclick="showImageModal('${fileUrl}', '${fileName}')">
+                            <div class="card-body p-2">
+                                <small class="text-muted">${fileName}</small>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+            fotoKtpSimHtml += '</div>';
+        } else {
+            fotoKtpSimHtml = '<p class="text-muted">Tidak ada foto KTP/SIM</p>';
+        }
+
+        // Format bukti files
         let buktiHtml = '';
         if (data.bukti && data.bukti.length > 0) {
             buktiHtml = '<div class="row g-3">';
@@ -616,158 +849,7 @@ $(document).ready(function() {
         });
 
         $('#detailContent').html(template);
-        $('#detailModal').modal('show');
     }
-
-    // PDF Download
-    $(document).on('click', '#downloadPdfBtn', function() {
-        if (currentReportId) {
-            window.open(`/dasbor/daftar-hitam/${currentReportId}/pdf`, '_blank');
-        }
-    });
-
-    // Share functionality
-    $(document).on('click', '#shareReportBtn', function() {
-        $('#shareModal').modal('show');
-        $('#shareResult').addClass('d-none');
-        $('#shareForm')[0].reset();
-    });
-
-    $('#shareForm').on('submit', function(e) {
-        e.preventDefault();
-
-        if (!currentReportId) return;
-
-        const password = $('#sharePassword').val();
-        const submitBtn = $(this).find('button[type="submit"]');
-        const originalText = submitBtn.html();
-
-        submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Membuat...');
-
-        $.ajax({
-            url: `/dasbor/daftar-hitam/${currentReportId}/share`,
-            method: 'POST',
-            data: {
-                password: password,
-                _token: '{{ csrf_token() }}'
-            },
-            success: function(response) {
-                if (response.success) {
-                    $('#shareUrl').val(response.share_url);
-                    $('#shareResult').removeClass('d-none');
-                }
-            },
-            error: function(xhr) {
-                console.error('Share error:', xhr);
-                alert('Terjadi kesalahan saat membuat link');
-            },
-            complete: function() {
-                submitBtn.prop('disabled', false).html(originalText);
-            }
-        });
-    });
-
-    // Copy share URL
-    window.copyShareUrl = function() {
-        const shareUrl = $('#shareUrl')[0];
-        shareUrl.select();
-        shareUrl.setSelectionRange(0, 99999);
-        document.execCommand('copy');
-
-        const btn = event.target;
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-check me-1"></i>Tersalin!';
-        btn.classList.remove('btn-outline-primary');
-        btn.classList.add('btn-success');
-
-        setTimeout(() => {
-            btn.innerHTML = originalText;
-            btn.classList.remove('btn-success');
-            btn.classList.add('btn-outline-primary');
-        }, 2000);
-    };
-
-    // Image modal
-    window.showImageModal = function(imageSrc, fileName) {
-        $('#modalImage').attr('src', imageSrc);
-        $('#downloadImageLink').attr('href', imageSrc);
-        $('#imageModalTitle').text(fileName || 'Lihat Gambar');
-        $('#imageModal').modal('show');
-    };
-
-    function formatStatusPenanganan(status) {
-        const mapping = {
-            'laporan_polisi': 'Laporan Polisi',
-            'mediasi': 'Mediasi',
-            'tuntutan_hukum': 'Tuntutan Hukum',
-            'blacklist_internal': 'Blacklist Internal',
-            'tidak_ada_tindakan': 'Tidak Ada Tindakan'
-        };
-        return mapping[status] || status;
-    }
-
-                    $('#detailContent').html(`
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label fw-medium">Nama Lengkap</label>
-                                <p class="mb-0">${data.nama_lengkap}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-medium">NIK</label>
-                                <p class="mb-0">${data.nik}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-medium">Jenis Kelamin</label>
-                                <p class="mb-0">${data.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan'}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-medium">No HP</label>
-                                <p class="mb-0">${data.no_hp}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-medium">Jenis Rental</label>
-                                <p class="mb-0">${data.jenis_rental}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-medium">Status</label>
-                                <p class="mb-0"><span class="badge ${data.status_validitas === 'Valid' ? 'bg-success' : data.status_validitas === 'Pending' ? 'bg-warning' : 'bg-danger'}">${data.status_validitas}</span></p>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label fw-medium">Alamat</label>
-                                <p class="mb-0">${data.alamat}</p>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label fw-medium">Jenis Laporan</label>
-                                <div>${jenisLaporanHtml}</div>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label fw-medium">Kronologi</label>
-                                <p class="mb-0">${data.kronologi}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-medium">Tanggal Kejadian</label>
-                                <p class="mb-0">${new Date(data.tanggal_kejadian).toLocaleDateString('id-ID')}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-medium">Pelapor</label>
-                                <p class="mb-0">${data.user.name}</p>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label fw-medium">Bukti</label>
-                                <div>${buktiHtml}</div>
-                            </div>
-                        </div>
-                    `);
-                    const modal = new bootstrap.Modal(document.getElementById('detailModal'));
-                    modal.show();
-                }
-            },
-            error: function(xhr) {
-                console.error('Detail error:', xhr);
-                alert('Terjadi kesalahan saat mengambil detail');
-            }
-        });
-    };
 
     window.closeDetailModal = function() {
         const modal = bootstrap.Modal.getInstance(document.getElementById('detailModal'));
