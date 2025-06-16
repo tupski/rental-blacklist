@@ -660,9 +660,15 @@ toastr.options = {
 };
 
 // Setup CSRF token for AJAX requests
+function getCSRFToken() {
+    return $('meta[name="csrf-token"]').attr('content') ||
+           $('input[name="_token"]').val() ||
+           '';
+}
+
 $.ajaxSetup({
     headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        'X-CSRF-TOKEN': getCSRFToken()
     }
 });
 </script>
@@ -684,7 +690,7 @@ $(document).ready(function() {
         e.stopPropagation();
 
         const notificationId = $(this).data('id');
-        markNotificationAsRead(notificationId);
+        markNotificationAsRead(notificationId, false); // Show feedback for manual mark as read
     });
 
     // Mark all notifications as read
@@ -696,14 +702,36 @@ $(document).ready(function() {
     // Handle notification link clicks
     $(document).on('click', '.notification-link', function(e) {
         const notificationId = $(this).data('id');
+        const targetUrl = $(this).attr('href');
 
-        // Mark as read when clicking the link
-        if (notificationId) {
-            markNotificationAsRead(notificationId);
+        // Prevent default link behavior since we handle navigation manually
+        e.preventDefault();
+
+        // Try to mark as read silently, but don't block navigation if it fails
+        if (notificationId && targetUrl) {
+            $.ajax({
+                url: '{{ route("admin.notifikasi.tandai-dibaca") }}',
+                method: 'POST',
+                data: {
+                    notification_id: notificationId,
+                    _token: getCSRFToken()
+                },
+                success: function(response) {
+                    // Silently mark as read, then navigate
+                    window.location.href = targetUrl;
+                },
+                error: function(xhr) {
+                    // If mark as read fails, still navigate to the target page
+                    // Don't show error message, just navigate
+                    window.location.href = targetUrl;
+                }
+            });
+        } else if (targetUrl) {
+            // If no notification ID, navigate directly
+            window.location.href = targetUrl;
         }
 
-        // Let the link navigate normally
-        return true;
+        return false;
     });
 
     function loadNotifications() {
@@ -833,27 +861,32 @@ $(document).ready(function() {
         }
     }
 
-    function markNotificationAsRead(notificationId) {
+    function markNotificationAsRead(notificationId, silent = false) {
         $.ajax({
             url: '{{ route("admin.notifikasi.tandai-dibaca") }}',
             method: 'POST',
             data: {
                 notification_id: notificationId,
-                _token: $('meta[name="csrf-token"]').attr('content')
+                _token: getCSRFToken()
             },
             success: function(response) {
                 if (response.success) {
                     loadNotifications(); // Refresh notifications
-                    toastr.success('Notifikasi ditandai sebagai sudah dibaca');
+                    if (!silent) {
+                        toastr.success('Notifikasi ditandai sebagai sudah dibaca');
+                    }
                 }
             },
             error: function(xhr) {
-                if (xhr.status === 419) {
-                    toastr.error('Session expired. Please refresh the page.');
-                    setTimeout(() => location.reload(), 2000);
-                } else {
-                    toastr.error('Gagal menandai notifikasi');
+                if (!silent) {
+                    if (xhr.status === 419) {
+                        toastr.warning('Session expired. Please refresh the page to mark notifications as read.');
+                    } else {
+                        toastr.error('Gagal menandai notifikasi');
+                    }
                 }
+                // Log error for debugging but don't show to user if silent
+                console.log('Mark as read failed:', xhr.status, xhr.responseText);
             }
         });
     }
@@ -863,7 +896,7 @@ $(document).ready(function() {
             url: '{{ route("admin.notifikasi.tandai-semua-dibaca") }}',
             method: 'POST',
             data: {
-                _token: $('meta[name="csrf-token"]').attr('content')
+                _token: getCSRFToken()
             },
             success: function(response) {
                 if (response.success) {
