@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use App\Models\User;
+use App\Models\Setting;
 
 class DatabaseSettingController extends Controller
 {
@@ -19,7 +23,10 @@ class DatabaseSettingController extends Controller
             'cache_status' => $this->getCacheStatus(),
         ];
 
-        return view('admin.settings.database', compact('dbInfo'));
+        // Check maintenance mode
+        $maintenanceMode = app()->isDownForMaintenance();
+
+        return view('admin.settings.database', compact('dbInfo', 'maintenanceMode'));
     }
 
     public function clearCache(Request $request)
@@ -107,5 +114,171 @@ class DatabaseSettingController extends Controller
         ];
 
         return $cacheFiles;
+    }
+
+    public function resetDatabase(Request $request)
+    {
+        $request->validate([
+            'confirmation_1' => 'required|in:RESET',
+            'confirmation_2' => 'required|in:DATABASE',
+            'confirmation_3' => 'required|in:CONFIRM',
+            'admin_password' => 'required',
+        ]);
+
+        // Verify admin password
+        if (!Hash::check($request->admin_password, auth()->user()->password)) {
+            return back()->withErrors(['admin_password' => 'Password admin tidak valid']);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // Store admin users before reset
+            $adminUsers = User::where('role', 'admin')->get();
+
+            // Clear all tables except migrations
+            $this->clearAllTables();
+
+            // Recreate admin users
+            foreach ($adminUsers as $admin) {
+                User::create([
+                    'name' => $admin->name,
+                    'email' => $admin->email,
+                    'email_verified_at' => now(),
+                    'password' => $admin->password,
+                    'role' => 'admin',
+                    'status' => 'active',
+                    'balance' => 0,
+                ]);
+            }
+
+            // Reset settings to default
+            $this->resetSettings();
+
+            // Clear storage files
+            $this->clearStorageFiles();
+
+            DB::commit();
+
+            return redirect()->route('admin.pengaturan.database.indeks')
+                ->with('success', 'Database berhasil direset! Semua data telah dihapus kecuali akun admin.');
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return back()->withErrors(['error' => 'Gagal reset database: ' . $e->getMessage()]);
+        }
+    }
+
+    public function enableMaintenance(Request $request)
+    {
+        $request->validate([
+            'message' => 'nullable|string|max:255',
+            'admin_password' => 'required',
+        ]);
+
+        // Verify admin password
+        if (!Hash::check($request->admin_password, auth()->user()->password)) {
+            return back()->withErrors(['admin_password' => 'Password admin tidak valid']);
+        }
+
+        try {
+            $message = $request->message ?: 'Aplikasi sedang dalam maintenance. Silakan coba lagi nanti.';
+
+            Artisan::call('down', [
+                '--message' => $message,
+                '--retry' => 60,
+                '--secret' => 'admin-secret-' . now()->timestamp,
+            ]);
+
+            return redirect()->route('admin.pengaturan.database.indeks')
+                ->with('success', 'Mode maintenance berhasil diaktifkan.');
+
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Gagal mengaktifkan maintenance mode: ' . $e->getMessage()]);
+        }
+    }
+
+    public function disableMaintenance(Request $request)
+    {
+        $request->validate([
+            'admin_password' => 'required',
+        ]);
+
+        // Verify admin password
+        if (!Hash::check($request->admin_password, auth()->user()->password)) {
+            return back()->withErrors(['admin_password' => 'Password admin tidak valid']);
+        }
+
+        try {
+            Artisan::call('up');
+
+            return redirect()->route('admin.pengaturan.database.indeks')
+                ->with('success', 'Mode maintenance berhasil dinonaktifkan.');
+
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Gagal menonaktifkan maintenance mode: ' . $e->getMessage()]);
+        }
+    }
+
+    private function clearAllTables()
+    {
+        // Disable foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+        // Get all tables except migrations
+        $tables = DB::select('SHOW TABLES');
+        $databaseName = DB::getDatabaseName();
+        $tableKey = 'Tables_in_' . $databaseName;
+
+        foreach ($tables as $table) {
+            $tableName = $table->$tableKey;
+
+            // Skip migrations and other system tables
+            if (!in_array($tableName, ['migrations', 'failed_jobs', 'password_reset_tokens'])) {
+                DB::table($tableName)->truncate();
+            }
+        }
+
+        // Re-enable foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+    }
+
+    private function resetSettings()
+    {
+        // Create default settings
+        $defaultSettings = [
+            'site_name' => 'CekPenyewa.com',
+            'site_tagline' => 'Sistem Blacklist Rental Indonesia',
+            'hero_title' => 'Lindungi Bisnis Rental Anda',
+            'hero_subtitle' => 'Cek data blacklist pelanggan sebelum menyewakan barang. 100% Gratis untuk pengusaha rental!',
+            'meta_title' => 'CekPenyewa.com - Sistem Blacklist Rental Indonesia',
+            'meta_description' => 'Sistem blacklist rental terpercaya di Indonesia. Cek data pelanggan bermasalah sebelum menyewakan barang Anda. Gratis untuk pengusaha rental.',
+            'meta_keywords' => 'blacklist rental, rental indonesia, cek pelanggan rental, sistem blacklist, rental bermasalah',
+            'contact_email' => 'support@cekpenyewa.com',
+            'contact_phone' => '+62 21 1234 5678',
+            'whatsapp_number' => '6281234567890',
+        ];
+
+        foreach ($defaultSettings as $key => $value) {
+            Setting::create(['key' => $key, 'value' => $value]);
+        }
+    }
+
+    private function clearStorageFiles()
+    {
+        // Clear public storage directories
+        $directories = [
+            'blacklist',
+            'reports',
+            'topup',
+            'sponsors',
+            'temp',
+        ];
+
+        foreach ($directories as $directory) {
+            if (Storage::disk('public')->exists($directory)) {
+                Storage::disk('public')->deleteDirectory($directory);
+            }
+        }
     }
 }

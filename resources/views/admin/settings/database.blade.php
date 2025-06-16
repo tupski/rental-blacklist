@@ -10,6 +10,51 @@
 @endsection
 
 @section('content')
+<!-- Maintenance Mode Status -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card {{ $maintenanceMode ? 'border-warning' : 'border-success' }}">
+            <div class="card-header {{ $maintenanceMode ? 'bg-warning' : 'bg-success' }}">
+                <h3 class="card-title text-white">
+                    <i class="fas fa-{{ $maintenanceMode ? 'exclamation-triangle' : 'check-circle' }} mr-2"></i>
+                    Status Aplikasi
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h5 class="mb-1">
+                            @if($maintenanceMode)
+                                <span class="badge badge-warning">MAINTENANCE MODE</span>
+                            @else
+                                <span class="badge badge-success">ONLINE</span>
+                            @endif
+                        </h5>
+                        <p class="text-muted mb-0">
+                            @if($maintenanceMode)
+                                Aplikasi sedang dalam mode maintenance. Hanya admin yang dapat mengakses.
+                            @else
+                                Aplikasi berjalan normal dan dapat diakses oleh semua pengguna.
+                            @endif
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        @if($maintenanceMode)
+                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#disableMaintenanceModal">
+                                <i class="fas fa-play mr-2"></i>Nonaktifkan Maintenance
+                            </button>
+                        @else
+                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#enableMaintenanceModal">
+                                <i class="fas fa-pause mr-2"></i>Aktifkan Maintenance
+                            </button>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row">
     <!-- Database Information -->
     <div class="col-md-6">
@@ -259,6 +304,33 @@
     </div>
 </div>
 
+<!-- Danger Zone -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-danger">
+            <div class="card-header bg-danger">
+                <h3 class="card-title text-white">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>Danger Zone
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <h5><i class="icon fas fa-exclamation-triangle"></i> Peringatan!</h5>
+                    Operasi di bawah ini akan menghapus semua data dari database.
+                    Pastikan Anda telah membuat backup sebelum melanjutkan.
+                </div>
+
+                <button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#resetDatabaseModal">
+                    <i class="fas fa-trash-alt mr-2"></i>Reset Database
+                </button>
+                <p class="text-muted mt-2">
+                    Menghapus semua data kecuali akun admin dan mengatur ulang aplikasi ke kondisi fresh install.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Warning Notice -->
 <div class="row">
     <div class="col-12">
@@ -273,15 +345,200 @@
         </div>
     </div>
 </div>
+<!-- Reset Database Modal -->
+<div class="modal fade" id="resetDatabaseModal" tabindex="-1" role="dialog" aria-labelledby="resetDatabaseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h4 class="modal-title" id="resetDatabaseModalLabel">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>Reset Database
+                </h4>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ route('admin.pengaturan.database.reset') }}" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <div class="alert alert-danger">
+                        <h5><i class="fas fa-skull-crossbones mr-2"></i>PERINGATAN KERAS!</h5>
+                        <p class="mb-0">
+                            Operasi ini akan <strong>MENGHAPUS SEMUA DATA</strong> dari database kecuali akun admin.
+                            Pastikan Anda sudah membuat backup database sebelum melanjutkan.
+                        </p>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="confirmation_1" class="form-label">Ketik "RESET":</label>
+                            <input type="text" class="form-control" id="confirmation_1" name="confirmation_1" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="confirmation_2" class="form-label">Ketik "DATABASE":</label>
+                            <input type="text" class="form-control" id="confirmation_2" name="confirmation_2" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="confirmation_3" class="form-label">Ketik "CONFIRM":</label>
+                            <input type="text" class="form-control" id="confirmation_3" name="confirmation_3" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="admin_password" class="form-label">Password Admin:</label>
+                        <input type="password" class="form-control" id="admin_password" name="admin_password" required>
+                        <small class="form-text text-muted">Masukkan password admin untuk konfirmasi</small>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle mr-2"></i>Yang akan dihapus:</h6>
+                        <ul class="mb-0">
+                            <li>Semua data users (kecuali admin)</li>
+                            <li>Semua data blacklist</li>
+                            <li>Semua data topup dan transaksi</li>
+                            <li>Semua data sponsor</li>
+                            <li>Semua file upload</li>
+                            <li>Settings akan direset ke default</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash-alt mr-2"></i>Reset Database
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Enable Maintenance Modal -->
+<div class="modal fade" id="enableMaintenanceModal" tabindex="-1" role="dialog" aria-labelledby="enableMaintenanceModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h4 class="modal-title" id="enableMaintenanceModalLabel">
+                    <i class="fas fa-pause mr-2"></i>Aktifkan Maintenance Mode
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ route('admin.pengaturan.database.maintenance.aktifkan') }}" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <p class="mb-0">
+                            Mode maintenance akan membuat aplikasi tidak dapat diakses oleh user biasa.
+                            Hanya admin yang dapat mengakses aplikasi.
+                        </p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="maintenance_message" class="form-label">Pesan Maintenance (Opsional):</label>
+                        <textarea class="form-control" id="maintenance_message" name="message" rows="3" placeholder="Aplikasi sedang dalam maintenance. Silakan coba lagi nanti."></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="maintenance_admin_password" class="form-label">Password Admin:</label>
+                        <input type="password" class="form-control" id="maintenance_admin_password" name="admin_password" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-pause mr-2"></i>Aktifkan Maintenance
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Disable Maintenance Modal -->
+<div class="modal fade" id="disableMaintenanceModal" tabindex="-1" role="dialog" aria-labelledby="disableMaintenanceModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h4 class="modal-title" id="disableMaintenanceModalLabel">
+                    <i class="fas fa-play mr-2"></i>Nonaktifkan Maintenance Mode
+                </h4>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ route('admin.pengaturan.database.maintenance.nonaktifkan') }}" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <div class="alert alert-success">
+                        <p class="mb-0">
+                            Aplikasi akan kembali dapat diakses oleh semua pengguna setelah maintenance mode dinonaktifkan.
+                        </p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="disable_admin_password" class="form-label">Password Admin:</label>
+                        <input type="password" class="form-control" id="disable_admin_password" name="admin_password" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-play mr-2"></i>Nonaktifkan Maintenance
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('scripts')
 <script>
 $(document).ready(function() {
-    // Auto refresh database info every 30 seconds
+    // Auto refresh database info every 30 seconds (disabled during maintenance)
+    @if(!$maintenanceMode)
     setInterval(function() {
         location.reload();
     }, 30000);
+    @endif
+
+    // Multi-step confirmation for database reset
+    $('#resetDatabaseModal form').on('submit', function(e) {
+        const conf1 = $('#confirmation_1').val();
+        const conf2 = $('#confirmation_2').val();
+        const conf3 = $('#confirmation_3').val();
+
+        if (conf1 !== 'RESET' || conf2 !== 'DATABASE' || conf3 !== 'CONFIRM') {
+            e.preventDefault();
+            alert('Konfirmasi tidak valid! Pastikan Anda mengetik RESET, DATABASE, dan CONFIRM dengan benar.');
+            return false;
+        }
+
+        if (!confirm('PERINGATAN TERAKHIR!\n\nAnda yakin ingin menghapus SEMUA DATA dari database?\n\nOperasi ini TIDAK DAPAT DIBATALKAN!')) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    // Real-time validation for confirmation inputs
+    $('#confirmation_1, #confirmation_2, #confirmation_3').on('input', function() {
+        const conf1 = $('#confirmation_1').val();
+        const conf2 = $('#confirmation_2').val();
+        const conf3 = $('#confirmation_3').val();
+        const submitBtn = $('#resetDatabaseModal form button[type="submit"]');
+
+        if (conf1 === 'RESET' && conf2 === 'DATABASE' && conf3 === 'CONFIRM') {
+            submitBtn.prop('disabled', false);
+            $(this).removeClass('is-invalid').addClass('is-valid');
+        } else {
+            submitBtn.prop('disabled', true);
+            if ($(this).val() !== '') {
+                $(this).removeClass('is-valid').addClass('is-invalid');
+            }
+        }
+    });
 
     // Confirmation dialogs with more details
     $('form').on('submit', function(e) {
@@ -294,12 +551,21 @@ $(document).ready(function() {
             message = 'Optimasi database akan memakan waktu tergantung ukuran database. Pastikan tidak ada user yang sedang menggunakan sistem. Lanjutkan?';
         } else if (action.includes('optimize')) {
             message = 'Optimasi sistem akan membuat cache baru untuk mempercepat aplikasi. Lanjutkan?';
+        } else if (action.includes('maintenance')) {
+            // Skip confirmation for maintenance modals (already handled in modal)
+            return true;
+        } else if (action.includes('reset')) {
+            // Skip confirmation for reset (already handled above)
+            return true;
         }
 
         if (message && !confirm(message)) {
             e.preventDefault();
         }
     });
+
+    // Initialize reset button as disabled
+    $('#resetDatabaseModal form button[type="submit"]').prop('disabled', true);
 });
 </script>
 
