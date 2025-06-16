@@ -11,30 +11,30 @@ class NotificationController extends Controller
     public function getNotifications()
     {
         $user = Auth::user();
-        
+
         // Get unread notifications
         $notifications = $user->unreadNotifications()
             ->latest()
             ->limit(10)
             ->get();
-        
+
         $unreadCount = $user->unreadNotifications()->count();
-        
+
         return response()->json([
             'notifications' => $notifications,
             'unread_count' => $unreadCount
         ]);
     }
-    
+
     public function markAsRead(Request $request)
     {
         $user = Auth::user();
-        
+
         if ($request->has('notification_id')) {
             $notification = $user->unreadNotifications()
                 ->where('id', $request->notification_id)
                 ->first();
-                
+
             if ($notification) {
                 $notification->markAsRead();
             }
@@ -42,18 +42,42 @@ class NotificationController extends Controller
             // Mark all as read
             $user->unreadNotifications->markAsRead();
         }
-        
+
         return response()->json(['success' => true]);
     }
-    
+
     public function index()
     {
         $user = Auth::user();
-        
+
         $notifications = $user->notifications()
             ->latest()
             ->paginate(20);
-            
+
         return view('admin.notifications.index', compact('notifications'));
+    }
+
+    public function markSingleAsRead(Request $request)
+    {
+        $user = Auth::user();
+
+        $notification = $user->unreadNotifications()
+            ->where('id', $request->notification_id)
+            ->first();
+
+        if ($notification) {
+            $notification->markAsRead();
+            return response()->json(['success' => true, 'message' => 'Notifikasi ditandai sebagai sudah dibaca']);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Notifikasi tidak ditemukan'], 404);
+    }
+
+    public function markAllAsRead()
+    {
+        $user = Auth::user();
+        $user->unreadNotifications->markAsRead();
+
+        return response()->json(['success' => true, 'message' => 'Semua notifikasi ditandai sebagai sudah dibaca']);
     }
 }

@@ -249,16 +249,23 @@
                     <i class="far fa-bell"></i>
                     <span class="badge badge-warning navbar-badge" id="notificationCount">0</span>
                 </a>
-                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                    <span class="dropdown-item dropdown-header" id="notificationHeader">0 Notifikasi</span>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right" style="max-width: 350px; max-height: 400px; overflow-y: auto;">
+                    <div class="dropdown-header d-flex justify-content-between align-items-center">
+                        <span id="notificationHeader">0 Notifikasi</span>
+                        <button type="button" class="btn btn-sm btn-outline-primary" id="markAllAsRead" style="font-size: 11px; padding: 2px 8px;">
+                            <i class="fas fa-check-double"></i> Tandai Semua
+                        </button>
+                    </div>
                     <div class="dropdown-divider"></div>
-                    <div id="notificationList">
-                        <div class="dropdown-item text-center text-muted">
+                    <div id="notificationList" style="max-height: 300px; overflow-y: auto;">
+                        <div class="dropdown-item text-center text-muted py-3">
                             <i class="fas fa-bell-slash mr-2"></i>Tidak ada notifikasi
                         </div>
                     </div>
                     <div class="dropdown-divider"></div>
-                    <a href="{{ route('admin.notifikasi.indeks') }}" class="dropdown-item dropdown-footer">Lihat Semua Notifikasi</a>
+                    <a href="{{ route('admin.notifikasi.indeks') }}" class="dropdown-item dropdown-footer text-center">
+                        <i class="fas fa-list mr-1"></i>Lihat Semua Notifikasi
+                    </a>
                 </div>
             </li>
 
@@ -671,6 +678,21 @@ $(document).ready(function() {
     // Refresh notifications every 30 seconds
     setInterval(loadNotifications, 30000);
 
+    // Mark single notification as read
+    $(document).on('click', '.mark-as-read', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const notificationId = $(this).data('id');
+        markNotificationAsRead(notificationId);
+    });
+
+    // Mark all notifications as read
+    $('#markAllAsRead').on('click', function(e) {
+        e.preventDefault();
+        markAllNotificationsAsRead();
+    });
+
     function loadNotifications() {
         $.ajax({
             url: '{{ route("admin.notifikasi.ambil") }}',
@@ -703,18 +725,36 @@ $(document).ready(function() {
         let notificationHtml = '';
         if (notifications.length > 0) {
             notifications.forEach(function(notification) {
+                const isUnread = !notification.read_at;
                 notificationHtml += `
-                    <a href="#" class="dropdown-item ${notification.read_at ? '' : 'bg-light'}">
-                        <i class="${getNotificationIcon(notification.type)} mr-2"></i>
-                        ${notification.data.message}
-                        <span class="float-right text-muted text-sm">${formatTime(notification.created_at)}</span>
-                    </a>
-                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item p-0 ${isUnread ? 'bg-light' : ''}" style="border-left: ${isUnread ? '3px solid #007bff' : '3px solid transparent'};">
+                        <div class="d-flex align-items-start p-2">
+                            <div class="flex-shrink-0 mr-2">
+                                <i class="${getNotificationIcon(notification.type)}" style="font-size: 14px;"></i>
+                            </div>
+                            <div class="flex-grow-1" style="min-width: 0;">
+                                <div class="text-sm text-wrap" style="line-height: 1.3;">
+                                    ${notification.data.message}
+                                </div>
+                                <div class="text-xs text-muted mt-1">
+                                    ${formatTime(notification.created_at)}
+                                </div>
+                            </div>
+                            ${isUnread ? `
+                                <div class="flex-shrink-0 ml-2">
+                                    <button type="button" class="btn btn-xs btn-outline-primary mark-as-read"
+                                            data-id="${notification.id}" style="font-size: 10px; padding: 1px 4px;">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
                 `;
             });
         } else {
             notificationHtml = `
-                <div class="dropdown-item text-center text-muted">
+                <div class="dropdown-item text-center text-muted py-3">
                     <i class="fas fa-bell-slash mr-2"></i>Tidak ada notifikasi
                 </div>
             `;
@@ -738,6 +778,41 @@ $(document).ready(function() {
             default:
                 return 'fas fa-bell text-primary';
         }
+    }
+
+    function markNotificationAsRead(notificationId) {
+        $.ajax({
+            url: '{{ route("admin.notifikasi.tandai-dibaca") }}',
+            method: 'POST',
+            data: {
+                notification_id: notificationId
+            },
+            success: function(response) {
+                if (response.success) {
+                    loadNotifications(); // Refresh notifications
+                    toastr.success('Notifikasi ditandai sebagai sudah dibaca');
+                }
+            },
+            error: function() {
+                toastr.error('Gagal menandai notifikasi');
+            }
+        });
+    }
+
+    function markAllNotificationsAsRead() {
+        $.ajax({
+            url: '{{ route("admin.notifikasi.tandai-semua-dibaca") }}',
+            method: 'POST',
+            success: function(response) {
+                if (response.success) {
+                    loadNotifications(); // Refresh notifications
+                    toastr.success('Semua notifikasi ditandai sebagai sudah dibaca');
+                }
+            },
+            error: function() {
+                toastr.error('Gagal menandai semua notifikasi');
+            }
+        });
     }
 
     function formatTime(timestamp) {

@@ -173,6 +173,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('notifikasi', [AdminNotificationController::class, 'getNotifications'])->name('notifikasi.ambil');
     Route::get('notifikasi/semua', [AdminNotificationController::class, 'index'])->name('notifikasi.indeks');
     Route::post('notifikasi/baca', [AdminNotificationController::class, 'markAsRead'])->name('notifikasi.baca');
+    Route::post('notifikasi/tandai-dibaca', [AdminNotificationController::class, 'markSingleAsRead'])->name('notifikasi.tandai-dibaca');
+    Route::post('notifikasi/tandai-semua-dibaca', [AdminNotificationController::class, 'markAllAsRead'])->name('notifikasi.tandai-semua-dibaca');
 
     // System Maintenance
     Route::get('maintenance', [AdminDashboardController::class, 'maintenance'])->name('maintenance');

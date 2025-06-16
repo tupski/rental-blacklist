@@ -48,7 +48,7 @@
 
             <!-- Overview Cards -->
             <div class="row">
-                <div class="col-lg-3 col-6">
+                <div class="col-lg-3 col-md-6 col-12">
                     <div class="small-box bg-info">
                         <div class="inner">
                             <h3>{{ number_format($overview['total_processed']) }}</h3>
@@ -59,7 +59,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-6">
+                <div class="col-lg-3 col-md-6 col-12">
                     <div class="small-box bg-success">
                         <div class="inner">
                             <h3>{{ number_format($overview['auto_approved']) }}</h3>
@@ -70,7 +70,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-6">
+                <div class="col-lg-3 col-md-6 col-12">
                     <div class="small-box bg-warning">
                         <div class="inner">
                             <h3>{{ number_format($overview['pending_review']) }}</h3>
@@ -84,7 +84,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="col-lg-3 col-6">
+                <div class="col-lg-3 col-md-6 col-12">
                     <div class="small-box bg-danger">
                         <div class="inner">
                             <h3>{{ number_format($overview['auto_rejected']) }}</h3>
@@ -99,7 +99,7 @@
 
             <!-- Performance Metrics -->
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-lg-3 col-md-6 col-12">
                     <div class="info-box">
                         <span class="info-box-icon bg-primary">
                             <i class="fas fa-percentage"></i>
@@ -107,10 +107,16 @@
                         <div class="info-box-content">
                             <span class="info-box-text">AI Accuracy</span>
                             <span class="info-box-number">{{ number_format($overview['processing_accuracy'] * 100, 1) }}%</span>
+                            <div class="progress">
+                                <div class="progress-bar bg-primary" style="width: {{ $overview['processing_accuracy'] * 100 }}%"></div>
+                            </div>
+                            <span class="progress-description">
+                                Model performance
+                            </span>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-lg-3 col-md-6 col-12">
                     <div class="info-box">
                         <span class="info-box-icon bg-info">
                             <i class="fas fa-chart-line"></i>
@@ -118,10 +124,16 @@
                         <div class="info-box-content">
                             <span class="info-box-text">Avg Risk Score</span>
                             <span class="info-box-number">{{ number_format($overview['avg_risk_score'] * 100, 1) }}%</span>
+                            <div class="progress">
+                                <div class="progress-bar bg-info" style="width: {{ $overview['avg_risk_score'] * 100 }}%"></div>
+                            </div>
+                            <span class="progress-description">
+                                Content risk level
+                            </span>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-lg-3 col-md-6 col-12">
                     <div class="info-box">
                         <span class="info-box-icon bg-warning">
                             <i class="fas fa-exclamation-triangle"></i>
@@ -129,10 +141,20 @@
                         <div class="info-box-content">
                             <span class="info-box-text">High Risk Users</span>
                             <span class="info-box-number">{{ number_format($overview['high_risk_users']) }}</span>
+                            <div class="progress">
+                                @php
+                                    $totalUsers = \App\Models\User::count();
+                                    $riskPercentage = $totalUsers > 0 ? ($overview['high_risk_users'] / $totalUsers) * 100 : 0;
+                                @endphp
+                                <div class="progress-bar bg-warning" style="width: {{ min($riskPercentage, 100) }}%"></div>
+                            </div>
+                            <span class="progress-description">
+                                {{ number_format($riskPercentage, 1) }}% of total users
+                            </span>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-lg-3 col-md-6 col-12">
                     <div class="info-box">
                         <span class="info-box-icon bg-success">
                             <i class="fas fa-shield-alt"></i>
@@ -140,6 +162,12 @@
                         <div class="info-box-content">
                             <span class="info-box-text">Model Precision</span>
                             <span class="info-box-number">{{ number_format($modelPerformance['precision'] * 100, 1) }}%</span>
+                            <div class="progress">
+                                <div class="progress-bar bg-success" style="width: {{ $modelPerformance['precision'] * 100 }}%"></div>
+                            </div>
+                            <span class="progress-description">
+                                Prediction accuracy
+                            </span>
                         </div>
                     </div>
                 </div>

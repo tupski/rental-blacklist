@@ -91,11 +91,11 @@
                                             </td>
                                             <td>
                                                 <div class="btn-group" role="group">
-                                                    <button type="button" class="btn btn-success btn-sm" 
+                                                    <button type="button" class="btn btn-success btn-sm"
                                                             onclick="approveUser({{ $user->id }}, '{{ $user->name }}')">
                                                         <i class="fas fa-check"></i> Setujui
                                                     </button>
-                                                    <button type="button" class="btn btn-danger btn-sm" 
+                                                    <button type="button" class="btn btn-danger btn-sm"
                                                             onclick="rejectUser({{ $user->id }}, '{{ $user->name }}')">
                                                         <i class="fas fa-times"></i> Tolak
                                                     </button>
@@ -111,10 +111,28 @@
                             {{ $pendingUsers->links() }}
                         </div>
                     @else
-                        <div class="text-center py-4">
-                            <i class="fas fa-check-circle text-success" style="font-size: 3rem;"></i>
-                            <h4 class="mt-3">Tidak Ada Akun Pending</h4>
-                            <p class="text-muted">Semua akun sudah disetujui atau ditolak.</p>
+                        <div class="text-center py-5">
+                            <div class="mb-4">
+                                <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                            </div>
+                            <h4 class="text-success mb-3">Tidak Ada Akun Pending</h4>
+                            <p class="text-muted mb-4">Semua akun sudah disetujui atau ditolak.</p>
+                            <div class="row justify-content-center">
+                                <div class="col-md-6">
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            <h6 class="card-title">
+                                                <i class="fas fa-info-circle text-info mr-2"></i>
+                                                Informasi
+                                            </h6>
+                                            <p class="card-text small mb-0">
+                                                Akun baru yang mendaftar akan muncul di sini untuk persetujuan admin.
+                                                Anda akan menerima notifikasi ketika ada akun baru yang perlu disetujui.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     @endif
                 </div>
@@ -166,7 +184,7 @@
                     <p>Apakah Anda yakin ingin menolak akun <strong id="rejectUserName"></strong>?</p>
                     <div class="form-group">
                         <label for="reason">Alasan Penolakan:</label>
-                        <textarea class="form-control" id="reason" name="reason" rows="3" 
+                        <textarea class="form-control" id="reason" name="reason" rows="3"
                                   placeholder="Masukkan alasan penolakan..." required></textarea>
                     </div>
                     <div class="alert alert-warning">

@@ -52,47 +52,88 @@
 
             <!-- Analytics Cards -->
             <div class="row mb-4">
-                <div class="col-lg-3 col-6">
-                    <div class="small-box bg-info">
-                        <div class="inner">
-                            <h3>{{ $analytics['total_conversations'] ?? 0 }}</h3>
-                            <p>Total Conversations</p>
-                        </div>
-                        <div class="icon">
+                <div class="col-lg-3 col-md-6 col-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-info">
                             <i class="fas fa-comments"></i>
+                        </span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Total Conversations</span>
+                            <span class="info-box-number">{{ number_format($analytics['total_conversations'] ?? 0) }}</span>
+                            <div class="progress">
+                                <div class="progress-bar bg-info" style="width: 100%"></div>
+                            </div>
+                            <span class="progress-description">
+                                All AI interactions
+                            </span>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-6">
-                    <div class="small-box bg-success">
-                        <div class="inner">
-                            <h3>{{ number_format($analytics['avg_response_time'] ?? 0) }}ms</h3>
-                            <p>Avg Response Time</p>
-                        </div>
-                        <div class="icon">
+                <div class="col-lg-3 col-md-6 col-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-success">
                             <i class="fas fa-clock"></i>
+                        </span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Avg Response Time</span>
+                            <span class="info-box-number">{{ number_format($analytics['avg_response_time'] ?? 0) }}ms</span>
+                            <div class="progress">
+                                @php
+                                    $responseTime = $analytics['avg_response_time'] ?? 0;
+                                    $maxTime = 5000; // 5 seconds max
+                                    $percentage = min(($responseTime / $maxTime) * 100, 100);
+                                    $color = $responseTime > 3000 ? 'bg-danger' : ($responseTime > 1500 ? 'bg-warning' : 'bg-success');
+                                @endphp
+                                <div class="progress-bar {{ $color }}" style="width: {{ $percentage }}%"></div>
+                            </div>
+                            <span class="progress-description">
+                                {{ $responseTime > 3000 ? 'Slow' : ($responseTime > 1500 ? 'Moderate' : 'Fast') }} response
+                            </span>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-6">
-                    <div class="small-box bg-warning">
-                        <div class="inner">
-                            <h3>{{ number_format($analytics['total_tokens'] ?? 0) }}</h3>
-                            <p>Total Tokens Used</p>
-                        </div>
-                        <div class="icon">
+                <div class="col-lg-3 col-md-6 col-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-warning">
                             <i class="fas fa-microchip"></i>
+                        </span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Total Tokens Used</span>
+                            <span class="info-box-number">{{ number_format($analytics['total_tokens'] ?? 0) }}</span>
+                            <div class="progress">
+                                @php
+                                    $tokens = $analytics['total_tokens'] ?? 0;
+                                    $maxTokens = 1000000; // 1M tokens
+                                    $tokenPercentage = min(($tokens / $maxTokens) * 100, 100);
+                                @endphp
+                                <div class="progress-bar bg-warning" style="width: {{ $tokenPercentage }}%"></div>
+                            </div>
+                            <span class="progress-description">
+                                {{ number_format($tokenPercentage, 1) }}% of monthly limit
+                            </span>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-6">
-                    <div class="small-box bg-danger">
-                        <div class="inner">
-                            <h3>${{ number_format($analytics['total_cost'] ?? 0, 2) }}</h3>
-                            <p>Total Cost</p>
-                        </div>
-                        <div class="icon">
+                <div class="col-lg-3 col-md-6 col-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-danger">
                             <i class="fas fa-dollar-sign"></i>
+                        </span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Total Cost</span>
+                            <span class="info-box-number">${{ number_format($analytics['total_cost'] ?? 0, 2) }}</span>
+                            <div class="progress">
+                                @php
+                                    $cost = $analytics['total_cost'] ?? 0;
+                                    $maxCost = 100; // $100 monthly budget
+                                    $costPercentage = min(($cost / $maxCost) * 100, 100);
+                                    $costColor = $cost > 80 ? 'bg-danger' : ($cost > 50 ? 'bg-warning' : 'bg-success');
+                                @endphp
+                                <div class="progress-bar {{ $costColor }}" style="width: {{ $costPercentage }}%"></div>
+                            </div>
+                            <span class="progress-description">
+                                {{ number_format($costPercentage, 1) }}% of monthly budget
+                            </span>
                         </div>
                     </div>
                 </div>
