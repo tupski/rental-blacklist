@@ -154,6 +154,15 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('ai-providers/{aiProvider}/toggle-status', [App\Http\Controllers\Admin\AiProviderController::class, 'toggleStatus'])->name('ai-providers.toggle-status');
     Route::get('ai-providers-stats', [App\Http\Controllers\Admin\AiProviderController::class, 'getStats'])->name('ai-providers.stats');
 
+    // AI Analytics & Moderation
+    Route::prefix('ai-analytics')->name('ai-analytics.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\AiAnalyticsController::class, 'index'])->name('index');
+        Route::get('/moderation-queue', [App\Http\Controllers\Admin\AiAnalyticsController::class, 'moderationQueue'])->name('moderation-queue');
+        Route::post('/review/{log}', [App\Http\Controllers\Admin\AiAnalyticsController::class, 'reviewModeration'])->name('review');
+        Route::get('/risk-profiles', [App\Http\Controllers\Admin\AiAnalyticsController::class, 'riskProfiles'])->name('risk-profiles');
+        Route::get('/chart-data', [App\Http\Controllers\Admin\AiAnalyticsController::class, 'getChartData'])->name('chart-data');
+    });
+
     // Reports & Analytics
     Route::get('laporan', [AdminReportController::class, 'index'])->name('laporan');
     Route::get('analitik', [AdminReportController::class, 'analytics'])->name('analitik');

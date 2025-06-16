@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Setting;
+use App\Services\AI\ContentModerationService;
+use App\Models\AiModerationLog;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -60,6 +62,30 @@ class RegisteredUserController extends Controller
             'role' => $role,
             'account_status' => $accountStatus,
         ]);
+
+        // AI Moderation for registration
+        $moderationService = new ContentModerationService();
+        $moderation = $moderationService->moderateContent(
+            'registration',
+            $user->id,
+            $request->name . ' ' . ($request->bio ?? '')
+        );
+
+        // Update moderation log with correct content ID
+        AiModerationLog::where('content_type', 'registration')
+                      ->where('content_id', 0)
+                      ->latest()
+                      ->first()
+                      ?->update(['content_id' => $user->id]);
+
+        // Apply AI decision
+        if ($moderation['decision'] === 'reject') {
+            $user->update(['account_status' => 'suspended']);
+            $accountStatus = 'suspended';
+        } elseif ($moderation['decision'] === 'flag') {
+            $user->update(['account_status' => 'pending']);
+            $accountStatus = 'pending';
+        }
 
         event(new Registered($user));
 
