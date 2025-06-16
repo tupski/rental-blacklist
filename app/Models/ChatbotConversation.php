@@ -53,25 +53,32 @@ class ChatbotConversation extends Model
      */
     public static function getSessionHistory(string $sessionId, int $limit = 10): array
     {
-        return static::where('session_id', $sessionId)
+        $conversations = static::where('session_id', $sessionId)
             ->where('status', 'success')
             ->orderBy('created_at', 'desc')
             ->limit($limit)
             ->get()
-            ->reverse()
-            ->map(function ($conversation) {
-                return [
-                    'role' => 'user',
-                    'content' => $conversation->user_message,
-                    'timestamp' => $conversation->created_at,
-                ] + [
-                    'role' => 'assistant',
-                    'content' => $conversation->bot_response,
-                    'timestamp' => $conversation->created_at,
-                ];
-            })
-            ->flatten(1)
-            ->toArray();
+            ->reverse();
+
+        $history = [];
+
+        foreach ($conversations as $conversation) {
+            // Add user message
+            $history[] = [
+                'role' => 'user',
+                'content' => $conversation->user_message,
+                'timestamp' => $conversation->created_at,
+            ];
+
+            // Add assistant response
+            $history[] = [
+                'role' => 'assistant',
+                'content' => $conversation->ai_response,
+                'timestamp' => $conversation->created_at,
+            ];
+        }
+
+        return $history;
     }
 
     /**

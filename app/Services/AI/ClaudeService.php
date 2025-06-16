@@ -107,12 +107,29 @@ class ClaudeService implements AiServiceInterface
         $messages = [];
 
         // Add conversation history
-        foreach ($history as $item) {
-            if (isset($item['role']) && isset($item['content'])) {
-                $messages[] = [
-                    'role' => $item['role'],
-                    'content' => $item['content']
-                ];
+        if (!empty($history)) {
+            foreach ($history as $item) {
+                // Handle both array and object formats
+                if (is_array($item)) {
+                    if (isset($item['role']) && isset($item['content'])) {
+                        $messages[] = [
+                            'role' => $item['role'],
+                            'content' => $item['content']
+                        ];
+                    }
+                } elseif (is_object($item)) {
+                    // Handle ChatbotConversation model
+                    if (isset($item->user_message) && isset($item->ai_response)) {
+                        $messages[] = [
+                            'role' => 'user',
+                            'content' => $item->user_message
+                        ];
+                        $messages[] = [
+                            'role' => 'assistant',
+                            'content' => $item->ai_response
+                        ];
+                    }
+                }
             }
         }
 

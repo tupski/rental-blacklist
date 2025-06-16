@@ -129,9 +129,18 @@ class GeminiService implements AiServiceInterface
         if (!empty($history)) {
             $prompt .= "Riwayat percakapan:\n";
             foreach ($history as $item) {
-                if (isset($item['role']) && isset($item['content'])) {
-                    $role = $item['role'] === 'user' ? 'Pengguna' : 'Asisten';
-                    $prompt .= "{$role}: {$item['content']}\n";
+                // Handle both array and object formats
+                if (is_array($item)) {
+                    if (isset($item['role']) && isset($item['content'])) {
+                        $role = $item['role'] === 'user' ? 'Pengguna' : 'Asisten';
+                        $prompt .= "{$role}: {$item['content']}\n";
+                    }
+                } elseif (is_object($item)) {
+                    // Handle ChatbotConversation model
+                    if (isset($item->user_message) && isset($item->ai_response)) {
+                        $prompt .= "Pengguna: {$item->user_message}\n";
+                        $prompt .= "Asisten: {$item->ai_response}\n";
+                    }
                 }
             }
             $prompt .= "\n";
