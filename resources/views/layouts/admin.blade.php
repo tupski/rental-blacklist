@@ -693,6 +693,19 @@ $(document).ready(function() {
         markAllNotificationsAsRead();
     });
 
+    // Handle notification link clicks
+    $(document).on('click', '.notification-link', function(e) {
+        const notificationId = $(this).data('id');
+
+        // Mark as read when clicking the link
+        if (notificationId) {
+            markNotificationAsRead(notificationId);
+        }
+
+        // Let the link navigate normally
+        return true;
+    });
+
     function loadNotifications() {
         $.ajax({
             url: '{{ route("admin.notifikasi.ambil") }}',
@@ -726,6 +739,8 @@ $(document).ready(function() {
         if (notifications.length > 0) {
             notifications.forEach(function(notification) {
                 const isUnread = !notification.read_at;
+                const notificationLink = getNotificationLink(notification);
+
                 notificationHtml += `
                     <div class="dropdown-item p-0 ${isUnread ? 'bg-light' : ''}" style="border-left: ${isUnread ? '3px solid #007bff' : '3px solid transparent'};">
                         <div class="d-flex align-items-start p-2">
@@ -734,7 +749,9 @@ $(document).ready(function() {
                             </div>
                             <div class="flex-grow-1" style="min-width: 0;">
                                 <div class="text-sm text-wrap" style="line-height: 1.3;">
+                                    ${notificationLink ? `<a href="${notificationLink}" class="text-decoration-none text-dark notification-link" data-id="${notification.id}">` : ''}
                                     ${notification.data.message}
+                                    ${notificationLink ? '</a>' : ''}
                                 </div>
                                 <div class="text-xs text-muted mt-1">
                                     ${formatTime(notification.created_at)}
@@ -780,12 +797,49 @@ $(document).ready(function() {
         }
     }
 
+    function getNotificationLink(notification) {
+        const type = notification.type;
+        const data = notification.data;
+
+        switch(type) {
+            case 'App\\Notifications\\UserRegisteredNotification':
+                // Arahkan ke halaman persetujuan akun
+                return '{{ route("admin.persetujuan-akun.indeks") }}';
+
+            case 'App\\Notifications\\TopupRequestNotification':
+            case 'App\\Notifications\\NewTopupNotification':
+                // Arahkan ke halaman topup dengan filter pending
+                if (data.topup_id) {
+                    return `{{ route("admin.isi-saldo.tampil", ":id") }}`.replace(':id', data.topup_id);
+                }
+                return '{{ route("admin.isi-saldo.indeks") }}?status=pending';
+
+            case 'App\\Notifications\\TopupStatusNotification':
+                // Arahkan ke detail topup
+                if (data.topup_id) {
+                    return `{{ route("admin.isi-saldo.tampil", ":id") }}`.replace(':id', data.topup_id);
+                }
+                return '{{ route("admin.isi-saldo.indeks") }}';
+
+            case 'App\\Notifications\\BlacklistReportNotification':
+                // Arahkan ke laporan guest
+                if (data.report_id) {
+                    return `{{ route("admin.laporan-tamu.tampil", ":id") }}`.replace(':id', data.report_id);
+                }
+                return '{{ route("admin.laporan-tamu.indeks") }}?status=pending';
+
+            default:
+                return null;
+        }
+    }
+
     function markNotificationAsRead(notificationId) {
         $.ajax({
             url: '{{ route("admin.notifikasi.tandai-dibaca") }}',
             method: 'POST',
             data: {
-                notification_id: notificationId
+                notification_id: notificationId,
+                _token: $('meta[name="csrf-token"]').attr('content')
             },
             success: function(response) {
                 if (response.success) {
@@ -793,8 +847,13 @@ $(document).ready(function() {
                     toastr.success('Notifikasi ditandai sebagai sudah dibaca');
                 }
             },
-            error: function() {
-                toastr.error('Gagal menandai notifikasi');
+            error: function(xhr) {
+                if (xhr.status === 419) {
+                    toastr.error('Session expired. Please refresh the page.');
+                    setTimeout(() => location.reload(), 2000);
+                } else {
+                    toastr.error('Gagal menandai notifikasi');
+                }
             }
         });
     }
@@ -803,14 +862,22 @@ $(document).ready(function() {
         $.ajax({
             url: '{{ route("admin.notifikasi.tandai-semua-dibaca") }}',
             method: 'POST',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
             success: function(response) {
                 if (response.success) {
                     loadNotifications(); // Refresh notifications
                     toastr.success('Semua notifikasi ditandai sebagai sudah dibaca');
                 }
             },
-            error: function() {
-                toastr.error('Gagal menandai semua notifikasi');
+            error: function(xhr) {
+                if (xhr.status === 419) {
+                    toastr.error('Session expired. Please refresh the page.');
+                    setTimeout(() => location.reload(), 2000);
+                } else {
+                    toastr.error('Gagal menandai semua notifikasi');
+                }
             }
         });
     }

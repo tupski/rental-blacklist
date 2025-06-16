@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\GuestReport;
+use App\Models\User;
+use App\Notifications\BlacklistReportNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 
 class GuestReportController extends Controller
 {
@@ -54,6 +57,14 @@ class GuestReportController extends Controller
     {
         $guestReport->update(['status' => 'approved']);
 
+        // Send notification to all admins
+        try {
+            $admins = User::where('role', 'admin')->where('id', '!=', auth()->id())->get();
+            Notification::send($admins, new BlacklistReportNotification($guestReport, 'approved'));
+        } catch (\Exception $e) {
+            \Log::warning('Failed to send blacklist report approval notification: ' . $e->getMessage());
+        }
+
         return redirect()->back()
             ->with('success', 'Laporan guest berhasil disetujui.');
     }
@@ -68,6 +79,14 @@ class GuestReportController extends Controller
             'status' => 'rejected',
             'catatan_admin' => $request->catatan_admin,
         ]);
+
+        // Send notification to all admins
+        try {
+            $admins = User::where('role', 'admin')->where('id', '!=', auth()->id())->get();
+            Notification::send($admins, new BlacklistReportNotification($guestReport, 'rejected'));
+        } catch (\Exception $e) {
+            \Log::warning('Failed to send blacklist report rejection notification: ' . $e->getMessage());
+        }
 
         return redirect()->back()
             ->with('success', 'Laporan guest berhasil ditolak.');

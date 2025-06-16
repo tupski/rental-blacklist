@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use App\Notifications\UserRegisteredNotification;
+use Illuminate\Support\Facades\Notification;
 
 class RegisteredUserController extends Controller
 {
@@ -91,6 +92,14 @@ class RegisteredUserController extends Controller
 
         // Send welcome notification
         $user->notify(new UserRegisteredNotification($user));
+
+        // Send notification to admins about new user registration
+        try {
+            $admins = User::where('role', 'admin')->get();
+            Notification::send($admins, new UserRegisteredNotification($user));
+        } catch (\Exception $e) {
+            \Log::warning('Failed to send user registration notification to admins: ' . $e->getMessage());
+        }
 
         Auth::login($user);
 

@@ -30,7 +30,12 @@ class UserRegisteredNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        // Send email to the user, database notification to admins
+        if ($notifiable->id === $this->user->id) {
+            return ['mail']; // User gets email
+        } else {
+            return ['database']; // Admins get database notification
+        }
     }
 
     /**
@@ -66,11 +71,23 @@ class UserRegisteredNotification extends Notification implements ShouldQueue
      */
     public function toArray(object $notifiable): array
     {
+        $roleText = $this->user->role === 'pengusaha_rental' ? 'Pemilik Rental' : 'User';
+        $statusText = $this->user->account_status === 'pending' ? ' (Menunggu Persetujuan)' : '';
+
         return [
+            'type' => 'user_registration',
+            'title' => 'Pendaftaran User Baru',
+            'message' => "{$roleText} baru '{$this->user->name}' telah mendaftar{$statusText}",
             'user_id' => $this->user->id,
             'user_name' => $this->user->name,
             'user_email' => $this->user->email,
-            'message' => 'User baru telah mendaftar'
+            'user_role' => $this->user->role,
+            'account_status' => $this->user->account_status,
+            'url' => $this->user->account_status === 'pending'
+                ? route('admin.persetujuan-akun.indeks')
+                : route('admin.pengguna.tampil', $this->user->id),
+            'icon' => 'fas fa-user-plus',
+            'color' => $this->user->account_status === 'pending' ? 'warning' : 'success'
         ];
     }
 }
