@@ -64,9 +64,9 @@
         <!-- Input Area -->
         <div class="chatbot-input">
             <form id="chatbot-form" class="d-flex">
-                <input type="text" 
-                       id="chatbot-input" 
-                       class="form-control" 
+                <input type="text"
+                       id="chatbot-input"
+                       class="form-control"
                        placeholder="Ketik pesan Anda..."
                        maxlength="500"
                        autocomplete="off">
@@ -178,6 +178,26 @@
     padding: 15px;
     overflow-y: auto;
     background: #f8f9fa;
+    max-height: 300px;
+    scroll-behavior: smooth;
+}
+
+.chatbot-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chatbot-messages::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.chatbot-messages::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.chatbot-messages::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
 }
 
 .message {
@@ -324,7 +344,7 @@
         bottom: 70px;
         right: -10px;
     }
-    
+
     .chatbot-toggle {
         width: 55px;
         height: 55px;
@@ -357,6 +377,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Check if chatbot is available
     checkChatbotAvailability();
+
+    // Load conversation history
+    loadConversationHistory();
 
     function generateSessionId() {
         const id = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
@@ -399,6 +422,7 @@ document.addEventListener('DOMContentLoaded', function() {
         isOpen = true;
         input.focus();
         hideQuickActions();
+        scrollToBottom();
     }
 
     function closeChatbot() {
@@ -441,7 +465,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Add user message
         addMessage(message, 'user');
-        
+
         // Hide quick actions
         quickActions.style.display = 'none';
 
@@ -464,7 +488,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             hideTypingIndicator();
-            
+
             if (data.success) {
                 addMessage(data.message, 'bot');
             } else {
@@ -483,14 +507,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function addMessage(content, sender) {
-        const time = new Date().toLocaleTimeString('id-ID', { 
-            hour: '2-digit', 
-            minute: '2-digit' 
+        const time = new Date().toLocaleTimeString('id-ID', {
+            hour: '2-digit',
+            minute: '2-digit'
         });
 
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${sender}-message`;
-        
+
         messageDiv.innerHTML = `
             <div class="message-content">
                 <div class="message-bubble">
@@ -517,7 +541,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
         `;
-        
+
         messages.appendChild(typingDiv);
         messages.scrollTop = messages.scrollHeight;
     }
@@ -528,5 +552,107 @@ document.addEventListener('DOMContentLoaded', function() {
             typing.remove();
         }
     }
+
+    function scrollToBottom() {
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    function loadConversationHistory() {
+        const savedHistory = localStorage.getItem('chatbot_history_' + sessionId);
+        if (savedHistory) {
+            try {
+                const history = JSON.parse(savedHistory);
+
+                // Clear welcome message if we have history
+                if (history.length > 0) {
+                    messages.innerHTML = '';
+                    quickActions.style.display = 'none';
+                }
+
+                // Restore messages
+                history.forEach(msg => {
+                    addMessageToDOM(msg.content, msg.sender, msg.timestamp);
+                });
+
+                scrollToBottom();
+            } catch (e) {
+                console.error('Error loading chat history:', e);
+            }
+        }
+    }
+
+    function saveMessageToHistory(content, sender) {
+        try {
+            const savedHistory = localStorage.getItem('chatbot_history_' + sessionId);
+            let history = savedHistory ? JSON.parse(savedHistory) : [];
+
+            history.push({
+                content: content,
+                sender: sender,
+                timestamp: new Date().toLocaleTimeString('id-ID', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+            });
+
+            // Keep only last 50 messages
+            if (history.length > 50) {
+                history = history.slice(-50);
+            }
+
+            localStorage.setItem('chatbot_history_' + sessionId, JSON.stringify(history));
+        } catch (e) {
+            console.error('Error saving chat history:', e);
+        }
+    }
+
+    function addMessageToDOM(content, sender, timestamp = null) {
+        const time = timestamp || new Date().toLocaleTimeString('id-ID', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${sender}-message`;
+
+        messageDiv.innerHTML = `
+            <div class="message-content">
+                <div class="message-bubble">
+                    <p class="mb-0">${content}</p>
+                </div>
+                <small class="message-time">${time}</small>
+            </div>
+        `;
+
+        messages.appendChild(messageDiv);
+        scrollToBottom();
+    }
+
+    // Update addMessage function to use new functions
+    function addMessage(content, sender) {
+        addMessageToDOM(content, sender);
+        saveMessageToHistory(content, sender);
+    }
+
+    // Clear history function
+    function clearHistory() {
+        localStorage.removeItem('chatbot_history_' + sessionId);
+        messages.innerHTML = `
+            <div class="message bot-message">
+                <div class="message-content">
+                    <div class="message-bubble">
+                        <p class="mb-1">👋 Halo! Saya AI Assistant CekPenyewa.com.</p>
+                        <p class="mb-0">Ada yang bisa saya bantu?</p>
+                    </div>
+                    <small class="message-time">Baru saja</small>
+                </div>
+            </div>
+        `;
+        quickActions.style.display = 'flex';
+        scrollToBottom();
+    }
+
+    // Add clear history button (optional)
+    window.clearChatHistory = clearHistory;
 });
 </script>

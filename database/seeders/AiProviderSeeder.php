@@ -23,10 +23,10 @@ class AiProviderSeeder extends Seeder
                 'monthly_limit' => 25000,
                 'priority' => 1,
                 'is_active' => false, // Set to false until API key is configured
-                'rate_limits' => [
+                'rate_limits' => json_encode([
                     'requests_per_minute' => 60,
                     'tokens_per_minute' => 100000,
-                ],
+                ]),
             ],
             [
                 'name' => 'openai',
@@ -38,25 +38,25 @@ class AiProviderSeeder extends Seeder
                 'monthly_limit' => 40000,
                 'priority' => 2,
                 'is_active' => false, // Set to false until API key is configured
-                'rate_limits' => [
+                'rate_limits' => json_encode([
                     'requests_per_minute' => 60,
                     'tokens_per_minute' => 90000,
-                ],
+                ]),
             ],
             [
                 'name' => 'gemini',
                 'display_name' => 'Gemini (Google)',
                 'api_key' => 'AIzaSyAYWP15JRHglOrfacequglAWw2JEr6-e-o',
-                'endpoint' => 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
-                'model' => 'gemini-pro',
+                'endpoint' => 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent',
+                'model' => 'gemini-1.5-flash-latest',
                 'daily_limit' => 2000,
                 'monthly_limit' => 50000,
                 'priority' => 1, // Set as priority 1 since it's the only working key
                 'is_active' => true, // Set to true since API key is configured
-                'rate_limits' => [
+                'rate_limits' => json_encode([
                     'requests_per_minute' => 60,
                     'tokens_per_minute' => 120000,
-                ],
+                ]),
             ],
         ];
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Helpers\CaptchaHelper;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -26,10 +27,19 @@ class LoginRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
         ];
+
+        // Add captcha validation if enabled
+        $captchaRules = CaptchaHelper::getValidationRules('login');
+        return array_merge($rules, $captchaRules);
+    }
+
+    public function messages(): array
+    {
+        return CaptchaHelper::getValidationMessages();
     }
 
     /**
@@ -40,6 +50,19 @@ class LoginRequest extends FormRequest
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
+
+        // Verify captcha if enabled
+        if (CaptchaHelper::isEnabled('login')) {
+            $captchaResponse = $this->input('g-recaptcha-response') ??
+                              $this->input('h-captcha-response') ??
+                              $this->input('cf-turnstile-response');
+
+            if (!CaptchaHelper::verify($captchaResponse, 'login')) {
+                throw ValidationException::withMessages([
+                    'captcha' => 'Verifikasi captcha gagal.',
+                ]);
+            }
+        }
 
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());

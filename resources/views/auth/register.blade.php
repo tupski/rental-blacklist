@@ -341,6 +341,9 @@
                                 </label>
                             </div>
 
+                            <!-- Captcha -->
+                            <x-captcha form-type="register" />
+
                             <!-- Submit Button -->
                             <button
                                 type="submit"

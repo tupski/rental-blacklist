@@ -23,9 +23,9 @@ class GeminiService implements AiServiceInterface
             // Build the prompt with context and history
             $prompt = $this->buildPrompt($message, $context, $history);
 
-            // Make API request
-            $url = $this->provider->endpoint . '?key=' . $this->provider->api_key;
-            
+            // Make API request - use correct Gemini 1.5 Flash model
+            $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=' . $this->provider->api_key;
+
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
             ])->timeout(30)->post($url, [
@@ -71,21 +71,21 @@ class GeminiService implements AiServiceInterface
                     'error' => $error,
                     'response' => $response->body()
                 ]);
-                
+
                 return AiResponse::error($error, $responseTime);
             }
 
             $data = $response->json();
-            
+
             if (empty($data['candidates'])) {
                 return AiResponse::error('No response from Gemini', $responseTime);
             }
 
             $content = $data['candidates'][0]['content']['parts'][0]['text'] ?? '';
-            
+
             // Gemini doesn't provide token usage in response, estimate it
             $tokensUsed = $this->estimateTokens($prompt . $content);
-            
+
             // Calculate cost
             $cost = $this->calculateCost($tokensUsed);
 
@@ -107,7 +107,7 @@ class GeminiService implements AiServiceInterface
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            
+
             return AiResponse::error($e->getMessage(), $responseTime);
         }
     }

@@ -91,6 +91,9 @@
                                 @enderror
                             </div>
 
+                            <!-- Captcha -->
+                            <x-captcha form-type="login" />
+
                             <!-- Remember Me -->
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <div class="form-check">
