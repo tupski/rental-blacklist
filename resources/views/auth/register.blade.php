@@ -292,8 +292,8 @@
                             </div>
 
                             <!-- Password Section (untuk semua jenis user) -->
-                            <div class="password-section">
-                                <h6 class="text-secondary mb-3 mt-4">Kata Sandi</h6>
+                            <div class="password-section mt-5">
+                                <h6 class="text-secondary mb-3">Kata Sandi</h6>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="password" class="form-label">Kata Sandi <span class="text-danger">*</span></label>
@@ -326,7 +326,7 @@
                             </div>
 
                             <!-- Terms -->
-                            <div class="form-check mb-4">
+                            <div class="form-check mb-4 mt-4">
                                 <input
                                     id="terms"
                                     type="checkbox"
@@ -344,7 +344,7 @@
                             <!-- Submit Button -->
                             <button
                                 type="submit"
-                                class="btn btn-primary btn-lg w-100 mb-3"
+                                class="btn btn-primary btn-lg w-100 mb-4"
                             >
                                 <i class="fas fa-user-plus me-2"></i>
                                 Daftar Sekarang
@@ -352,7 +352,7 @@
                         </form>
 
                         <!-- Benefits -->
-                        <div class="alert alert-success">
+                        <div class="alert alert-success mt-4">
                             <h6 class="alert-heading">
                                 <i class="fas fa-check-circle me-1"></i>
                                 Keuntungan Bergabung
@@ -469,7 +469,7 @@ function togglePassword(fieldId) {
 
 // Indonesia Region API functions
 function loadProvinces() {
-    $.get('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json', function(data) {
+    $.get('https://tupski.github.io/api-wilayah-indonesia/api/provinces.json', function(data) {
         let options = '<option value="">Pilih Provinsi</option>';
         data.forEach(function(province) {
             options += `<option value="${province.id}">${province.name}</option>`;
@@ -481,7 +481,7 @@ function loadProvinces() {
 }
 
 function loadRegencies(provinceId) {
-    $.get(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${provinceId}.json`, function(data) {
+    $.get(`https://tupski.github.io/api-wilayah-indonesia/api/regencies/${provinceId}.json`, function(data) {
         let options = '<option value="">Pilih Kabupaten/Kota</option>';
         data.forEach(function(regency) {
             options += `<option value="${regency.id}">${regency.name}</option>`;
@@ -494,7 +494,7 @@ function loadRegencies(provinceId) {
 }
 
 function loadDistricts(regencyId) {
-    $.get(`https://www.emsifa.com/api-wilayah-indonesia/api/districts/${regencyId}.json`, function(data) {
+    $.get(`https://tupski.github.io/api-wilayah-indonesia/api/districts/${regencyId}.json`, function(data) {
         let options = '<option value="">Pilih Kecamatan</option>';
         data.forEach(function(district) {
             options += `<option value="${district.id}">${district.name}</option>`;
@@ -507,7 +507,7 @@ function loadDistricts(regencyId) {
 }
 
 function loadVillages(districtId) {
-    $.get(`https://www.emsifa.com/api-wilayah-indonesia/api/villages/${districtId}.json`, function(data) {
+    $.get(`https://tupski.github.io/api-wilayah-indonesia/api/villages/${districtId}.json`, function(data) {
         let options = '<option value="">Pilih Kelurahan</option>';
         data.forEach(function(village) {
             options += `<option value="${village.id}">${village.name}</option>`;

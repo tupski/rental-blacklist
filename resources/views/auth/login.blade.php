@@ -120,19 +120,6 @@
                             </button>
                         </form>
 
-                        <!-- Demo Accounts -->
-                        <div class="alert alert-info">
-                            <h6 class="alert-heading">
-                                <i class="fas fa-info-circle me-1"></i>
-                                Akun Demo untuk Testing
-                            </h6>
-                            <div class="small">
-                                <p class="mb-1"><strong>Admin:</strong> admin@rentalguard.id | <strong>Password:</strong> admin123</p>
-                                <p class="mb-1"><strong>Rental:</strong> rental@example.com | <strong>Password:</strong> rental123</p>
-                                <p class="mb-0"><strong>User:</strong> user@example.com | <strong>Password:</strong> user123</p>
-                            </div>
-                        </div>
-
                         <!-- Register Link -->
                         <div class="text-center mb-3">
                             <p class="text-muted mb-0">
