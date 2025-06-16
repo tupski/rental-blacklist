@@ -49,6 +49,11 @@ Route::middleware('auth')->group(function () {
         ->middleware(['signed', 'throttle:6,1'])
         ->name('verifikasi.verifikasi');
 
+    // Alias untuk kompatibilitas Laravel default
+    Route::get('email/verify/{id}/{hash}', VerifyEmailController::class)
+        ->middleware(['signed', 'throttle:6,1'])
+        ->name('verification.verify');
+
     Route::post('email/pemberitahuan-verifikasi', [EmailVerificationNotificationController::class, 'store'])
         ->middleware('throttle:6,1')
         ->name('verifikasi.kirim');
