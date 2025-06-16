@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Daftar Akun Baru')
+@section('title', 'Daftar')
 
 @section('content')
 <div class="bg-gradient-to-br from-primary-subtle to-info-subtle min-vh-100 d-flex align-items-center py-5">
@@ -469,7 +469,7 @@ function togglePassword(fieldId) {
 
 // Indonesia Region API functions
 function loadProvinces() {
-    $.get('https://tupski.github.io/api-wilayah-indonesia/api/provinces.json', function(data) {
+    $.get('/api/wilayah/provinsi', function(data) {
         let options = '<option value="">Pilih Provinsi</option>';
         data.forEach(function(province) {
             options += `<option value="${province.id}">${province.name}</option>`;
@@ -481,7 +481,7 @@ function loadProvinces() {
 }
 
 function loadRegencies(provinceId) {
-    $.get(`https://tupski.github.io/api-wilayah-indonesia/api/regencies/${provinceId}.json`, function(data) {
+    $.get(`/api/wilayah/kabupaten/${provinceId}`, function(data) {
         let options = '<option value="">Pilih Kabupaten/Kota</option>';
         data.forEach(function(regency) {
             options += `<option value="${regency.id}">${regency.name}</option>`;
@@ -494,7 +494,7 @@ function loadRegencies(provinceId) {
 }
 
 function loadDistricts(regencyId) {
-    $.get(`https://tupski.github.io/api-wilayah-indonesia/api/districts/${regencyId}.json`, function(data) {
+    $.get(`/api/wilayah/kecamatan/${regencyId}`, function(data) {
         let options = '<option value="">Pilih Kecamatan</option>';
         data.forEach(function(district) {
             options += `<option value="${district.id}">${district.name}</option>`;
@@ -507,7 +507,7 @@ function loadDistricts(regencyId) {
 }
 
 function loadVillages(districtId) {
-    $.get(`https://tupski.github.io/api-wilayah-indonesia/api/villages/${districtId}.json`, function(data) {
+    $.get(`/api/wilayah/kelurahan/${districtId}`, function(data) {
         let options = '<option value="">Pilih Kelurahan</option>';
         data.forEach(function(village) {
             options += `<option value="${village.id}">${village.name}</option>`;

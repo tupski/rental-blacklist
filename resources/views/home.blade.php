@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', $settings['meta_title'])
+@section('title', 'Beranda')
 
 @section('meta')
 <meta name="description" content="{{ $settings['meta_description'] }}">

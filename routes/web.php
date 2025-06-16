@@ -13,6 +13,7 @@ use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PublicRentalController;
+use App\Http\Controllers\RegionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -63,6 +64,14 @@ Route::post('/lapor', [ReportController::class, 'store'])->name('laporan.simpan'
 Route::get('/rental', [RentalController::class, 'index'])->name('rental.indeks');
 Route::get('/daftar-rental', [RentalController::class, 'create'])->name('rental.daftar');
 Route::post('/daftar-rental', [RentalController::class, 'store'])->name('rental.simpan');
+
+// API Wilayah Indonesia (public)
+Route::prefix('api/wilayah')->name('api.wilayah.')->group(function () {
+    Route::get('/provinsi', [RegionController::class, 'provinces'])->name('provinsi');
+    Route::get('/kabupaten/{provinceId}', [RegionController::class, 'regencies'])->name('kabupaten');
+    Route::get('/kecamatan/{regencyId}', [RegionController::class, 'districts'])->name('kecamatan');
+    Route::get('/kelurahan/{districtId}', [RegionController::class, 'villages'])->name('kelurahan');
+});
 
 /*
 |--------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Masuk ke Akun')
+@section('title', 'Masuk')
 
 @section('content')
 <div class="bg-gradient-to-br from-danger-subtle to-warning-subtle min-vh-100 d-flex align-items-center py-5">

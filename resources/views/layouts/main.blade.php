@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Rental Blacklist') }} - @yield('title', 'Sistem Blacklist Rental')</title>
+    <title>@yield('title', 'Beranda') - CekPenyewa.com</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
