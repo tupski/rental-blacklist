@@ -10,6 +10,52 @@
 @endsection
 
 @section('content')
+<!-- Alerts -->
+@if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show">
+        <i class="fas fa-check-circle mr-2"></i>
+        {{ session('success') }}
+
+        @if(session('bypass_url'))
+            <hr>
+            <h6><i class="fas fa-key mr-2"></i>Link Bypass Maintenance:</h6>
+            <div class="input-group mt-2">
+                <input type="text" class="form-control" id="bypassUrl" value="{{ session('bypass_url') }}" readonly>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" onclick="copyBypassUrl()">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                    <a href="{{ session('bypass_url') }}" class="btn btn-primary" target="_blank">
+                        <i class="fas fa-external-link-alt"></i> Buka
+                    </a>
+                </div>
+            </div>
+            <small class="text-muted d-block mt-2">
+                <i class="fas fa-info-circle mr-1"></i>
+                Gunakan link ini untuk mengakses admin panel saat maintenance mode aktif.
+            </small>
+        @endif
+
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+@endif
+
+@if($errors->any())
+    <div class="alert alert-danger alert-dismissible fade show">
+        <i class="fas fa-exclamation-triangle mr-2"></i>
+        <ul class="mb-0">
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+@endif
+
 <!-- Maintenance Mode Status -->
 <div class="row mb-4">
     <div class="col-12">
@@ -33,6 +79,12 @@
                         <p class="text-muted mb-0">
                             @if($maintenanceMode)
                                 Aplikasi sedang dalam mode maintenance. Hanya admin yang dapat mengakses.
+                                @if($currentSecret)
+                                    <br><small class="text-info">
+                                        <i class="fas fa-key mr-1"></i>
+                                        Secret Key: <code>{{ $currentSecret }}</code>
+                                    </small>
+                                @endif
                             @else
                                 Aplikasi berjalan normal dan dapat diakses oleh semua pengguna.
                             @endif
@@ -40,9 +92,19 @@
                     </div>
                     <div class="col-md-4 text-right">
                         @if($maintenanceMode)
-                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#disableMaintenanceModal">
-                                <i class="fas fa-play mr-2"></i>Nonaktifkan Maintenance
-                            </button>
+                            <div class="btn-group-vertical" role="group">
+                                @if($currentSecret)
+                                    <button type="button" class="btn btn-info btn-sm mb-2" onclick="copyCurrentSecret()">
+                                        <i class="fas fa-copy mr-1"></i>Copy Secret Key
+                                    </button>
+                                    <a href="{{ url('/?secret=' . $currentSecret) }}" class="btn btn-primary btn-sm mb-2" target="_blank">
+                                        <i class="fas fa-external-link-alt mr-1"></i>Buka Bypass Link
+                                    </a>
+                                @endif
+                                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#disableMaintenanceModal">
+                                    <i class="fas fa-play mr-2"></i>Nonaktifkan Maintenance
+                                </button>
+                            </div>
                         @else
                             <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#enableMaintenanceModal">
                                 <i class="fas fa-pause mr-2"></i>Aktifkan Maintenance
@@ -567,6 +629,71 @@ $(document).ready(function() {
     // Initialize reset button as disabled
     $('#resetDatabaseModal form button[type="submit"]').prop('disabled', true);
 });
+
+// Copy bypass URL function
+function copyBypassUrl() {
+    const urlInput = document.getElementById('bypassUrl');
+    urlInput.select();
+    urlInput.setSelectionRange(0, 99999); // For mobile devices
+
+    try {
+        document.execCommand('copy');
+
+        // Change button text temporarily
+        const btn = event.target.closest('button');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        btn.classList.remove('btn-outline-secondary');
+        btn.classList.add('btn-success');
+
+        setTimeout(function() {
+            btn.innerHTML = originalText;
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-outline-secondary');
+        }, 2000);
+
+    } catch (err) {
+        alert('Gagal copy URL. Silakan copy manual.');
+    }
+}
+
+// Copy current secret key function
+function copyCurrentSecret() {
+    @if($currentSecret ?? false)
+    const secretKey = '{{ $currentSecret }}';
+
+    // Create temporary input element
+    const tempInput = document.createElement('input');
+    tempInput.value = secretKey;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    tempInput.setSelectionRange(0, 99999);
+
+    try {
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+
+        // Change button text temporarily
+        const btn = event.target.closest('button');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check mr-1"></i>Copied!';
+        btn.classList.remove('btn-info');
+        btn.classList.add('btn-success');
+
+        setTimeout(function() {
+            btn.innerHTML = originalText;
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-info');
+        }, 2000);
+
+    } catch (err) {
+        document.body.removeChild(tempInput);
+        alert('Gagal copy secret key. Silakan copy manual: ' + secretKey);
+    }
+    @else
+    alert('Secret key tidak tersedia.');
+    @endif
+}
 </script>
 
 <!-- Toastr for notifications -->

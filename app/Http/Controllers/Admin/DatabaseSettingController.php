@@ -26,7 +26,13 @@ class DatabaseSettingController extends Controller
         // Check maintenance mode
         $maintenanceMode = app()->isDownForMaintenance();
 
-        return view('admin.settings.database', compact('dbInfo', 'maintenanceMode'));
+        // Get current secret key if maintenance mode is active
+        $currentSecret = null;
+        if ($maintenanceMode && Storage::exists('maintenance_secret.txt')) {
+            $currentSecret = Storage::get('maintenance_secret.txt');
+        }
+
+        return view('admin.settings.database', compact('dbInfo', 'maintenanceMode', 'currentSecret'));
     }
 
     public function clearCache(Request $request)
@@ -191,14 +197,21 @@ class DatabaseSettingController extends Controller
                 Storage::delete('maintenance_message.txt');
             }
 
+            // Store secret key to file for reference
+            Storage::put('maintenance_secret.txt', $secret);
+
             // Put application in maintenance mode
             Artisan::call('down', [
                 '--retry' => 60,
                 '--secret' => $secret,
             ]);
 
+            $bypassUrl = url('/?secret=' . $secret);
+
             return redirect()->route('admin.pengaturan.database.indeks')
-                ->with('success', 'Mode maintenance berhasil diaktifkan. Secret key: ' . $secret);
+                ->with('success', 'Mode maintenance berhasil diaktifkan!')
+                ->with('bypass_url', $bypassUrl)
+                ->with('secret_key', $secret);
 
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Gagal mengaktifkan maintenance mode: ' . $e->getMessage()]);
@@ -219,8 +232,9 @@ class DatabaseSettingController extends Controller
         try {
             Artisan::call('up');
 
-            // Remove maintenance message file
+            // Remove maintenance files
             Storage::delete('maintenance_message.txt');
+            Storage::delete('maintenance_secret.txt');
 
             return redirect()->route('admin.pengaturan.database.indeks')
                 ->with('success', 'Mode maintenance berhasil dinonaktifkan.');
