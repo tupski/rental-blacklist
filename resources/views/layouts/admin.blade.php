@@ -515,6 +515,12 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a href="{{ route('admin.ai-providers.index') }}" class="nav-link {{ request()->routeIs('admin.ai-providers*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>AI Providers</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="{{ route('admin.maintenance') }}" class="nav-link {{ request()->routeIs('admin.maintenance*') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Maintenance</p>

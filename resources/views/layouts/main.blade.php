@@ -377,6 +377,13 @@
                             Verifikasi
                         </a>
                     </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('chatbot.*') ? 'active fw-bold' : '' }}" href="{{ route('chatbot.index') }}">
+                            <i class="fas fa-robot me-1"></i>
+                            AI Assistant
+                        </a>
+                    </li>
                     @auth
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('dasbor*') ? 'active fw-bold' : '' }}" href="{{ route('dasbor') }}">

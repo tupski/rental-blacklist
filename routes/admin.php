@@ -139,6 +139,21 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('pengaturan/database/maintenance/aktifkan', [AdminDatabaseSettingController::class, 'enableMaintenance'])->name('pengaturan.database.maintenance.aktifkan');
     Route::post('pengaturan/database/maintenance/nonaktifkan', [AdminDatabaseSettingController::class, 'disableMaintenance'])->name('pengaturan.database.maintenance.nonaktifkan');
 
+    // AI Providers Management
+    Route::resource('ai-providers', App\Http\Controllers\Admin\AiProviderController::class)->names([
+        'index' => 'ai-providers.index',
+        'create' => 'ai-providers.create',
+        'store' => 'ai-providers.store',
+        'show' => 'ai-providers.show',
+        'edit' => 'ai-providers.edit',
+        'update' => 'ai-providers.update',
+        'destroy' => 'ai-providers.destroy',
+    ]);
+    Route::post('ai-providers/{aiProvider}/test', [App\Http\Controllers\Admin\AiProviderController::class, 'test'])->name('ai-providers.test');
+    Route::post('ai-providers/{aiProvider}/reset-usage', [App\Http\Controllers\Admin\AiProviderController::class, 'resetUsage'])->name('ai-providers.reset-usage');
+    Route::post('ai-providers/{aiProvider}/toggle-status', [App\Http\Controllers\Admin\AiProviderController::class, 'toggleStatus'])->name('ai-providers.toggle-status');
+    Route::get('ai-providers-stats', [App\Http\Controllers\Admin\AiProviderController::class, 'getStats'])->name('ai-providers.stats');
+
     // Reports & Analytics
     Route::get('laporan', [AdminReportController::class, 'index'])->name('laporan');
     Route::get('analitik', [AdminReportController::class, 'analytics'])->name('analitik');
