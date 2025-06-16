@@ -55,7 +55,10 @@ class AiProviderController extends Controller
         ]);
 
         try {
-            AiProvider::create($request->all());
+            $data = $request->all();
+            $data['is_active'] = $request->has('is_active');
+
+            AiProvider::create($data);
 
             return redirect()->route('admin.ai-providers.index')
                 ->with('success', 'AI Provider berhasil ditambahkan');
@@ -68,16 +71,19 @@ class AiProviderController extends Controller
     /**
      * Show edit form
      */
-    public function edit(AiProvider $aiProvider)
+    public function edit($id)
     {
+        $aiProvider = AiProvider::findOrFail($id);
         return view('admin.ai-providers.edit', compact('aiProvider'));
     }
 
     /**
      * Update AI provider
      */
-    public function update(Request $request, AiProvider $aiProvider)
+    public function update(Request $request, $id)
     {
+        $aiProvider = AiProvider::findOrFail($id);
+
         $request->validate([
             'display_name' => 'required|string|max:255',
             'api_key' => 'required|string',
@@ -90,7 +96,10 @@ class AiProviderController extends Controller
         ]);
 
         try {
-            $aiProvider->update($request->all());
+            $data = $request->all();
+            $data['is_active'] = $request->has('is_active');
+
+            $aiProvider->update($data);
 
             return redirect()->route('admin.ai-providers.index')
                 ->with('success', 'AI Provider berhasil diperbarui');
@@ -103,8 +112,10 @@ class AiProviderController extends Controller
     /**
      * Delete AI provider
      */
-    public function destroy(AiProvider $aiProvider)
+    public function destroy($id)
     {
+        $aiProvider = AiProvider::findOrFail($id);
+
         try {
             $aiProvider->delete();
 
@@ -119,8 +130,10 @@ class AiProviderController extends Controller
     /**
      * Test AI provider connection
      */
-    public function test(AiProvider $aiProvider)
+    public function test($id)
     {
+        $aiProvider = AiProvider::findOrFail($id);
+
         try {
             $response = $this->aiManager->testProvider($aiProvider);
 
@@ -149,8 +162,10 @@ class AiProviderController extends Controller
     /**
      * Reset usage counters
      */
-    public function resetUsage(AiProvider $aiProvider)
+    public function resetUsage($id)
     {
+        $aiProvider = AiProvider::findOrFail($id);
+
         try {
             $aiProvider->update([
                 'daily_usage' => 0,
@@ -175,8 +190,10 @@ class AiProviderController extends Controller
     /**
      * Toggle provider status
      */
-    public function toggleStatus(AiProvider $aiProvider)
+    public function toggleStatus($id)
     {
+        $aiProvider = AiProvider::findOrFail($id);
+
         try {
             $aiProvider->update(['is_active' => !$aiProvider->is_active]);
 
