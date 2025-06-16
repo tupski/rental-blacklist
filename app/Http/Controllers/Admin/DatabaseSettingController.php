@@ -182,16 +182,23 @@ class DatabaseSettingController extends Controller
         }
 
         try {
-            $message = $request->message ?: 'Aplikasi sedang dalam maintenance. Silakan coba lagi nanti.';
+            $secret = 'admin-secret-' . now()->timestamp;
 
+            // Store custom message to file if provided
+            if ($request->message) {
+                Storage::put('maintenance_message.txt', $request->message);
+            } else {
+                Storage::delete('maintenance_message.txt');
+            }
+
+            // Put application in maintenance mode
             Artisan::call('down', [
-                '--message' => $message,
                 '--retry' => 60,
-                '--secret' => 'admin-secret-' . now()->timestamp,
+                '--secret' => $secret,
             ]);
 
             return redirect()->route('admin.pengaturan.database.indeks')
-                ->with('success', 'Mode maintenance berhasil diaktifkan.');
+                ->with('success', 'Mode maintenance berhasil diaktifkan. Secret key: ' . $secret);
 
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Gagal mengaktifkan maintenance mode: ' . $e->getMessage()]);
@@ -211,6 +218,9 @@ class DatabaseSettingController extends Controller
 
         try {
             Artisan::call('up');
+
+            // Remove maintenance message file
+            Storage::delete('maintenance_message.txt');
 
             return redirect()->route('admin.pengaturan.database.indeks')
                 ->with('success', 'Mode maintenance berhasil dinonaktifkan.');

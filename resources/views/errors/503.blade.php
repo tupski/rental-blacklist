@@ -18,8 +18,19 @@
                 <h1 class="display-1 fw-bold text-warning mb-3">503</h1>
                 <h2 class="h3 text-dark mb-4">Sedang Maintenance</h2>
                 <p class="lead text-muted mb-5">
-                    Sistem sedang dalam tahap pemeliharaan untuk meningkatkan kualitas layanan. 
-                    Mohon tunggu beberapa saat dan coba lagi nanti.
+                    @php
+                        $maintenanceMessage = null;
+                        if (\Illuminate\Support\Facades\Storage::exists('maintenance_message.txt')) {
+                            $maintenanceMessage = \Illuminate\Support\Facades\Storage::get('maintenance_message.txt');
+                        }
+                    @endphp
+
+                    @if($maintenanceMessage)
+                        {{ $maintenanceMessage }}
+                    @else
+                        Sistem sedang dalam tahap pemeliharaan untuk meningkatkan kualitas layanan.
+                        Mohon tunggu beberapa saat dan coba lagi nanti.
+                    @endif
                 </p>
 
                 <!-- Maintenance Info -->
@@ -57,7 +68,7 @@
                 <div class="mt-5">
                     <h6 class="text-muted mb-3">Progress Maintenance</h6>
                     <div class="progress" style="height: 10px;">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" 
+                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning"
                              role="progressbar" style="width: 75%">
                         </div>
                     </div>
@@ -106,9 +117,9 @@
                 <div class="mt-5">
                     <h6 class="text-muted mb-3">Butuh bantuan darurat?</h6>
                     <div class="d-flex flex-wrap gap-3 justify-content-center">
-                        <a href="mailto:admin@rentalblacklist.com" class="text-decoration-none">
+                        <a href="mailto:support@cekpenyewa.com" class="text-decoration-none">
                             <i class="fas fa-envelope text-info me-1"></i>
-                            Email Admin
+                            Email Support
                         </a>
                         <a href="https://wa.me/6281911919993" class="text-decoration-none" target="_blank">
                             <i class="fab fa-whatsapp text-success me-1"></i>
@@ -126,7 +137,7 @@
                     <div class="alert alert-light border">
                         <i class="fas fa-info-circle text-info me-2"></i>
                         <small>
-                            Halaman ini akan otomatis refresh setiap 30 detik untuk mengecek status sistem.
+                            Halaman ini akan otomatis refresh setiap 60 detik untuk mengecek status sistem.
                         </small>
                     </div>
                 </div>
@@ -166,19 +177,19 @@
 </style>
 
 <script>
-// Auto refresh every 30 seconds
+// Auto refresh every 60 seconds
 setTimeout(function() {
     location.reload();
-}, 30000);
+}, 60000);
 
 // Check status function
 function checkStatus() {
     const btn = event.target;
     const originalText = btn.innerHTML;
-    
+
     btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Mengecek...';
     btn.disabled = true;
-    
+
     setTimeout(function() {
         location.reload();
     }, 2000);
