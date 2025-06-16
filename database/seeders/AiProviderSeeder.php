@@ -46,13 +46,13 @@ class AiProviderSeeder extends Seeder
             [
                 'name' => 'gemini',
                 'display_name' => 'Gemini (Google)',
-                'api_key' => 'your-gemini-api-key-here',
+                'api_key' => 'AIzaSyAYWP15JRHglOrfacequglAWw2JEr6-e-o',
                 'endpoint' => 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
                 'model' => 'gemini-pro',
                 'daily_limit' => 2000,
                 'monthly_limit' => 50000,
-                'priority' => 3,
-                'is_active' => false, // Set to false until API key is configured
+                'priority' => 1, // Set as priority 1 since it's the only working key
+                'is_active' => true, // Set to true since API key is configured
                 'rate_limits' => [
                     'requests_per_minute' => 60,
                     'tokens_per_minute' => 120000,

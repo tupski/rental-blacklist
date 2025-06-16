@@ -36,7 +36,7 @@ class ChatbotController extends Controller
         try {
             // Get or create session ID
             $sessionId = $request->session_id ?: Str::uuid()->toString();
-            
+
             // Get user info
             $userId = auth()->id();
             $userIp = $request->ip();
@@ -78,6 +78,30 @@ class ChatbotController extends Controller
     }
 
     /**
+     * Get chatbot status (public)
+     */
+    public function getStatus()
+    {
+        try {
+            $status = $this->aiManager->getChatbotStatus();
+
+            return response()->json([
+                'success' => true,
+                'available' => $status['available'],
+                'provider_count' => $status['provider_count'],
+                'providers' => $status['providers'],
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'available' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
      * Get chatbot statistics (for admin)
      */
     public function getStats()
@@ -86,7 +110,7 @@ class ChatbotController extends Controller
 
         try {
             $stats = $this->aiManager->getProviderStats();
-            
+
             return response()->json([
                 'success' => true,
                 'data' => $stats
@@ -112,7 +136,7 @@ class ChatbotController extends Controller
         try {
             // In a real implementation, you might want to soft delete
             // or just return success without actually deleting
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Riwayat percakapan telah dihapus'

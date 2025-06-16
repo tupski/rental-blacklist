@@ -76,6 +76,7 @@ Route::prefix('api/wilayah')->name('api.wilayah.')->group(function () {
 // Chatbot routes (public access)
 Route::get('/chatbot', [App\Http\Controllers\ChatbotController::class, 'index'])->name('chatbot.index');
 Route::post('/chatbot/send', [App\Http\Controllers\ChatbotController::class, 'sendMessage'])->name('chatbot.send');
+Route::get('/chatbot/status', [App\Http\Controllers\ChatbotController::class, 'getStatus'])->name('chatbot.status');
 Route::post('/chatbot/clear-history', [App\Http\Controllers\ChatbotController::class, 'clearHistory'])->name('chatbot.clear-history');
 Route::get('/chatbot/history', [App\Http\Controllers\ChatbotController::class, 'getHistory'])->name('chatbot.history');
 

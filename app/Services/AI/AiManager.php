@@ -24,8 +24,6 @@ class AiManager
         ?int $userId = null,
         string $userIp = '127.0.0.1'
     ): AiResponse {
-        $startTime = microtime(true);
-
         try {
             // Get relevant context from knowledge base
             $context = ChatbotKnowledgeBase::getRelevantContext($message);
@@ -33,11 +31,17 @@ class AiManager
             // Get conversation history
             $history = ChatbotConversation::getSessionHistory($sessionId, 5);
 
-            // Try providers in order of priority
-            $providers = AiProvider::getAvailable();
-            
+            // Try providers in order of priority - only those with valid API keys
+            $providers = AiProvider::where('is_active', true)
+                ->where('api_key', '!=', '')
+                ->where('api_key', 'not like', '%your-%')
+                ->orderBy('priority')
+                ->orderBy('daily_usage')
+                ->get()
+                ->filter(fn($provider) => $provider->isAvailable());
+
             if ($providers->isEmpty()) {
-                return AiResponse::error('No AI providers available');
+                return AiResponse::error('Tidak ada AI provider yang tersedia. Silakan hubungi administrator untuk mengaktifkan layanan AI.');
             }
 
             $lastError = null;
@@ -46,7 +50,7 @@ class AiManager
                 try {
                     // Create service instance
                     $service = $this->createService($provider);
-                    
+
                     if (!$service->isAvailable()) {
                         continue;
                     }
@@ -74,7 +78,7 @@ class AiManager
                         // Record error
                         $provider->recordError($response->getError() ?? 'Unknown error');
                         $lastError = $response->getError();
-                        
+
                         // Try next provider
                         continue;
                     }
@@ -84,7 +88,7 @@ class AiManager
                         'provider' => $provider->name,
                         'error' => $e->getMessage()
                     ]);
-                    
+
                     $provider->recordError($e->getMessage());
                     $lastError = $e->getMessage();
                     continue;
@@ -110,7 +114,7 @@ class AiManager
     private function createService(AiProvider $provider): AiServiceInterface
     {
         $serviceClass = $this->serviceMap[$provider->name] ?? null;
-        
+
         if (!$serviceClass || !class_exists($serviceClass)) {
             throw new \Exception("Service not found for provider: {$provider->name}");
         }
@@ -180,7 +184,7 @@ class AiManager
                 'daily_limit' => $provider->daily_limit,
                 'monthly_usage' => $provider->monthly_usage,
                 'monthly_limit' => $provider->monthly_limit,
-                'usage_percentage' => $provider->daily_limit > 0 
+                'usage_percentage' => $provider->daily_limit > 0
                     ? round(($provider->daily_usage / $provider->daily_limit) * 100, 2)
                     : 0,
                 'last_used' => $provider->last_used_at?->diffForHumans(),
@@ -198,7 +202,7 @@ class AiManager
     {
         $errors = $provider->error_counts ?? [];
         $today = now()->format('Y-m-d');
-        
+
         return $errors[$today] ?? 0;
     }
 
@@ -217,5 +221,41 @@ class AiManager
         } catch (\Exception $e) {
             return AiResponse::error($e->getMessage());
         }
+    }
+
+    /**
+     * Check if chatbot is available (has at least one working provider)
+     */
+    public function isChatbotAvailable(): bool
+    {
+        // Check if chatbot is enabled in settings
+        $chatbotEnabled = \App\Models\Setting::where('key', 'chatbot_enabled')->value('value') ?? 'true';
+
+        if ($chatbotEnabled !== 'true') {
+            return false;
+        }
+
+        return AiProvider::where('is_active', true)
+            ->where('api_key', '!=', '')
+            ->where('api_key', 'not like', '%your-%')
+            ->exists();
+    }
+
+    /**
+     * Get chatbot status for frontend
+     */
+    public function getChatbotStatus(): array
+    {
+        $available = $this->isChatbotAvailable();
+        $providers = AiProvider::where('is_active', true)
+            ->where('api_key', '!=', '')
+            ->where('api_key', 'not like', '%your-%')
+            ->get();
+
+        return [
+            'available' => $available,
+            'provider_count' => $providers->count(),
+            'providers' => $providers->pluck('display_name')->toArray(),
+        ];
     }
 }
