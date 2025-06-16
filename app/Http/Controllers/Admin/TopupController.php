@@ -51,10 +51,27 @@ class TopupController extends Controller
             $query->where('amount', '<=', $request->jumlah_max);
         }
 
-        $topups = $query->latest()->paginate(20)->appends($request->query());
+        $topups = $query->latest()->paginate(10)->appends($request->query());
 
         // Get statistics for all topups (not just filtered ones)
         $allTopups = TopupRequest::with('user')->get();
+
+        // Handle AJAX request
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'html' => view('admin.topup.partials.table', compact('topups'))->render(),
+                'pagination_html' => view('admin.topup.partials.pagination', compact('topups'))->render(),
+                'pagination' => [
+                    'current_page' => $topups->currentPage(),
+                    'last_page' => $topups->lastPage(),
+                    'per_page' => $topups->perPage(),
+                    'total' => $topups->total(),
+                    'from' => $topups->firstItem(),
+                    'to' => $topups->lastItem()
+                ]
+            ]);
+        }
 
         return view('admin.topup.index', compact('topups', 'allTopups'));
     }

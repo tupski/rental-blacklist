@@ -10,6 +10,25 @@
 
 @push('styles')
 <style>
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .loading-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 0.5rem;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
     .table th {
         border-top: none;
         font-weight: 600;
@@ -56,10 +75,26 @@
     .text-truncate {
         max-width: 200px;
     }
+    .table-row-hover:hover {
+        background-color: #f8f9fa;
+    }
+    .empty-state {
+        padding: 2rem;
+    }
 </style>
 @endpush
 
 @section('content')
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay d-none">
+    <div class="loading-content">
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <p class="mt-2">Memuat data...</p>
+    </div>
+</div>
+
 <!-- Statistics Cards -->
 <div class="row mb-4">
     <div class="col-lg-3 col-6">
@@ -112,7 +147,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Daftar Permintaan Topup</h3>
+                <h3 class="card-title" id="dataCount">Daftar Permintaan Topup ({{ $topups->total() }} data)</h3>
                 <div class="card-tools">
                     <button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#filterCollapse">
                         <i class="fas fa-filter"></i> Filter & Pencarian
@@ -121,184 +156,125 @@
             </div>
 
             <!-- Filter Section -->
-            <div class="collapse {{ request()->hasAny(['status', 'invoice', 'user', 'tanggal_dari', 'tanggal_sampai', 'jumlah_min', 'jumlah_max']) ? 'show' : '' }}" id="filterCollapse">
+            <div class="collapse show" id="filterCollapse">
                 <div class="card-body border-bottom">
-                    <form method="GET" action="{{ route('admin.isi-saldo.indeks') }}" id="filterForm">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="invoice">Nomor Invoice</label>
-                                    <input type="text" class="form-control form-control-sm" id="invoice" name="invoice"
-                                           value="{{ request('invoice') }}" placeholder="Cari nomor invoice...">
-                                </div>
+                    <!-- Quick Filters -->
+                    <div class="mb-3">
+                        <small class="text-muted">Filter Cepat:</small>
+                        <div class="btn-group btn-group-sm ml-2" role="group">
+                            <button type="button" class="btn btn-outline-warning quick-filter" data-status="pending">
+                                <i class="fas fa-clock"></i> Pending
+                            </button>
+                            <button type="button" class="btn btn-outline-info quick-filter" data-status="pending_confirmation">
+                                <i class="fas fa-hourglass-half"></i> Menunggu Konfirmasi
+                            </button>
+                            <button type="button" class="btn btn-outline-success quick-filter" data-status="confirmed">
+                                <i class="fas fa-check"></i> Confirmed
+                            </button>
+                            <button type="button" class="btn btn-outline-danger quick-filter" data-status="rejected">
+                                <i class="fas fa-times"></i> Rejected
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary quick-filter" data-status="">
+                                <i class="fas fa-list"></i> Semua
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Filters -->
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="invoice">Nomor Invoice</label>
+                                <input type="text" class="form-control form-control-sm" id="invoice" name="invoice"
+                                       placeholder="Cari nomor invoice...">
                             </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="user">Nama/Email User</label>
-                                    <input type="text" class="form-control form-control-sm" id="user" name="user"
-                                           value="{{ request('user') }}" placeholder="Cari nama atau email...">
-                                </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="user">Nama/Email User</label>
+                                <input type="text" class="form-control form-control-sm" id="user" name="user"
+                                       placeholder="Cari nama atau email...">
                             </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label for="status">Status</label>
-                                    <select class="form-control form-control-sm" id="status" name="status">
-                                        <option value="">Semua Status</option>
-                                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                                        <option value="pending_confirmation" {{ request('status') == 'pending_confirmation' ? 'selected' : '' }}>Menunggu Konfirmasi</option>
-                                        <option value="confirmed" {{ request('status') == 'confirmed' ? 'selected' : '' }}>Confirmed</option>
-                                        <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
-                                        <option value="expired" {{ request('status') == 'expired' ? 'selected' : '' }}>Expired</option>
-                                    </select>
-                                </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="status">Status</label>
+                                <select class="form-control form-control-sm" id="status" name="status">
+                                    <option value="">Semua Status</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="pending_confirmation">Menunggu Konfirmasi</option>
+                                    <option value="confirmed">Confirmed</option>
+                                    <option value="rejected">Rejected</option>
+                                    <option value="expired">Expired</option>
+                                </select>
                             </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label for="tanggal_dari">Tanggal Dari</label>
-                                    <input type="date" class="form-control form-control-sm" id="tanggal_dari" name="tanggal_dari"
-                                           value="{{ request('tanggal_dari') }}">
-                                </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="tanggal_dari">Tanggal Dari</label>
+                                <input type="date" class="form-control form-control-sm" id="tanggal_dari" name="tanggal_dari">
                             </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label for="tanggal_sampai">Tanggal Sampai</label>
-                                    <input type="date" class="form-control form-control-sm" id="tanggal_sampai" name="tanggal_sampai"
-                                           value="{{ request('tanggal_sampai') }}">
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="tanggal_sampai">Tanggal Sampai</label>
+                                <input type="date" class="form-control form-control-sm" id="tanggal_sampai" name="tanggal_sampai">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="jumlah_min">Jumlah Min</label>
+                                <input type="number" class="form-control form-control-sm" id="jumlah_min" name="jumlah_min"
+                                       placeholder="0">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="jumlah_max">Jumlah Max</label>
+                                <input type="number" class="form-control form-control-sm" id="jumlah_max" name="jumlah_max"
+                                       placeholder="999999999">
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label>&nbsp;</label>
+                                <div class="d-flex">
+                                    <button type="button" class="btn btn-primary btn-sm mr-2" id="searchBtn">
+                                        <i class="fas fa-search"></i> Cari
+                                    </button>
+                                    <button type="button" class="btn btn-secondary btn-sm" id="resetBtn">
+                                        <i class="fas fa-times"></i> Reset
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label for="jumlah_min">Jumlah Min</label>
-                                    <input type="number" class="form-control form-control-sm" id="jumlah_min" name="jumlah_min"
-                                           value="{{ request('jumlah_min') }}" placeholder="0">
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label for="jumlah_max">Jumlah Max</label>
-                                    <input type="number" class="form-control form-control-sm" id="jumlah_max" name="jumlah_max"
-                                           value="{{ request('jumlah_max') }}" placeholder="999999999">
-                                </div>
-                            </div>
-                            <div class="col-md-8">
-                                <div class="form-group">
-                                    <label>&nbsp;</label>
-                                    <div class="d-flex">
-                                        <button type="submit" class="btn btn-primary btn-sm mr-2">
-                                            <i class="fas fa-search"></i> Cari
-                                        </button>
-                                        <a href="{{ route('admin.isi-saldo.indeks') }}" class="btn btn-secondary btn-sm">
-                                            <i class="fas fa-times"></i> Reset
-                                        </a>
-                                    </div>
-                                </div>
+                    </div>
+
+                    <!-- Reset Filter Row (Hidden by default) -->
+                    <div class="row" id="resetFilterRow" style="display: none;">
+                        <div class="col-12">
+                            <div class="alert alert-info mb-0">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                Filter aktif diterapkan.
+                                <button type="button" class="btn btn-sm btn-outline-info ml-2" id="resetBtn2">
+                                    <i class="fas fa-times"></i> Reset Semua Filter
+                                </button>
                             </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped" id="topupTable">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Invoice</th>
-                                <th>User</th>
-                                <th>Jumlah</th>
-                                <th>Metode Pembayaran</th>
-                                <th>Status</th>
-                                <th>Tanggal Request</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($topups as $topup)
-                            <tr>
-                                <td>{{ $topup->id }}</td>
-                                <td>
-                                    <strong class="text-primary invoice-number">{{ $topup->invoice_number }}</strong>
-                                    <br><small class="text-muted">{{ $topup->created_at->format('d/m/Y H:i') }}</small>
-                                </td>
-                                <td>
-                                    <strong>{{ $topup->user->name }}</strong><br>
-                                    <small class="text-muted">{{ $topup->user->email }}</small>
-                                </td>
-                                <td>
-                                    <strong class="text-success">Rp {{ number_format($topup->amount, 0, ',', '.') }}</strong>
-                                </td>
-                                <td>
-                                    <span class="badge badge-info">{{ ucfirst($topup->payment_method) }}</span>
-                                    @if($topup->payment_channel)
-                                        <br><small class="text-muted">{{ $topup->payment_channel }}</small>
-                                    @endif
-                                </td>
-                                <td>
-                                    <span class="badge badge-{{ $topup->status_color }}">{{ $topup->status_text }}</span>
-                                </td>
-                                <td>
-                                    {{ $topup->created_at->format('d/m/Y H:i') }}
-                                    @if($topup->confirmed_at)
-                                        <br><small class="text-success">Dikonfirmasi: {{ $topup->confirmed_at->format('d/m/Y H:i') }}</small>
-                                    @endif
-                                </td>
-                                <td>
-                                    <div class="btn-group" role="group">
-                                        <a href="{{ route('admin.isi-saldo.tampil', $topup->id) }}"
-                                           class="btn btn-info btn-sm" title="Lihat Detail">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-
-                                        @if($topup->status === 'pending')
-                                            <button type="button" class="btn btn-success btn-sm"
-                                                    onclick="approveTopup({{ $topup->id }})" title="Approve">
-                                                <i class="fas fa-check"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-danger btn-sm"
-                                                    onclick="rejectTopup({{ $topup->id }})" title="Reject">
-                                                <i class="fas fa-times"></i>
-                                            </button>
-                                        @endif
-
-                                        <form action="{{ route('admin.isi-saldo.hapus', $topup->id) }}"
-                                              method="POST" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm"
-                                                    title="Hapus" onclick="return confirm('Hapus data topup ini?')">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="8" class="text-center">
-                                    <div class="py-4">
-                                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                                        <h5 class="text-muted">Tidak ada data topup</h5>
-                                        @if(request()->hasAny(['status', 'invoice', 'user', 'tanggal_dari', 'tanggal_sampai', 'jumlah_min', 'jumlah_max']))
-                                            <p class="text-muted">Coba ubah filter pencarian Anda</p>
-                                            <a href="{{ route('admin.isi-saldo.indeks') }}" class="btn btn-sm btn-outline-primary">
-                                                <i class="fas fa-times"></i> Reset Filter
-                                            </a>
-                                        @endif
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+            <!-- Table Content -->
+            <div id="tableContent">
+                @include('admin.topup.partials.table', ['topups' => $topups])
             </div>
-            @if($topups->hasPages())
-            <div class="card-footer">
-                {{ $topups->links() }}
+
+            <!-- Pagination -->
+            <div class="card-footer" id="paginationContainer">
+                @include('admin.topup.partials.pagination', ['topups' => $topups])
             </div>
-            @endif
         </div>
     </div>
 </div>
@@ -362,54 +338,123 @@
 @push('scripts')
 <script>
 $(document).ready(function() {
-    // Initialize DataTable
-    $('#topupTable').DataTable({
-        "responsive": true,
-        "lengthChange": false,
-        "autoWidth": false,
-        "searching": false, // Disable default search since we have custom filters
-        "ordering": true,
-        "info": true,
-        "paging": false,
-        "order": [[ 0, "desc" ]], // Sort by ID descending
-        "columnDefs": [
-            { "orderable": false, "targets": -1 } // Disable sorting on action column
-        ],
-        "language": {
-            "search": "Cari:",
-            "lengthMenu": "Tampilkan _MENU_ data per halaman",
-            "zeroRecords": "Tidak ada data yang ditemukan",
-            "info": "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-            "infoEmpty": "Tidak ada data tersedia",
-            "infoFiltered": "(difilter dari _MAX_ total data)"
+    let currentPage = 1;
+
+    // Load data function
+    function loadData(page = 1) {
+        $('#loadingOverlay').removeClass('d-none');
+
+        const formData = {
+            invoice: $('#invoice').val(),
+            user: $('#user').val(),
+            status: $('#status').val(),
+            tanggal_dari: $('#tanggal_dari').val(),
+            tanggal_sampai: $('#tanggal_sampai').val(),
+            jumlah_min: $('#jumlah_min').val(),
+            jumlah_max: $('#jumlah_max').val(),
+            page: page
+        };
+
+        $.ajax({
+            url: '{{ route('admin.isi-saldo.indeks') }}',
+            method: 'GET',
+            data: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('#tableContent').html(response.html);
+                    $('#paginationContainer').html(response.pagination_html);
+                    updateDataCount(response.pagination.total);
+                    updateResetButton();
+                    currentPage = page;
+                }
+            },
+            error: function(xhr) {
+                console.error('Error loading data:', xhr);
+                alert('Terjadi kesalahan saat memuat data. Silakan coba lagi.');
+            },
+            complete: function() {
+                $('#loadingOverlay').addClass('d-none');
+            }
+        });
+    }
+
+    // Update data count
+    function updateDataCount(total) {
+        $('#dataCount').text('Daftar Permintaan Topup (' + total + ' data)');
+    }
+
+    // Update reset button visibility
+    function updateResetButton() {
+        const hasFilters = $('#invoice').val() || $('#user').val() || $('#status').val() ||
+                          $('#tanggal_dari').val() || $('#tanggal_sampai').val() ||
+                          $('#jumlah_min').val() || $('#jumlah_max').val();
+        if (hasFilters) {
+            $('#resetFilterRow').show();
+        } else {
+            $('#resetFilterRow').hide();
+        }
+    }
+
+    // Search button click
+    $('#searchBtn').on('click', function() {
+        loadData(1);
+    });
+
+    // Auto-submit on select change
+    $('#status, #tanggal_dari, #tanggal_sampai').on('change', function() {
+        loadData(1);
+    });
+
+    // Enter key on search inputs
+    $('#invoice, #user, #jumlah_min, #jumlah_max').on('keypress', function(e) {
+        if (e.which === 13) {
+            e.preventDefault();
+            loadData(1);
         }
     });
 
-    // Auto-submit form on filter change (with debounce)
-    let filterTimeout;
-    $('#filterForm input, #filterForm select').on('input change', function() {
-        clearTimeout(filterTimeout);
-        filterTimeout = setTimeout(function() {
-            $('#filterForm').submit();
-        }, 500); // 500ms delay
+    // Reset button
+    $('#resetBtn, #resetBtn2').on('click', function() {
+        $('#invoice').val('');
+        $('#user').val('');
+        $('#status').val('');
+        $('#tanggal_dari').val('');
+        $('#tanggal_sampai').val('');
+        $('#jumlah_min').val('');
+        $('#jumlah_max').val('');
+        loadData(1);
     });
 
     // Quick filter buttons
     $('.quick-filter').on('click', function(e) {
         e.preventDefault();
         const status = $(this).data('status');
+
+        // Reset other filters
+        $('#invoice').val('');
+        $('#user').val('');
+        $('#tanggal_dari').val('');
+        $('#tanggal_sampai').val('');
+        $('#jumlah_min').val('');
+        $('#jumlah_max').val('');
+
+        // Set status and load
         $('#status').val(status);
-        $('#filterForm').submit();
+        loadData(1);
+
+        // Update button states
+        $('.quick-filter').removeClass('active');
+        $(this).addClass('active');
     });
 
-    // Clear individual filter
-    $('.clear-filter').on('click', function() {
-        const target = $(this).data('target');
-        $(target).val('');
-        $('#filterForm').submit();
-    });
+    // Initialize
+    updateResetButton();
 });
 
+// Global functions for modal actions
 function approveTopup(topupId) {
     $('#approveForm').attr('action', '/admin/isi-saldo/' + topupId + '/setujui');
     $('#approveModal').modal('show');
@@ -419,38 +464,5 @@ function rejectTopup(topupId) {
     $('#rejectForm').attr('action', '/admin/isi-saldo/' + topupId + '/tolak');
     $('#rejectModal').modal('show');
 }
-
-// Add some quick filter buttons
-function addQuickFilters() {
-    const quickFiltersHtml = `
-        <div class="mb-3">
-            <small class="text-muted">Filter Cepat:</small>
-            <div class="btn-group btn-group-sm ml-2" role="group">
-                <button type="button" class="btn btn-outline-warning quick-filter" data-status="pending">
-                    <i class="fas fa-clock"></i> Pending
-                </button>
-                <button type="button" class="btn btn-outline-info quick-filter" data-status="pending_confirmation">
-                    <i class="fas fa-hourglass-half"></i> Menunggu Konfirmasi
-                </button>
-                <button type="button" class="btn btn-outline-success quick-filter" data-status="confirmed">
-                    <i class="fas fa-check"></i> Confirmed
-                </button>
-                <button type="button" class="btn btn-outline-danger quick-filter" data-status="rejected">
-                    <i class="fas fa-times"></i> Rejected
-                </button>
-                <button type="button" class="btn btn-outline-secondary quick-filter" data-status="">
-                    <i class="fas fa-list"></i> Semua
-                </button>
-            </div>
-        </div>
-    `;
-
-    $('#filterCollapse .card-body').prepend(quickFiltersHtml);
-}
-
-// Initialize quick filters after DOM is ready
-$(document).ready(function() {
-    addQuickFilters();
-});
 </script>
 @endpush
