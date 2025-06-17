@@ -377,6 +377,13 @@
                             Verifikasi
                         </a>
                     </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('blog.*') ? 'active fw-bold' : '' }}" href="{{ route('blog.indeks') }}">
+                            <i class="fas fa-blog me-1"></i>
+                            Blog
+                        </a>
+                    </li>
                     @auth
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('dasbor*') ? 'active fw-bold' : '' }}" href="{{ route('dasbor') }}">
@@ -520,6 +527,7 @@
                         <li class="mb-2"><a href="{{ route('beranda') }}">Cek Blacklist</a></li>
                         <li class="mb-2"><a href="{{ route('rental.daftar') }}">Daftar Rental</a></li>
                         <li class="mb-2"><a href="{{ route('laporan.buat') }}">Lapor Masalah</a></li>
+                        <li class="mb-2"><a href="{{ route('blog.indeks') }}">Blog</a></li>
                         <li class="mb-2"><a href="{{ route('api.dokumentasi') }}">API Access</a></li>
                     </ul>
                 </div>

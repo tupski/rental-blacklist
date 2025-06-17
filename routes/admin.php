@@ -15,6 +15,8 @@ use App\Http\Controllers\Admin\PaymentSettingController as AdminPaymentSettingCo
 use App\Http\Controllers\Admin\DatabaseSettingController as AdminDatabaseSettingController;
 use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
+use App\Http\Controllers\Admin\BlogController as AdminBlogController;
+use App\Http\Controllers\Admin\BlogCategoryController as AdminBlogCategoryController;
 
 
 /*
@@ -107,6 +109,50 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('isi-saldo/{topup}/setujui', [AdminTopupController::class, 'approve'])->name('isi-saldo.setujui');
     Route::post('isi-saldo/{topup}/tolak', [AdminTopupController::class, 'reject'])->name('isi-saldo.tolak');
     Route::delete('isi-saldo/{topup}', [AdminTopupController::class, 'destroy'])->name('isi-saldo.hapus');
+
+    // Blog Management
+    Route::resource('blog', AdminBlogController::class)->parameters([
+        'blog' => 'post'
+    ])->names([
+        'index' => 'blog.indeks',
+        'create' => 'blog.buat',
+        'store' => 'blog.simpan',
+        'show' => 'blog.tampil',
+        'edit' => 'blog.edit',
+        'update' => 'blog.perbarui',
+        'destroy' => 'blog.hapus'
+    ]);
+    Route::post('blog/{post}/auto-save', [AdminBlogController::class, 'autoSave'])->name('blog.auto-save');
+    Route::post('blog/generate-slug', [AdminBlogController::class, 'generateSlug'])->name('blog.generate-slug');
+    Route::post('blog/analyze-seo', [AdminBlogController::class, 'analyzeSeo'])->name('blog.analyze-seo');
+    Route::post('blog/upload-image', [AdminBlogController::class, 'uploadImage'])->name('blog.upload-image');
+    Route::get('blog/data', [AdminBlogController::class, 'getData'])->name('blog.data');
+
+    // Blog Comments Management
+    Route::prefix('blog/komentar')->name('blog.komentar.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\BlogCommentController::class, 'index'])->name('indeks');
+        Route::get('/data', [App\Http\Controllers\Admin\BlogCommentController::class, 'getData'])->name('data');
+        Route::get('/{comment}', [App\Http\Controllers\Admin\BlogCommentController::class, 'show'])->name('tampil');
+        Route::post('/{comment}/setujui', [App\Http\Controllers\Admin\BlogCommentController::class, 'approve'])->name('setujui');
+        Route::post('/{comment}/tolak', [App\Http\Controllers\Admin\BlogCommentController::class, 'reject'])->name('tolak');
+        Route::post('/{comment}/spam', [App\Http\Controllers\Admin\BlogCommentController::class, 'spam'])->name('spam');
+        Route::delete('/{comment}', [App\Http\Controllers\Admin\BlogCommentController::class, 'destroy'])->name('hapus');
+        Route::post('/bulk-action', [App\Http\Controllers\Admin\BlogCommentController::class, 'bulkAction'])->name('bulk-action');
+    });
+
+    // Blog Categories Management
+    Route::resource('blog/kategori', AdminBlogCategoryController::class)->parameters([
+        'kategori' => 'category'
+    ])->names([
+        'index' => 'blog.kategori.indeks',
+        'create' => 'blog.kategori.buat',
+        'store' => 'blog.kategori.simpan',
+        'show' => 'blog.kategori.tampil',
+        'edit' => 'blog.kategori.edit',
+        'update' => 'blog.kategori.perbarui',
+        'destroy' => 'blog.kategori.hapus'
+    ]);
+    Route::post('blog/kategori/generate-slug', [AdminBlogCategoryController::class, 'generateSlug'])->name('blog.kategori.generate-slug');
 
     // Settings - General (keep for backward compatibility)
     Route::get('pengaturan', [AdminSettingController::class, 'index'])->name('pengaturan.indeks');

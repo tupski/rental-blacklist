@@ -14,6 +14,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PublicRentalController;
 use App\Http\Controllers\RegionController;
+use App\Http\Controllers\BlogController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -79,6 +80,15 @@ Route::post('/chatbot/send', [App\Http\Controllers\ChatbotController::class, 'se
 Route::get('/chatbot/status', [App\Http\Controllers\ChatbotController::class, 'getStatus'])->name('chatbot.status');
 Route::post('/chatbot/clear-history', [App\Http\Controllers\ChatbotController::class, 'clearHistory'])->name('chatbot.clear-history');
 Route::get('/chatbot/history', [App\Http\Controllers\ChatbotController::class, 'getHistory'])->name('chatbot.history');
+
+// Blog routes (public access)
+Route::prefix('blog')->name('blog.')->group(function () {
+    Route::get('/', [BlogController::class, 'index'])->name('indeks');
+    Route::get('/cari', [BlogController::class, 'search'])->name('cari');
+    Route::get('/kategori/{slug}', [BlogController::class, 'category'])->name('kategori');
+    Route::get('/sitemap.xml', [BlogController::class, 'sitemap'])->name('sitemap');
+    Route::get('/{kategori}/{slug}', [BlogController::class, 'show'])->name('detail');
+});
 
 /*
 |--------------------------------------------------------------------------

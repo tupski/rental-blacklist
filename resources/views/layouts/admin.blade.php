@@ -456,6 +456,49 @@
                         </a>
                     </li>
 
+                    <!-- Manajemen Blog -->
+                    <li class="nav-item {{ request()->routeIs('admin.blog*') ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ request()->routeIs('admin.blog*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-blog"></i>
+                            <p>
+                                Manajemen Blog
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.blog.indeks') }}" class="nav-link {{ request()->routeIs('admin.blog.indeks') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Daftar Artikel</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.blog.buat') }}" class="nav-link {{ request()->routeIs('admin.blog.buat') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Tulis Artikel</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.blog.kategori.indeks') }}" class="nav-link {{ request()->routeIs('admin.blog.kategori*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Kategori</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.blog.komentar.indeks') }}" class="nav-link {{ request()->routeIs('admin.blog.komentar*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Komentar</p>
+                                    @php
+                                        $pendingComments = \App\Models\BlogComment::where('status', 'pending')->count();
+                                    @endphp
+                                    @if($pendingComments > 0)
+                                        <span class="badge badge-warning right">{{ $pendingComments }}</span>
+                                    @endif
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
                     <!-- Laporan & Analitik -->
                     <li class="nav-item {{ request()->routeIs('admin.reports*') || request()->routeIs('admin.analytics*') ? 'menu-open' : '' }}">
                         <a href="#" class="nav-link {{ request()->routeIs('admin.reports*') || request()->routeIs('admin.analytics*') ? 'active' : '' }}">
