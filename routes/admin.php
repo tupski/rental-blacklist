@@ -6,7 +6,6 @@ use App\Http\Controllers\Admin\BlacklistController as AdminBlacklistController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\GuestReportController as AdminGuestReportController;
 use App\Http\Controllers\Admin\SponsorController as AdminSponsorController;
-use App\Http\Controllers\Admin\TopupController as AdminTopupController;
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
 use App\Http\Controllers\Admin\ApplicationSettingController as AdminApplicationSettingController;
 use App\Http\Controllers\Admin\SystemSettingController as AdminSystemSettingController;
@@ -102,13 +101,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         'destroy' => 'sponsor.hapus'
     ]);
     Route::post('sponsor/{sponsor}/ubah-status', [AdminSponsorController::class, 'toggleStatus'])->name('sponsor.ubah-status');
-
-    // Topup Management
-    Route::get('isi-saldo', [AdminTopupController::class, 'index'])->name('isi-saldo.indeks');
-    Route::get('isi-saldo/{topup}', [AdminTopupController::class, 'show'])->name('isi-saldo.tampil');
-    Route::post('isi-saldo/{topup}/setujui', [AdminTopupController::class, 'approve'])->name('isi-saldo.setujui');
-    Route::post('isi-saldo/{topup}/tolak', [AdminTopupController::class, 'reject'])->name('isi-saldo.tolak');
-    Route::delete('isi-saldo/{topup}', [AdminTopupController::class, 'destroy'])->name('isi-saldo.hapus');
 
     // Blog Management
     Route::resource('blog', AdminBlogController::class)->parameters([
