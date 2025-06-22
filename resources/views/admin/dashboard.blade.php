@@ -52,19 +52,7 @@
         </div>
     </div>
     <!-- ./col -->
-    <div class="col-lg-3 col-6">
-        <!-- small box -->
-        <div class="small-box bg-danger">
-            <div class="inner">
-                <h3>{{ $stats['pending_topups'] ?? 0 }}</h3>
-                <p>Pending Topups</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-credit-card"></i>
-            </div>
-            <a href="{{ route('admin.isi-saldo.indeks') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
+
     <!-- ./col -->
 </div>
 <!-- /.row -->

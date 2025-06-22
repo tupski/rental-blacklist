@@ -448,13 +448,7 @@
                         </ul>
                     </li>
 
-                    <!-- Manajemen Topup -->
-                    <li class="nav-item">
-                        <a href="{{ route('admin.isi-saldo.indeks') }}" class="nav-link {{ request()->routeIs('admin.isi-saldo*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-credit-card"></i>
-                            <p>Manajemen Topup</p>
-                        </a>
-                    </li>
+
 
                     <!-- Manajemen Blog -->
                     <li class="nav-item {{ request()->routeIs('admin.blog*') ? 'menu-open' : '' }}">
@@ -877,20 +871,7 @@ $(document).ready(function() {
                 // Arahkan ke halaman persetujuan akun
                 return '{{ route("admin.persetujuan-akun.indeks") }}';
 
-            case 'App\\Notifications\\TopupRequestNotification':
-            case 'App\\Notifications\\NewTopupNotification':
-                // Arahkan ke halaman topup dengan filter pending
-                if (data.topup_id) {
-                    return `{{ route("admin.isi-saldo.tampil", ":id") }}`.replace(':id', data.topup_id);
-                }
-                return '{{ route("admin.isi-saldo.indeks") }}?status=pending';
 
-            case 'App\\Notifications\\TopupStatusNotification':
-                // Arahkan ke detail topup
-                if (data.topup_id) {
-                    return `{{ route("admin.isi-saldo.tampil", ":id") }}`.replace(':id', data.topup_id);
-                }
-                return '{{ route("admin.isi-saldo.indeks") }}';
 
             case 'App\\Notifications\\BlacklistReportNotification':
                 // Arahkan ke laporan guest

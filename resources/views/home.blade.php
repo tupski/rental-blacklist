@@ -17,8 +17,7 @@
 <!-- Email Verification Alert -->
 @include('components.email-verification-alert')
 
-<!-- Low Balance Alert -->
-@include('components.low-balance-alert')
+
 
 <!-- Hero Section -->
 <div class="bg-gradient-to-br from-danger-subtle to-warning-subtle min-vh-100">
@@ -314,32 +313,32 @@
                 <div class="card border-0 shadow-lg h-100">
                     <div class="card-body p-4">
                         <h4 class="card-title fw-bold mb-4">
-                            <i class="fas fa-eye text-info me-2"></i>
-                            Untuk Pengguna Umum
+                            <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                            Laporkan Pelanggan Bermasalah
                         </h4>
                         <ul class="list-unstyled">
                             <li class="d-flex align-items-start mb-3">
-                                <i class="fas fa-search text-primary me-3 mt-1"></i>
-                                <span>Cari data dengan NIK atau nama</span>
+                                <i class="fas fa-plus text-primary me-3 mt-1"></i>
+                                <span>Tambah laporan tanpa perlu login</span>
                             </li>
                             <li class="d-flex align-items-start mb-3">
-                                <i class="fas fa-eye-slash text-warning me-3 mt-1"></i>
-                                <span>Data ditampilkan dengan sensor</span>
+                                <i class="fas fa-shield-alt text-success me-3 mt-1"></i>
+                                <span>Bantu sesama pengusaha rental</span>
                             </li>
                             <li class="d-flex align-items-start mb-3">
-                                <i class="fas fa-credit-card text-success me-3 mt-1"></i>
-                                <span>Beli kredit untuk lihat data lengkap</span>
+                                <i class="fas fa-database text-info me-3 mt-1"></i>
+                                <span>Data tersimpan aman dan terverifikasi</span>
                             </li>
                             <li class="d-flex align-items-start mb-3">
-                                <i class="fas fa-shield-alt text-danger me-3 mt-1"></i>
-                                <span>Data terverifikasi dan terpercaya</span>
+                                <i class="fas fa-users text-warning me-3 mt-1"></i>
+                                <span>Lindungi komunitas rental Indonesia</span>
                             </li>
                         </ul>
                         <div class="mt-4">
-                            <button class="btn btn-info btn-lg">
-                                <i class="fas fa-coins me-2"></i>
-                                Beli Kredit
-                            </button>
+                            <a href="{{ route('tamu.lapor') }}" class="btn btn-warning btn-lg">
+                                <i class="fas fa-plus me-2"></i>
+                                Buat Laporan
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -464,16 +463,16 @@
 
                 <div class="d-flex gap-2">
                     @auth
-                        @if(Auth::user()->role === 'user')
-                            <button type="button" class="btn btn-outline-danger" id="unlockDetailBtn" onclick="confirmUnlockDetail()">
+                        @if(Auth::user()->role === 'pengusaha_rental')
+                            <button type="button" class="btn btn-outline-success" id="unlockDetailBtn" onclick="confirmUnlockDetail()">
                                 <i class="fas fa-eye me-2"></i>
-                                Lihat Detail Lengkap
+                                Lihat Detail Lengkap (Gratis)
                             </button>
                         @endif
                     @else
-                        <button type="button" class="btn btn-success" onclick="showFullAccess()">
-                            <i class="fas fa-unlock me-2"></i>
-                            Akses Penuh
+                        <button type="button" class="btn btn-primary" onclick="showRegistrationInfo()">
+                            <i class="fas fa-user-plus me-2"></i>
+                            Daftar untuk Akses Penuh
                         </button>
                     @endauth
 
@@ -490,47 +489,63 @@
     </div>
 </div>
 
-@auth
-@if(Auth::user()->role === 'user')
-<!-- Unlock Confirmation Modal -->
-<div class="modal fade" id="unlockConfirmModal" tabindex="-1">
+<!-- Registration Info Modal -->
+<div class="modal fade" id="registrationInfoModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">
-                    <i class="fas fa-unlock text-warning me-2"></i>
-                    Konfirmasi Buka Detail
+                    <i class="fas fa-user-plus text-primary me-2"></i>
+                    Akses Penuh untuk Pemilik Rental
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <div class="alert alert-warning">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    <strong>Perhatian!</strong> Tindakan ini akan memotong saldo Anda.
+                <div class="alert alert-success">
+                    <i class="fas fa-gift me-2"></i>
+                    <strong>100% GRATIS!</strong> Daftar sebagai pemilik rental dan dapatkan akses penuh tanpa biaya.
                 </div>
-                <p>Anda akan membuka detail lengkap untuk:</p>
-                <ul>
-                    <li><strong>Nama:</strong> <span id="confirm-name"></span></li>
-                    <li><strong>Jenis Rental:</strong> <span id="confirm-rental"></span></li>
-                    <li><strong>Biaya:</strong> <span id="confirm-price" class="text-danger fw-bold"></span></li>
+
+                <h6 class="fw-bold mb-3">Keuntungan Daftar sebagai Pemilik Rental:</h6>
+                <ul class="list-unstyled">
+                    <li class="d-flex align-items-start mb-2">
+                        <i class="fas fa-check text-success me-3 mt-1"></i>
+                        <span>Akses gratis ke semua data blacklist</span>
+                    </li>
+                    <li class="d-flex align-items-start mb-2">
+                        <i class="fas fa-check text-success me-3 mt-1"></i>
+                        <span>Lihat data lengkap tanpa sensor</span>
+                    </li>
+                    <li class="d-flex align-items-start mb-2">
+                        <i class="fas fa-check text-success me-3 mt-1"></i>
+                        <span>Download dan print laporan</span>
+                    </li>
+                    <li class="d-flex align-items-start mb-2">
+                        <i class="fas fa-check text-success me-3 mt-1"></i>
+                        <span>Tambah laporan pelanggan bermasalah</span>
+                    </li>
+                    <li class="d-flex align-items-start mb-2">
+                        <i class="fas fa-check text-success me-3 mt-1"></i>
+                        <span>Kelola data laporan Anda</span>
+                    </li>
                 </ul>
-                <p class="text-muted small">
-                    Setelah membuka detail, Anda akan melihat data lengkap termasuk alamat dan kronologi kejadian.
-                </p>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Catatan:</strong> Pendaftaran memerlukan verifikasi dokumen legalitas usaha rental.
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="fas fa-times me-2"></i>Batal
+                    <i class="fas fa-times me-2"></i>Tutup
                 </button>
-                <button type="button" class="btn btn-warning" id="confirmUnlockBtn">
-                    <i class="fas fa-unlock me-2"></i>Ya, Buka Detail
-                </button>
+                <a href="{{ route('daftar') }}" class="btn btn-primary">
+                    <i class="fas fa-user-plus me-2"></i>Daftar Sekarang
+                </a>
             </div>
         </div>
     </div>
 </div>
-@endif
-@endauth
 
 @endsection
 
@@ -841,11 +856,12 @@ $(document).ready(function() {
                         </div>
                     `);
 
-                    // Show/hide buttons based on user role and unlock status
+                    // Show/hide buttons based on user role and access
                     @auth
-                        @if(Auth::user()->role === 'user')
-                            if (data.is_full_access) {
-                                $('#unlockDetailBtn').hide();
+                        @if(Auth::user()->role === 'pengusaha_rental')
+                            // Rental owners can access media and print if active
+                            if (data.can_access_media) {
+                                $('#unlockDetailBtn').show();
                                 $('#printDetailBtn').removeClass('d-none');
                                 $('#downloadPdfBtn').removeClass('d-none');
                             } else {
@@ -854,11 +870,13 @@ $(document).ready(function() {
                                 $('#downloadPdfBtn').addClass('d-none');
                             }
                         @else
+                            // Admin always has full access
                             $('#unlockDetailBtn').hide();
                             $('#printDetailBtn').removeClass('d-none');
                             $('#downloadPdfBtn').removeClass('d-none');
                         @endif
                     @else
+                        // Guest users - show registration info
                         $('#unlockDetailBtn').hide();
                         $('#printDetailBtn').addClass('d-none');
                         $('#downloadPdfBtn').addClass('d-none');
@@ -877,13 +895,14 @@ $(document).ready(function() {
         });
     };
 
-    // Show full access info
-    window.showFullAccess = function() {
-        alert('Untuk akses penuh:\n\n1. Daftar sebagai rental (GRATIS)\n2. Beli kredit untuk akses sekali pakai\n\nKlik "Daftar Rental" di menu untuk mendaftar gratis!');
+    // Show registration info
+    window.showRegistrationInfo = function() {
+        const modal = new bootstrap.Modal(document.getElementById('registrationInfoModal'));
+        modal.show();
     };
 
     @auth
-    @if(Auth::user()->role === 'user')
+    @if(Auth::user()->role === 'pengusaha_rental')
     // View detail with unlock option for regular users
     window.viewDetailWithUnlock = function(id, jenisRental) {
         currentDetailId = id;
@@ -964,22 +983,12 @@ $(document).ready(function() {
         });
     };
 
-    // Confirm unlock detail
+    // Confirm unlock detail (free for rental owners)
     window.confirmUnlockDetail = function() {
         if (!currentDetailData) return;
 
-        const price = getPriceByRental(currentDetailData.jenis_rental);
-
-        // Update price in modal footer
-        $('#unlockPrice').text('Rp ' + price.toLocaleString('id-ID'));
-
-        $('#confirm-name').text(currentDetailData.nama_lengkap);
-        $('#confirm-rental').text(currentDetailData.jenis_rental);
-        $('#confirm-price').text('Rp ' + price.toLocaleString('id-ID'));
-
-        $('#detailModal').modal('hide');
-        const confirmModal = new bootstrap.Modal(document.getElementById('unlockConfirmModal'));
-        confirmModal.show();
+        // For rental owners, unlock is free
+        unlockDetail(currentDetailData.id);
     };
 
     // Handle confirm unlock
@@ -1319,14 +1328,7 @@ $(document).ready(function() {
         }, 5000);
     }
 
-    function getPriceByRental(rental) {
-        const priceMap = {
-            'Rental Mobil': {{ \App\Models\Setting::get('price_rental_mobil', 1500) }},
-            'Rental Motor': {{ \App\Models\Setting::get('price_rental_motor', 1500) }},
-            'Kamera': {{ \App\Models\Setting::get('price_kamera', 1000) }}
-        };
-        return priceMap[rental] || {{ \App\Models\Setting::get('price_lainnya', 800) }};
-    }
+
     @endif
     @endauth
 

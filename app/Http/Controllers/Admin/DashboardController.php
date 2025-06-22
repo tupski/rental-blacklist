@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\RentalBlacklist;
 use App\Models\User;
 use App\Models\GuestReport;
-use App\Models\TopupRequest;
+
 
 class DashboardController extends Controller
 {
@@ -18,7 +18,6 @@ class DashboardController extends Controller
             'total_blacklist' => RentalBlacklist::count(),
             'total_users' => User::where('role', '!=', 'admin')->count(),
             'pending_reports' => GuestReport::where('status', 'pending')->count(),
-            'pending_topups' => TopupRequest::where('status', 'pending')->count(),
         ];
 
         // Get recent blacklist reports

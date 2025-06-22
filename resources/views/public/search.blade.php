@@ -234,15 +234,17 @@
                         </ul>
                         <div class="mt-4">
                             @auth
-                                <a href="{{ route('isi-saldo.indeks') }}" class="btn btn-success">
-                                    <i class="fas fa-coins me-2"></i>
-                                    Beli Kredit
-                                </a>
+                                @if(Auth::user()->role === 'pengusaha_rental')
+                                    <div class="alert alert-success">
+                                        <i class="fas fa-check-circle me-2"></i>
+                                        <strong>Akses Gratis!</strong> Sebagai pemilik rental, Anda mendapat akses gratis ke semua data.
+                                    </div>
+                                @endif
                             @else
-                                <button class="btn btn-success" onclick="alert('Silakan login terlebih dahulu untuk membeli kredit')">
-                                    <i class="fas fa-coins me-2"></i>
-                                    Beli Kredit
-                                </button>
+                                <a href="{{ route('daftar') }}" class="btn btn-primary">
+                                    <i class="fas fa-user-plus me-2"></i>
+                                    Daftar Sebagai Pemilik Rental
+                                </a>
                             @endauth
                         </div>
                     </div>

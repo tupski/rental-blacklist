@@ -99,37 +99,29 @@
                 <h3 class="card-title">Aktivitas Terbaru</h3>
             </div>
             <div class="card-body">
-                @if($user->balanceTransactions->count() > 0)
+                @if($user->userUnlocks->count() > 0)
                     <div class="table-responsive">
                         <table class="table table-sm">
                             <thead>
                                 <tr>
                                     <th>Tanggal</th>
-                                    <th>Tipe</th>
-                                    <th>Jumlah</th>
-                                    <th>Deskripsi</th>
+                                    <th>Data yang Dibuka</th>
+                                    <th>Jumlah Bayar</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($user->balanceTransactions->take(10) as $transaction)
+                                @foreach($user->userUnlocks->take(10) as $unlock)
                                 <tr>
-                                    <td>{{ $transaction->created_at->format('d/m/Y H:i') }}</td>
-                                    <td>
-                                        @if($transaction->type === 'topup')
-                                            <span class="badge badge-success">Topup</span>
-                                        @else
-                                            <span class="badge badge-danger">Penggunaan</span>
-                                        @endif
-                                    </td>
-                                    <td>Rp {{ number_format($transaction->amount, 0, ',', '.') }}</td>
-                                    <td>{{ $transaction->description }}</td>
+                                    <td>{{ $unlock->unlocked_at->format('d/m/Y H:i') }}</td>
+                                    <td>{{ $unlock->blacklist->nama_lengkap ?? 'Data tidak tersedia' }}</td>
+                                    <td>{{ $unlock->formatted_amount }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
                 @else
-                    <p class="text-muted">Belum ada aktivitas</p>
+                    <p class="text-muted">Belum ada aktivitas unlock data</p>
                 @endif
             </div>
         </div>

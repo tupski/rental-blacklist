@@ -47,13 +47,9 @@
                 <i class="fas fa-user-plus"></i>
                 Cara Daftar
             </button>
-            <button class="quick-btn" data-message="Berapa harga pencarian data?">
-                <i class="fas fa-dollar-sign"></i>
-                Harga
-            </button>
-            <button class="quick-btn" data-message="Bagaimana cara topup saldo?">
-                <i class="fas fa-credit-card"></i>
-                Topup
+            <button class="quick-btn" data-message="Bagaimana cara menggunakan sistem?">
+                <i class="fas fa-question-circle"></i>
+                Cara Pakai
             </button>
             <button class="quick-btn" data-message="Apa itu rental owner?">
                 <i class="fas fa-car"></i>
