@@ -7,11 +7,11 @@ use App\Models\RentalBlacklist;
 use App\Models\Setting;
 use App\Models\Sponsor;
 use App\Models\DocumentVerification;
-use App\Helpers\PhoneHelper;
+
 use Barryvdh\DomPDF\Facade\Pdf;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
-use Endroid\QrCode\Writer\Result\ResultInterface;
+
 
 class PublicController extends Controller
 {
@@ -91,6 +91,9 @@ class PublicController extends Controller
                 // Check if user can access uncensored data
                 $canAccessData = $isAuthenticated && $user->canAccessData();
 
+                // Check if user has limited access (inactive rental owner)
+                $hasLimitedAccess = $isAuthenticated && $user->hasLimitedAccess();
+
                 // Tampilkan data sesuai dengan status akun
                 return [
                     'id' => $item->id,
@@ -105,7 +108,8 @@ class PublicController extends Controller
                     'pelapor' => $item->user->name,
                     'is_verified' => $item->user && $item->user->role === 'pengusaha_rental',
                     'is_unlocked' => $isUnlocked,
-                    'can_access_data' => $canAccessData
+                    'can_access_data' => $canAccessData,
+                    'has_limited_access' => $hasLimitedAccess
                 ];
             });
 
@@ -187,7 +191,6 @@ class PublicController extends Controller
     public function unlockData($id)
     {
         $user = auth()->user();
-        $blacklist = RentalBlacklist::findOrFail($id);
 
         // Check if user can access full features
         if (!$user->canAccessFullFeatures()) {
@@ -206,12 +209,12 @@ class PublicController extends Controller
             ], 403);
         }
 
-        // Check if user is pengusaha_rental (they get free access)
-        if ($user->role === 'pengusaha_rental') {
+        // Only rental owners can unlock data (free access)
+        if ($user->role !== 'pengusaha_rental') {
             return response()->json([
                 'success' => false,
-                'message' => 'Pengusaha rental mendapat akses gratis ke semua data'
-            ]);
+                'message' => 'Hanya pemilik rental yang dapat mengakses data lengkap.'
+            ], 403);
         }
 
         // Check if already unlocked
@@ -222,25 +225,16 @@ class PublicController extends Controller
             ]);
         }
 
-        // Determine price based on rental type
-        $detailPrices = [
-            'Rental Mobil' => 1500,
-            'Rental Motor' => 1500,
-            'Rental Kamera' => 1000,
-            'Rental Lainnya' => 800,
-        ];
-
-        $price = $detailPrices[$blacklist->jenis_rental] ?? 800;
-
         try {
-            $user->unlockData($id, $price, "Unlock data blacklist: {$blacklist->nama_lengkap}");
+            // Free unlock for rental owners
+            $user->unlockData($id);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data berhasil dibuka!',
+                'message' => 'Data berhasil dibuka! (Gratis untuk pemilik rental)',
                 'data' => [
-                    'amount_paid' => $price,
-                    'remaining_balance' => $user->getCurrentBalance()
+                    'amount_paid' => 0,
+                    'access_type' => 'free_rental_owner'
                 ]
             ]);
         } catch (\Exception $e) {
@@ -256,9 +250,10 @@ class PublicController extends Controller
         $user = auth()->user();
         $blacklist = RentalBlacklist::with('user')->findOrFail($id);
 
-        // Check if user has access (active account and unlocked data)
+        // Check if user has access (active account and unlocked data OR limited access)
         $hasAccess = $user && (
             $user->canAccessData() ||
+            $user->hasLimitedAccess() ||
             ($user->isActive() && ($user->hasUnlockedData($id) || $user->hasUnlockedNik($blacklist->nik)))
         );
 
@@ -268,6 +263,9 @@ class PublicController extends Controller
                 'message' => 'Anda tidak memiliki akses ke data lengkap ini'
             ], 403);
         }
+
+        // Check if user can access media files
+        $canAccessMedia = $user->canAccessMediaAndPrint();
 
         // Format data lengkap sesuai dengan semua field dari form lapor
         $data = [
@@ -280,9 +278,9 @@ class PublicController extends Controller
             'no_hp' => $blacklist->no_hp,
             'alamat' => $blacklist->alamat,
 
-            // Foto Penyewa dan KTP/SIM
-            'foto_penyewa' => $blacklist->foto_penyewa ?: [],
-            'foto_ktp_sim' => $blacklist->foto_ktp_sim ?: [],
+            // Foto Penyewa dan KTP/SIM (only for active rental owners)
+            'foto_penyewa' => $canAccessMedia ? ($blacklist->foto_penyewa ?: []) : [],
+            'foto_ktp_sim' => $canAccessMedia ? ($blacklist->foto_ktp_sim ?: []) : [],
 
             // Informasi Pelapor
             'nama_perusahaan_rental' => $blacklist->nama_perusahaan_rental,
@@ -309,8 +307,8 @@ class PublicController extends Controller
             'status_penanganan' => $blacklist->status_penanganan ?: [],
             'status_lainnya' => $blacklist->status_lainnya,
 
-            // Bukti Pendukung
-            'bukti' => $blacklist->bukti ?: [],
+            // Bukti Pendukung (only for active rental owners)
+            'bukti' => $canAccessMedia ? ($blacklist->bukti ?: []) : [],
 
             // Persetujuan
             'persetujuan' => $blacklist->persetujuan,
@@ -324,6 +322,10 @@ class PublicController extends Controller
             'jumlah_laporan' => RentalBlacklist::countReportsByNik($blacklist->nik),
             'pelapor' => $blacklist->user->name,
             'created_at' => $blacklist->created_at->format('d/m/Y H:i'),
+
+            // Access control info
+            'can_access_media' => $canAccessMedia,
+            'has_limited_access' => $user->hasLimitedAccess(),
         ];
 
         return response()->json([
@@ -337,15 +339,11 @@ class PublicController extends Controller
         $user = auth()->user();
         $blacklist = RentalBlacklist::with('user')->findOrFail($id);
 
-        // Check if user has access (active account and unlocked data OR rental owner)
-        $hasAccess = $user && (
-            $user->canAccessData() ||
-            ($user->isActive() && ($user->hasUnlockedData($id) || $user->hasUnlockedNik($blacklist->nik))) ||
-            $user->role === 'pengusaha_rental'
-        );
+        // Check if user can print/download (only active rental owners and admins)
+        $canPrint = $user && $user->canAccessMediaAndPrint();
 
-        if (!$hasAccess) {
-            abort(403, 'Anda tidak memiliki akses ke data lengkap ini');
+        if (!$canPrint) {
+            abort(403, 'Anda tidak memiliki akses untuk mencetak/mengunduh data ini. Fitur ini hanya tersedia untuk pemilik rental yang sudah aktif.');
         }
 
         // Generate verification code and barcode
@@ -378,15 +376,11 @@ class PublicController extends Controller
         $user = auth()->user();
         $blacklist = RentalBlacklist::with('user')->findOrFail($id);
 
-        // Check if user has access (active account and unlocked data OR rental owner)
-        $hasAccess = $user && (
-            $user->canAccessData() ||
-            ($user->isActive() && ($user->hasUnlockedData($id) || $user->hasUnlockedNik($blacklist->nik))) ||
-            $user->role === 'pengusaha_rental'
-        );
+        // Check if user can download PDF (only active rental owners and admins)
+        $canDownload = $user && $user->canAccessMediaAndPrint();
 
-        if (!$hasAccess) {
-            abort(403, 'Anda tidak memiliki akses ke data lengkap ini');
+        if (!$canDownload) {
+            abort(403, 'Anda tidak memiliki akses untuk mengunduh PDF ini. Fitur ini hanya tersedia untuk pemilik rental yang sudah aktif.');
         }
 
         // Generate verification code and barcode
