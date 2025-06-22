@@ -41,13 +41,15 @@ Route::post('/kontak', [ContactController::class, 'store'])->name('kontak.kirim'
 Route::get('/verifikasi-dokumen', [App\Http\Controllers\DocumentVerificationController::class, 'index'])->name('verifikasi.index');
 Route::post('/verifikasi-dokumen', [App\Http\Controllers\DocumentVerificationController::class, 'verify'])->name('verifikasi.verify');
 
-// Public rental profile and report timeline
+// Public rental profile
 Route::get('/rental/{id}/profil', [PublicRentalController::class, 'profile'])->name('rental.profil');
-Route::get('/laporan/{nik}/timeline', [PublicRentalController::class, 'reportTimeline'])->name('laporan.timeline');
-Route::get('/laporan/{id}/detail', [PublicRentalController::class, 'reportDetail'])->name('laporan.detail');
 
-// Public detail page (accessible to all)
-Route::get('/detail-laporan/{id}', [PublicRentalController::class, 'reportDetail'])->name('detail.laporan');
+// Protected routes - require authentication
+Route::middleware('auth')->group(function () {
+    Route::get('/laporan/{nik}/timeline', [PublicRentalController::class, 'reportTimeline'])->name('laporan.timeline');
+    Route::get('/laporan/{id}/detail', [PublicRentalController::class, 'reportDetail'])->name('laporan.detail');
+    Route::get('/detail-laporan/{id}', [PublicRentalController::class, 'reportDetail'])->name('detail.laporan');
+});
 
 // Shared report routes
 Route::get('/berbagi/{token}', [App\Http\Controllers\SharedReportController::class, 'view'])->name('shared.view');
@@ -87,6 +89,9 @@ Route::prefix('blog')->name('blog.')->group(function () {
     Route::get('/sitemap.xml', [BlogController::class, 'sitemap'])->name('sitemap');
     Route::get('/{kategori}/{slug}', [BlogController::class, 'show'])->name('detail');
 });
+
+// Dynamic Pages - Must be at the end to avoid conflicts
+Route::get('/{slug}', [PageController::class, 'show'])->name('halaman.tampil')->where('slug', '[a-zA-Z0-9\-]+');
 
 /*
 |--------------------------------------------------------------------------

@@ -73,8 +73,14 @@ class PublicRentalController extends Controller
         $showUncensored = false;
         if (auth()->check()) {
             $user = auth()->user();
-            // Admin dan rental owner dapat melihat data tanpa sensor
-            $showUncensored = in_array($user->role, ['admin', 'rental_owner']);
+            // Admin selalu dapat melihat data tanpa sensor
+            if ($user->role === 'admin') {
+                $showUncensored = true;
+            }
+            // Pemilik rental hanya jika sudah aktif
+            elseif ($user->role === 'pengusaha_rental' && $user->isActive()) {
+                $showUncensored = true;
+            }
         }
 
         // Statistik berdasarkan jenis rental
@@ -122,8 +128,14 @@ class PublicRentalController extends Controller
         $showUncensored = false;
         if (auth()->check()) {
             $user = auth()->user();
-            // Admin dan rental owner dapat melihat data tanpa sensor
-            $showUncensored = in_array($user->role, ['admin', 'rental_owner']);
+            // Admin selalu dapat melihat data tanpa sensor
+            if ($user->role === 'admin') {
+                $showUncensored = true;
+            }
+            // Pemilik rental hanya jika sudah aktif
+            elseif ($user->role === 'pengusaha_rental' && $user->isActive()) {
+                $showUncensored = true;
+            }
         }
 
         // Ambil laporan lain dengan NIK yang sama untuk konteks

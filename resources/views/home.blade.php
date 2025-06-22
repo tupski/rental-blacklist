@@ -60,36 +60,40 @@
                 </div>
                 @endif
 
-                <!-- Search Form -->
-                <div class="row justify-content-center mb-5">
-                    <div class="col-lg-8">
-                        <div class="card shadow-lg border-0">
-                            <div class="card-body p-4">
-                                <form id="searchForm">
-                                    <div class="input-group input-group-lg">
-                                        <input
-                                            type="text"
-                                            id="searchInput"
-                                            name="cari"
-                                            class="form-control border-0 shadow-none"
-                                            placeholder="Masukkan NIK, Nama Lengkap, atau Nomor HP (min. 3 karakter)"
-                                            required
-                                            minlength="3"
-                                        >
-                                        <button
-                                            type="submit"
-                                            class="btn btn-danger px-4"
-                                            id="searchBtn"
-                                        >
-                                            <i class="fas fa-search"></i>
-                                            <span class="d-none d-md-inline ms-2">Cari Sekarang</span>
-                                        </button>
+                <!-- Search Form - Only for Rental Owners and Admin -->
+                @auth
+                    @if(in_array(auth()->user()->role, ['pengusaha_rental', 'admin']))
+                        <div class="row justify-content-center mb-5">
+                            <div class="col-lg-8">
+                                <div class="card shadow-lg border-0">
+                                    <div class="card-body p-4">
+                                        <form id="searchForm">
+                                            <div class="input-group input-group-lg">
+                                                <input
+                                                    type="text"
+                                                    id="searchInput"
+                                                    name="cari"
+                                                    class="form-control border-0 shadow-none"
+                                                    placeholder="Masukkan NIK, Nama Lengkap, atau Nomor HP (min. 3 karakter)"
+                                                    required
+                                                    minlength="3"
+                                                >
+                                                <button
+                                                    type="submit"
+                                                    class="btn btn-danger px-4"
+                                                    id="searchBtn"
+                                                >
+                                                    <i class="fas fa-search"></i>
+                                                    <span class="d-none d-md-inline ms-2">Cari Sekarang</span>
+                                                </button>
+                                            </div>
+                                        </form>
                                     </div>
-                                </form>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    @endif
+                @endauth
 
                 <!-- Bottom Sponsors -->
                 @if(isset($homeBottomSponsors) && $homeBottomSponsors->count() > 0)

@@ -299,11 +299,11 @@
                         <h1 class="display-4 fw-bold mb-3">Timeline Laporan</h1>
                         <h2 class="mb-3 opacity-90">{{ $showUncensored ? $terlapor->nama_lengkap : $terlapor->sensored_nama }}</h2>
                         <div class="d-flex align-items-center flex-wrap gap-3">
-                            <span class="badge bg-white bg-opacity-20 text-white px-3 py-2 rounded-pill">
+                            <span class="badge px-3 py-2 rounded-pill text-white" style="background: linear-gradient(135deg, #da3544 0%, #b02a37 100%);">
                                 <i class="fas fa-id-card me-2"></i>
                                 NIK: {{ $showUncensored ? $terlapor->nik : $terlapor->sensored_nik }}
                             </span>
-                            <span class="badge bg-white bg-opacity-20 text-white px-3 py-2 rounded-pill">
+                            <span class="badge px-3 py-2 rounded-pill text-white" style="background: linear-gradient(135deg, #da3544 0%, #b02a37 100%);">
                                 <i class="fas fa-phone me-2"></i>
                                 HP: {{ $showUncensored ? $terlapor->no_hp : $terlapor->sensored_no_hp }}
                             </span>
@@ -326,9 +326,22 @@
                 </p>
             </div>
             <div class="col-lg-4 text-lg-end">
-                <div class="stat-card bg-white bg-opacity-15 text-white border-0">
-                    <div class="stat-number text-white">{{ $totalReports }}</div>
-                    <div class="stat-label text-white opacity-75">Total Laporan</div>
+                <div class="card shadow-lg border-0" style="background: linear-gradient(135deg, #da3544 0%, #b02a37 100%);">
+                    <div class="card-body text-center text-white p-4">
+                        <div class="d-flex align-items-center justify-content-center mb-2">
+                            <div class="rounded-circle bg-white bg-opacity-20 p-3 me-3">
+                                <i class="fas fa-file-alt text-white fs-4"></i>
+                            </div>
+                            <div class="text-start">
+                                <h2 class="fw-bold mb-0 text-white">{{ $totalReports }}</h2>
+                                <p class="mb-0 text-white opacity-90">Total Laporan</p>
+                            </div>
+                        </div>
+                        <small class="text-white opacity-75">
+                            <i class="fas fa-calendar me-1"></i>
+                            Terdaftar dalam sistem
+                        </small>
+                    </div>
                 </div>
             </div>
         </div>

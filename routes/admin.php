@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\NotificationController as AdminNotificationContro
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\BlogCategoryController as AdminBlogCategoryController;
+use App\Http\Controllers\Admin\PageController as AdminPageController;
 
 
 /*
@@ -127,6 +128,19 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         'edit' => 'blog.edit',
         'update' => 'blog.perbarui',
         'destroy' => 'blog.hapus'
+    ]);
+
+    // Page Management
+    Route::resource('halaman', AdminPageController::class)->parameters([
+        'halaman' => 'page'
+    ])->names([
+        'index' => 'halaman.indeks',
+        'create' => 'halaman.buat',
+        'store' => 'halaman.simpan',
+        'show' => 'halaman.tampil',
+        'edit' => 'halaman.edit',
+        'update' => 'halaman.perbarui',
+        'destroy' => 'halaman.hapus'
     ]);
     Route::post('blog/{post}/auto-save', [AdminBlogController::class, 'autoSave'])->name('blog.auto-save');
     Route::post('blog/generate-slug', [AdminBlogController::class, 'generateSlug'])->name('blog.generate-slug');
