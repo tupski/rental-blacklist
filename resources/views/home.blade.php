@@ -335,7 +335,7 @@
                             </li>
                         </ul>
                         <div class="mt-4">
-                            <a href="{{ route('tamu.lapor') }}" class="btn btn-warning btn-lg">
+                            <a href="{{ route('laporan.buat') }}" class="btn btn-warning btn-lg">
                                 <i class="fas fa-plus me-2"></i>
                                 Buat Laporan
                             </a>

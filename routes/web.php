@@ -161,6 +161,16 @@ Route::middleware(['auth', 'verified', 'role:pengusaha_rental'])->group(function
     Route::get('/rental/dasbor', [DashboardController::class, 'index'])->name('rental.dasbor');
     Route::post('/rental/cari', [DashboardController::class, 'search'])->name('rental.cari');
 
+    // Sponsorship Purchase
+    Route::get('/sponsorship/beli/{sponsorPackage}', [App\Http\Controllers\SponsorshipController::class, 'purchase'])->name('sponsorship.beli');
+    Route::post('/sponsorship/beli/{sponsorPackage}', [App\Http\Controllers\SponsorshipController::class, 'storePurchase'])->name('sponsorship.simpan');
+    Route::get('/sponsorship/pembayaran', [App\Http\Controllers\SponsorshipController::class, 'payment'])->name('sponsorship.pembayaran');
+    Route::get('/sponsorship/pembayaran/{sponsorPurchase}', [App\Http\Controllers\SponsorshipController::class, 'paymentDetail'])->name('sponsorship.pembayaran.detail');
+    Route::post('/sponsorship/konfirmasi/{sponsorPurchase}', [App\Http\Controllers\SponsorshipController::class, 'confirmPayment'])->name('sponsorship.konfirmasi');
+    Route::get('/sponsorship/pengaturan/{sponsorPurchase}', [App\Http\Controllers\SponsorshipController::class, 'settings'])->name('sponsorship.pengaturan');
+    Route::post('/sponsorship/pengaturan/{sponsorPurchase}', [App\Http\Controllers\SponsorshipController::class, 'updateSettings'])->name('sponsorship.pengaturan.simpan');
+    Route::get('/sponsorship/saya', [App\Http\Controllers\SponsorshipController::class, 'mySponsorship'])->name('sponsorship.saya');
+
     // Blacklist detail for rental owners
     Route::get('/rental/blacklist/{id}', function ($id) {
         $blacklist = \App\Models\RentalBlacklist::with('user')->find($id);

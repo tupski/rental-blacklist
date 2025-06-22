@@ -96,41 +96,58 @@
                         </h4>
                     </div>
                     <div class="card-body">
-                        <!-- Premium Package -->
-                        <div class="border rounded p-3 mb-3 bg-primary bg-opacity-5">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <h6 class="fw-bold text-primary mb-0">Premium Sponsor</h6>
-                                <span class="badge bg-primary">Populer</span>
+                        @forelse($sponsorPackages as $package)
+                            <div class="border rounded p-3 mb-3 {{ $package->is_popular ? 'bg-primary bg-opacity-5' : '' }}">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h6 class="fw-bold {{ $package->is_popular ? 'text-primary' : '' }} mb-0">
+                                        {{ $package->name }}
+                                    </h6>
+                                    @if($package->is_popular)
+                                        <span class="badge bg-warning">
+                                            <i class="fas fa-star"></i> Populer
+                                        </span>
+                                    @endif
+                                </div>
+
+                                @if($package->description)
+                                    <p class="small text-muted mb-2">{{ $package->description }}</p>
+                                @endif
+
+                                <ul class="list-unstyled small text-muted mb-3">
+                                    @foreach($package->benefits as $benefit)
+                                        <li><i class="fas fa-check text-success me-2"></i>{{ $benefit }}</li>
+                                    @endforeach
+                                </ul>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="{{ $package->is_popular ? 'text-primary' : '' }} fw-bold">
+                                        {{ $package->formatted_price }}
+                                        <small class="text-muted fw-normal">/ {{ $package->formatted_duration }}</small>
+                                    </div>
+
+                                    @auth
+                                        @if(auth()->user()->role === 'pengusaha_rental')
+                                            <a href="{{ route('sponsorship.beli', $package) }}"
+                                               class="btn {{ $package->is_popular ? 'btn-primary' : 'btn-outline-primary' }} btn-sm">
+                                                <i class="fas fa-shopping-cart me-1"></i>
+                                                Beli Sekarang
+                                            </a>
+                                        @endif
+                                    @else
+                                        <a href="{{ route('masuk') }}"
+                                           class="btn {{ $package->is_popular ? 'btn-primary' : 'btn-outline-primary' }} btn-sm">
+                                            <i class="fas fa-sign-in-alt me-1"></i>
+                                            Login untuk Beli
+                                        </a>
+                                    @endauth
+                                </div>
                             </div>
-                            <ul class="list-unstyled small text-muted mb-3">
-                                <li><i class="fas fa-check text-success me-2"></i>Logo di halaman utama (atas)</li>
-                                <li><i class="fas fa-check text-success me-2"></i>Logo di semua halaman (footer)</li>
-                                <li><i class="fas fa-check text-success me-2"></i>Halaman sponsor khusus</li>
-                                <li><i class="fas fa-check text-success me-2"></i>Laporan bulanan</li>
-                            </ul>
-                            <div class="text-primary fw-bold">Mulai dari Rp 2.500.000/bulan</div>
-                        </div>
-
-                        <!-- Standard Package -->
-                        <div class="border rounded p-3 mb-3">
-                            <h6 class="fw-bold mb-2">Standard Sponsor</h6>
-                            <ul class="list-unstyled small text-muted mb-3">
-                                <li><i class="fas fa-check text-success me-2"></i>Logo di semua halaman (footer)</li>
-                                <li><i class="fas fa-check text-success me-2"></i>Halaman sponsor khusus</li>
-                                <li><i class="fas fa-check text-success me-2"></i>Laporan bulanan</li>
-                            </ul>
-                            <div class="fw-bold">Mulai dari Rp 1.500.000/bulan</div>
-                        </div>
-
-                        <!-- Basic Package -->
-                        <div class="border rounded p-3">
-                            <h6 class="fw-bold mb-2">Basic Sponsor</h6>
-                            <ul class="list-unstyled small text-muted mb-3">
-                                <li><i class="fas fa-check text-success me-2"></i>Logo di halaman sponsor</li>
-                                <li><i class="fas fa-check text-success me-2"></i>Backlink ke website</li>
-                            </ul>
-                            <div class="fw-bold">Mulai dari Rp 750.000/bulan</div>
-                        </div>
+                        @empty
+                            <div class="text-center py-4">
+                                <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">Belum ada paket sponsorship tersedia</p>
+                            </div>
+                        @endforelse
                     </div>
                 </div>
             </div>
@@ -145,17 +162,17 @@
                         <p class="text-muted mb-4">
                             Hubungi tim kami untuk mendiskusikan paket sponsorship yang sesuai dengan kebutuhan bisnis Anda
                         </p>
-                        
+
                         <div class="row g-3 justify-content-center">
                             <div class="col-md-4">
-                                <a href="https://wa.me/6281234567890?text=Halo, saya tertarik menjadi sponsor RentalGuard" 
+                                <a href="https://wa.me/6281234567890?text=Halo, saya tertarik menjadi sponsor RentalGuard"
                                    target="_blank" class="btn btn-success btn-lg w-100">
                                     <i class="fab fa-whatsapp me-2"></i>
                                     WhatsApp
                                 </a>
                             </div>
                             <div class="col-md-4">
-                                <a href="mailto:sponsor@rentalguard.id?subject=Sponsorship Inquiry" 
+                                <a href="mailto:sponsor@rentalguard.id?subject=Sponsorship Inquiry"
                                    class="btn btn-primary btn-lg w-100">
                                     <i class="fas fa-envelope me-2"></i>
                                     Email

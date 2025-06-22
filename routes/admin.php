@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\BlacklistController as AdminBlacklistController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\GuestReportController as AdminGuestReportController;
 use App\Http\Controllers\Admin\SponsorController as AdminSponsorController;
+use App\Http\Controllers\Admin\SponsorPackageController as AdminSponsorPackageController;
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
 use App\Http\Controllers\Admin\ApplicationSettingController as AdminApplicationSettingController;
 use App\Http\Controllers\Admin\SystemSettingController as AdminSystemSettingController;
@@ -99,6 +100,19 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         'edit' => 'sponsor.edit',
         'update' => 'sponsor.perbarui',
         'destroy' => 'sponsor.hapus'
+    ]);
+
+    // Sponsor Package Management
+    Route::resource('paket-sponsor', AdminSponsorPackageController::class)->parameters([
+        'paket-sponsor' => 'sponsorPackage'
+    ])->names([
+        'index' => 'paket-sponsor.indeks',
+        'create' => 'paket-sponsor.buat',
+        'store' => 'paket-sponsor.simpan',
+        'show' => 'paket-sponsor.tampil',
+        'edit' => 'paket-sponsor.edit',
+        'update' => 'paket-sponsor.perbarui',
+        'destroy' => 'paket-sponsor.hapus'
     ]);
     Route::post('sponsor/{sponsor}/ubah-status', [AdminSponsorController::class, 'toggleStatus'])->name('sponsor.ubah-status');
 

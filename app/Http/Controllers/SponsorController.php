@@ -18,6 +18,11 @@ class SponsorController extends Controller
 
     public function sponsorship()
     {
-        return view('sponsors.sponsorship');
+        $sponsorPackages = \App\Models\SponsorPackage::active()
+                                                    ->orderBy('sort_order')
+                                                    ->orderBy('name')
+                                                    ->get();
+
+        return view('sponsors.sponsorship', compact('sponsorPackages'));
     }
 }
