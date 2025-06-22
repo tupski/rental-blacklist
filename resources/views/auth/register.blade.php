@@ -20,27 +20,14 @@
                     </p>
                 </div>
 
-                <!-- Registration Type Switch -->
+                <!-- Registration Header -->
                 <div class="card border-0 shadow-lg mb-4">
-                    <div class="card-body p-4">
-                        <div class="row text-center">
-                            <div class="col-6">
-                                <input type="radio" class="btn-check" name="registration_type" id="rental_owner" value="rental" checked>
-                                <label class="btn btn-outline-primary w-100 py-3" for="rental_owner">
-                                    <i class="fas fa-car fa-2x d-block mb-2"></i>
-                                    <strong>Pemilik Rental</strong>
-                                    <small class="d-block text-muted">Untuk pengusaha rental</small>
-                                </label>
-                            </div>
-                            <div class="col-6">
-                                <input type="radio" class="btn-check" name="registration_type" id="general_user" value="user">
-                                <label class="btn btn-outline-success w-100 py-3" for="general_user">
-                                    <i class="fas fa-user fa-2x d-block mb-2"></i>
-                                    <strong>User Umum</strong>
-                                    <small class="d-block text-muted">Untuk pengguna biasa</small>
-                                </label>
-                            </div>
+                    <div class="card-body p-4 text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-car fa-3x text-primary"></i>
                         </div>
+                        <h4 class="text-primary mb-2">Registrasi Pemilik Rental</h4>
+                        <p class="text-muted mb-0">Daftar sebagai pengusaha rental dan dapatkan akses penuh ke sistem blacklist</p>
                     </div>
                 </div>
 
@@ -53,9 +40,6 @@
 
                             <!-- Rental Owner Form -->
                             <div id="rental_form" class="registration-form">
-                                <h5 class="text-primary mb-3">
-                                    <i class="fas fa-car me-2"></i>Registrasi Pemilik Rental
-                                </h5>
 
                                 <!-- Detail Penanggung Jawab -->
                                 <h6 class="text-secondary mb-3">Detail Penanggung Jawab</h6>
@@ -166,133 +150,10 @@
                                 </div>
                             </div>
 
-                            <!-- General User Form -->
-                            <div id="user_form" class="registration-form" style="display: none;">
-                                <h5 class="text-success mb-3">
-                                    <i class="fas fa-user me-2"></i>Registrasi User Umum
-                                </h5>
 
-                                <!-- Data Pribadi -->
-                                <h6 class="text-secondary mb-3">Data Pribadi</h6>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="user_name" class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control @error('user_name') is-invalid @enderror"
-                                               id="user_name" name="user_name" value="{{ old('user_name') }}">
-                                        @error('user_name')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="user_nik" class="form-label">NIK <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control @error('user_nik') is-invalid @enderror"
-                                               id="user_nik" name="user_nik" value="{{ old('user_nik') }}" maxlength="16">
-                                        @error('user_nik')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="user_birth_date" class="form-label">Tanggal Lahir <span class="text-danger">*</span></label>
-                                        <input type="date" class="form-control @error('user_birth_date') is-invalid @enderror"
-                                               id="user_birth_date" name="user_birth_date" value="{{ old('user_birth_date') }}">
-                                        @error('user_birth_date')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="user_phone" class="form-label">No. HP/WhatsApp <span class="text-danger">*</span></label>
-                                        <input type="tel" class="form-control @error('user_phone') is-invalid @enderror"
-                                               id="user_phone" name="user_phone" value="{{ old('user_phone') }}">
-                                        @error('user_phone')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
 
-                                <!-- Domisili (untuk user umum) -->
-                                <h6 class="text-secondary mb-3 mt-4">Domisili</h6>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="province" class="form-label">Provinsi <span class="text-danger">*</span></label>
-                                        <select class="form-select @error('province') is-invalid @enderror"
-                                                id="province" name="province">
-                                            <option value="">Pilih Provinsi</option>
-                                            <!-- Provinsi akan diload via JavaScript -->
-                                        </select>
-                                        @error('province')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="regency" class="form-label">Kabupaten/Kota <span class="text-danger">*</span></label>
-                                        <select class="form-select @error('regency') is-invalid @enderror"
-                                                id="regency" name="regency">
-                                            <option value="">Pilih Kabupaten/Kota</option>
-                                        </select>
-                                        @error('regency')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="district" class="form-label">Kecamatan <span class="text-danger">*</span></label>
-                                        <select class="form-select @error('district') is-invalid @enderror"
-                                                id="district" name="district">
-                                            <option value="">Pilih Kecamatan</option>
-                                        </select>
-                                        @error('district')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="village" class="form-label">Kelurahan <span class="text-danger">*</span></label>
-                                        <select class="form-select @error('village') is-invalid @enderror"
-                                                id="village" name="village">
-                                            <option value="">Pilih Kelurahan</option>
-                                        </select>
-                                        @error('village')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="user_address" class="form-label">Alamat Lengkap <span class="text-danger">*</span></label>
-                                    <textarea class="form-control @error('user_address') is-invalid @enderror"
-                                              id="user_address" name="user_address" rows="3">{{ old('user_address') }}</textarea>
-                                    @error('user_address')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <!-- Login Detail (untuk user umum) -->
-                                <h6 class="text-secondary mb-3 mt-4">Detail Login</h6>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="user_email" class="form-label">Email <span class="text-danger">*</span></label>
-                                        <input type="email" class="form-control @error('user_email') is-invalid @enderror"
-                                               id="user_email" name="user_email" value="{{ old('user_email') }}">
-                                        @error('user_email')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="identity_file" class="form-label">Upload Identitas <span class="text-danger">*</span></label>
-                                        <input type="file" class="form-control @error('identity_file') is-invalid @enderror"
-                                               id="identity_file" name="identity_file" accept=".pdf,.jpg,.jpeg,.png">
-                                        <small class="form-text text-muted">KTP/SIM/Paspor. Format: PDF, JPG, PNG. Maks 2MB</small>
-                                        @error('identity_file')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Password Section (untuk semua jenis user) -->
-                            <div class="password-section mt-5">
+                            <!-- Password Section -->
+                            <div class="password-section mt-4">
                                 <h6 class="text-secondary mb-3">Kata Sandi</h6>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
@@ -395,64 +256,8 @@
 @push('scripts')
 <script>
 $(document).ready(function() {
-    // Handle registration type switch
-    $('input[name="registration_type"]').on('change', function() {
-        const selectedType = $(this).val();
-        $('#user_type').val(selectedType);
-
-        if (selectedType === 'rental') {
-            $('#rental_form').show();
-            $('#user_form').hide();
-            // Enable rental form fields
-            $('#rental_form input, #rental_form select, #rental_form textarea').prop('required', function() {
-                return $(this).data('required') !== false;
-            });
-            // Disable user form fields
-            $('#user_form input, #user_form select, #user_form textarea').prop('required', false);
-        } else {
-            $('#rental_form').hide();
-            $('#user_form').show();
-            // Enable user form fields
-            $('#user_form input, #user_form select, #user_form textarea').prop('required', function() {
-                return $(this).data('required') !== false;
-            });
-            // Disable rental form fields
-            $('#rental_form input, #rental_form select, #rental_form textarea').prop('required', false);
-        }
-    });
-
-    // Load provinces on page load
-    loadProvinces();
-
-    // Handle province change
-    $('#province').on('change', function() {
-        const provinceId = $(this).val();
-        if (provinceId) {
-            loadRegencies(provinceId);
-        } else {
-            $('#regency, #district, #village').html('<option value="">Pilih...</option>');
-        }
-    });
-
-    // Handle regency change
-    $('#regency').on('change', function() {
-        const regencyId = $(this).val();
-        if (regencyId) {
-            loadDistricts(regencyId);
-        } else {
-            $('#district, #village').html('<option value="">Pilih...</option>');
-        }
-    });
-
-    // Handle district change
-    $('#district').on('change', function() {
-        const districtId = $(this).val();
-        if (districtId) {
-            loadVillages(districtId);
-        } else {
-            $('#village').html('<option value="">Pilih...</option>');
-        }
-    });
+    // Form is ready for rental registration only
+    console.log('Rental registration form loaded');
 });
 
 function togglePassword(fieldId) {
@@ -470,56 +275,7 @@ function togglePassword(fieldId) {
     }
 }
 
-// Indonesia Region API functions
-function loadProvinces() {
-    $.get('/api/wilayah/provinsi', function(data) {
-        let options = '<option value="">Pilih Provinsi</option>';
-        data.forEach(function(province) {
-            options += `<option value="${province.id}">${province.name}</option>`;
-        });
-        $('#province').html(options);
-    }).fail(function() {
-        $('#province').html('<option value="">Error loading provinces</option>');
-    });
-}
 
-function loadRegencies(provinceId) {
-    $.get(`/api/wilayah/kabupaten/${provinceId}`, function(data) {
-        let options = '<option value="">Pilih Kabupaten/Kota</option>';
-        data.forEach(function(regency) {
-            options += `<option value="${regency.id}">${regency.name}</option>`;
-        });
-        $('#regency').html(options);
-        $('#district, #village').html('<option value="">Pilih...</option>');
-    }).fail(function() {
-        $('#regency').html('<option value="">Error loading regencies</option>');
-    });
-}
-
-function loadDistricts(regencyId) {
-    $.get(`/api/wilayah/kecamatan/${regencyId}`, function(data) {
-        let options = '<option value="">Pilih Kecamatan</option>';
-        data.forEach(function(district) {
-            options += `<option value="${district.id}">${district.name}</option>`;
-        });
-        $('#district').html(options);
-        $('#village').html('<option value="">Pilih...</option>');
-    }).fail(function() {
-        $('#district').html('<option value="">Error loading districts</option>');
-    });
-}
-
-function loadVillages(districtId) {
-    $.get(`/api/wilayah/kelurahan/${districtId}`, function(data) {
-        let options = '<option value="">Pilih Kelurahan</option>';
-        data.forEach(function(village) {
-            options += `<option value="${village.id}">${village.name}</option>`;
-        });
-        $('#village').html(options);
-    }).fail(function() {
-        $('#village').html('<option value="">Error loading villages</option>');
-    });
-}
 </script>
 @endpush
 @endsection
