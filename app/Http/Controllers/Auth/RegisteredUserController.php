@@ -35,33 +35,56 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'responsible_name' => ['required', 'string', 'max:255'],
+            'responsible_email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class.',email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'user_type' => ['required', 'in:user,rental'],
+            'responsible_position' => ['required', 'string'],
+            'responsible_phone' => ['required', 'string', 'max:15'],
+            'entity_type' => ['required', 'string'],
+            'company_name' => ['required', 'string', 'max:255'],
+            'company_address' => ['required', 'string'],
+            'company_phone' => ['nullable', 'string', 'max:15'],
+            'company_email' => ['nullable', 'email', 'max:255'],
+            'legal_document' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
         ]);
 
-        // Determine role and account status based on user type
-        $role = $request->user_type === 'rental' ? 'pengusaha_rental' : 'user';
+        // Only rental owners are allowed
+        $role = 'pengusaha_rental';
 
-        // Check auto-activation settings
-        $autoActivateUsers = Setting::get('auto_activate_user_accounts', '1') === '1';
+        // Check auto-activation settings for rental accounts
         $autoActivateRentals = Setting::get('auto_activate_rental_accounts', '0') === '1';
+        $accountStatus = $autoActivateRentals ? 'active' : 'pending';
 
-        $accountStatus = 'active'; // Default
-
-        if ($role === 'user' && !$autoActivateUsers) {
-            $accountStatus = 'pending';
-        } elseif ($role === 'pengusaha_rental' && !$autoActivateRentals) {
-            $accountStatus = 'pending';
+        // Handle legal document upload
+        $legalDocumentPath = null;
+        if ($request->hasFile('legal_document')) {
+            $file = $request->file('legal_document');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $legalDocumentPath = $file->storeAs('legal-documents', $filename, 'public');
         }
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'name' => $request->responsible_name,
+            'email' => $request->responsible_email,
             'password' => Hash::make($request->password),
             'role' => $role,
             'account_status' => $accountStatus,
+            'no_hp' => $request->responsible_phone,
+            'alamat' => $request->company_address,
+        ]);
+
+        // Create rental registration record
+        $user->rentalRegistration()->create([
+            'nama_rental' => $request->company_name,
+            'jenis_rental' => ['Umum'], // Default, can be updated later
+            'alamat' => $request->company_address,
+            'no_hp' => $request->company_phone ?? $request->responsible_phone,
+            'email' => $request->company_email ?? $request->responsible_email,
+            'nama_pemilik' => $request->responsible_name,
+            'no_hp_pemilik' => $request->responsible_phone,
+            'dokumen_legalitas' => $legalDocumentPath ? [$legalDocumentPath] : [],
+            'status' => $accountStatus === 'active' ? 'approved' : 'pending',
+            'user_id' => $user->id,
         ]);
 
         // AI Moderation for registration
