@@ -410,8 +410,8 @@
                     </li>
 
                     <!-- Manajemen Sponsor -->
-                    <li class="nav-item {{ request()->routeIs('admin.sponsors*') ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ request()->routeIs('admin.sponsors*') ? 'active' : '' }}">
+                    <li class="nav-item {{ request()->routeIs('admin.sponsor*') || request()->routeIs('admin.paket-sponsor*') || request()->routeIs('admin.donasi*') ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ request()->routeIs('admin.sponsor*') || request()->routeIs('admin.paket-sponsor*') || request()->routeIs('admin.donasi*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-handshake"></i>
                             <p>
                                 Manajemen Sponsor
@@ -429,6 +429,18 @@
                                 <a href="{{ route('admin.sponsor.buat') }}" class="nav-link {{ request()->routeIs('admin.sponsor.buat') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Tambah Sponsor</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.paket-sponsor.indeks') }}" class="nav-link {{ request()->routeIs('admin.paket-sponsor*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Paket Sponsor</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.donasi.indeks') }}" class="nav-link {{ request()->routeIs('admin.donasi*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Donasi</p>
                                 </a>
                             </li>
                         </ul>

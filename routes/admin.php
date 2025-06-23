@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\GuestReportController as AdminGuestReportController;
 use App\Http\Controllers\Admin\SponsorController as AdminSponsorController;
 use App\Http\Controllers\Admin\SponsorPackageController as AdminSponsorPackageController;
+use App\Http\Controllers\Admin\DonationController as AdminDonationController;
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
 use App\Http\Controllers\Admin\ApplicationSettingController as AdminApplicationSettingController;
 use App\Http\Controllers\Admin\SystemSettingController as AdminSystemSettingController;
@@ -128,6 +129,17 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         'destroy' => 'paket-sponsor.hapus'
     ]);
     Route::post('sponsor/{sponsor}/ubah-status', [AdminSponsorController::class, 'toggleStatus'])->name('sponsor.ubah-status');
+
+    // Donation Management
+    Route::resource('donasi', AdminDonationController::class)->parameters([
+        'donasi' => 'donation'
+    ])->names([
+        'index' => 'donasi.indeks',
+        'show' => 'donasi.tampil',
+        'destroy' => 'donasi.hapus'
+    ])->only(['index', 'show', 'destroy']);
+    Route::post('donasi/{donation}/konfirmasi', [AdminDonationController::class, 'confirm'])->name('donasi.konfirmasi');
+    Route::post('donasi/{donation}/tolak', [AdminDonationController::class, 'reject'])->name('donasi.tolak');
 
     // Blog Management
     Route::resource('blog', AdminBlogController::class)->parameters([
