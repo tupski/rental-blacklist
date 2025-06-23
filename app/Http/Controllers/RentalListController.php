@@ -17,7 +17,7 @@ class RentalListController extends Controller
         $city = $request->get('city');
 
         $rentals = User::where('role', 'pengusaha_rental')
-                      ->where('is_active', true)
+                      ->where('account_status', 'active')
                       ->when($search, function ($query, $search) {
                           return $query->where(function ($q) use ($search) {
                               $q->where('name', 'like', "%{$search}%")
@@ -36,14 +36,14 @@ class RentalListController extends Controller
 
         // Get unique provinces and cities for filter
         $provinces = User::where('role', 'pengusaha_rental')
-                        ->where('is_active', true)
+                        ->where('account_status', 'active')
                         ->whereNotNull('province')
                         ->distinct()
                         ->pluck('province')
                         ->sort();
 
         $cities = User::where('role', 'pengusaha_rental')
-                     ->where('is_active', true)
+                     ->where('account_status', 'active')
                      ->whereNotNull('city')
                      ->when($province, function ($query, $province) {
                          return $query->where('province', $province);
@@ -60,7 +60,7 @@ class RentalListController extends Controller
      */
     public function show(User $rental)
     {
-        if ($rental->role !== 'pengusaha_rental' || !$rental->is_active) {
+        if ($rental->role !== 'pengusaha_rental' || !$rental->isActive()) {
             abort(404);
         }
 

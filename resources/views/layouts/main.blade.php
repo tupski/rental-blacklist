@@ -538,7 +538,7 @@
                     <h5 class="fw-bold mb-3">Layanan</h5>
                     <ul class="list-unstyled">
                         <li class="mb-2"><a href="{{ route('beranda') }}">Cek Blacklist</a></li>
-                        <li class="mb-2"><a href="{{ route('rental.daftar') }}">Daftar Rental</a></li>
+                        <li class="mb-2"><a href="{{ route('rental.daftar') }}">Pendaftaran Rental</a></li>
                         <li class="mb-2"><a href="{{ route('laporan.buat') }}">Lapor Masalah</a></li>
                         <li class="mb-2"><a href="{{ route('blog.indeks') }}">Blog</a></li>
                         <li class="mb-2"><a href="{{ route('api.dokumentasi') }}">API Access</a></li>

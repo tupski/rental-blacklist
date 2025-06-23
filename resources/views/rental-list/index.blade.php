@@ -54,10 +54,10 @@
                     <div class="row g-3 align-items-end">
                         <div class="col-md-4">
                             <label for="search" class="form-label">Cari Rental</label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="search" 
-                                   name="search" 
+                            <input type="text"
+                                   class="form-control"
+                                   id="search"
+                                   name="search"
                                    value="{{ $search }}"
                                    placeholder="Nama rental, perusahaan, atau email">
                         </div>
@@ -111,7 +111,7 @@
                     </small>
                 @endif
             </h3>
-            
+
             @if($search || $province || $city)
                 <a href="{{ route('daftar-rental.indeks') }}" class="btn btn-outline-secondary">
                     <i class="fas fa-times me-2"></i>
@@ -128,7 +128,7 @@
                         <div class="card-body p-4">
                             <!-- Header with Avatar -->
                             <div class="d-flex align-items-start mb-3">
-                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" 
+                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3"
                                      style="width: 50px; height: 50px; font-size: 1.2rem;">
                                     {{ strtoupper(substr($rental->name, 0, 1)) }}
                                 </div>
@@ -145,23 +145,39 @@
                                 @php
                                     $now = now();
                                     $oneMonthAgo = $now->copy()->subMonth();
-                                    
+
                                     // Check if sponsor (has active sponsor subscription)
-                                    $isSponsor = $rental->sponsors()->where('status', 'active')->exists();
-                                    
+                                    $isSponsor = false;
+                                    try {
+                                        $isSponsor = $rental->sponsors()->where('status', 'active')->exists();
+                                    } catch (\Exception $e) {
+                                        // Sponsor relation might not exist yet
+                                    }
+
                                     // Check if donatur (donated in last month)
-                                    $isDonatur = \App\Models\Donation::where('donor_email', $rental->email)
-                                                                    ->where('status', 'confirmed')
-                                                    ->where('confirmed_at', '>=', $oneMonthAgo)
-                                                    ->exists();
-                                    
+                                    $isDonatur = false;
+                                    try {
+                                        $isDonatur = \App\Models\Donation::where('donor_email', $rental->email)
+                                                                        ->where('status', 'confirmed')
+                                                                        ->where('confirmed_at', '>=', $oneMonthAgo)
+                                                                        ->exists();
+                                    } catch (\Exception $e) {
+                                        // Donation table might not exist yet
+                                    }
+
                                     // Check if top reporter (most reports in last month)
-                                    $reportsCount = $rental->rentalBlacklists()
-                                                          ->where('created_at', '>=', $oneMonthAgo)
-                                                          ->count();
-                                    
-                                    $topReporterThreshold = 5; // Minimum reports to be top reporter
-                                    $isTopReporter = $reportsCount >= $topReporterThreshold;
+                                    $reportsCount = 0;
+                                    $isTopReporter = false;
+                                    try {
+                                        $reportsCount = $rental->rentalBlacklists()
+                                                              ->where('created_at', '>=', $oneMonthAgo)
+                                                              ->count();
+
+                                        $topReporterThreshold = 5; // Minimum reports to be top reporter
+                                        $isTopReporter = $reportsCount >= $topReporterThreshold;
+                                    } catch (\Exception $e) {
+                                        // Relation might not exist
+                                    }
                                 @endphp
 
                                 @if($isSponsor)
@@ -201,12 +217,12 @@
                                         @if($rental->province){{ $rental->province }}@endif
                                     </p>
                                 @endif
-                                
+
                                 <p class="text-muted small mb-1">
                                     <i class="fas fa-calendar me-2"></i>
                                     Bergabung {{ $rental->created_at->format('M Y') }}
                                 </p>
-                                
+
                                 <p class="text-muted small mb-0">
                                     <i class="fas fa-file-alt me-2"></i>
                                     {{ $rental->rentalBlacklists()->count() }} Laporan
@@ -217,17 +233,17 @@
                             @if($rental->phone || $rental->website)
                                 <div class="mb-3">
                                     @if($rental->phone)
-                                        <a href="https://wa.me/{{ $rental->phone }}" 
-                                           target="_blank" 
+                                        <a href="https://wa.me/{{ $rental->phone }}"
+                                           target="_blank"
                                            class="btn btn-success btn-sm me-2 mb-1">
                                             <i class="fab fa-whatsapp me-1"></i>
                                             WhatsApp
                                         </a>
                                     @endif
-                                    
+
                                     @if($rental->website)
-                                        <a href="{{ $rental->website }}" 
-                                           target="_blank" 
+                                        <a href="{{ $rental->website }}"
+                                           target="_blank"
                                            class="btn btn-outline-primary btn-sm mb-1">
                                             <i class="fas fa-globe me-1"></i>
                                             Website
@@ -238,7 +254,7 @@
 
                             <!-- Action Button -->
                             <div class="d-grid">
-                                <a href="{{ route('daftar-rental.tampil', $rental) }}" 
+                                <a href="{{ route('daftar-rental.tampil', $rental) }}"
                                    class="btn btn-outline-primary">
                                     <i class="fas fa-eye me-2"></i>
                                     Lihat Profil
@@ -254,7 +270,7 @@
                         <h4 class="text-muted">Tidak ada rental ditemukan</h4>
                         <p class="text-muted">
                             @if($search || $province || $city)
-                                Coba ubah kriteria pencarian Anda atau 
+                                Coba ubah kriteria pencarian Anda atau
                                 <a href="{{ route('daftar-rental.indeks') }}">reset filter</a>
                             @else
                                 Belum ada rental yang terdaftar di platform ini.
@@ -283,9 +299,9 @@
                 <p class="text-muted mb-4">
                     Daftarkan rental Anda di platform CekPenyewa.com dan dapatkan akses ke database blacklist pelanggan bermasalah.
                 </p>
-                <a href="{{ route('daftar') }}" class="btn btn-primary btn-lg">
+                <a href="{{ route('rental.daftar') }}" class="btn btn-primary btn-lg">
                     <i class="fas fa-user-plus me-2"></i>
-                    Daftar Sekarang
+                    Daftar Rental Sekarang
                 </a>
             </div>
         </div>

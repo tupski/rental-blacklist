@@ -38,7 +38,7 @@
                 <h5 class="fw-bold mb-3">Layanan</h5>
                 <ul class="list-unstyled">
                     <li class="mb-2"><a href="{{ route('beranda') }}">Cek Blacklist</a></li>
-                    <li class="mb-2"><a href="{{ route('rental.daftar') }}">Daftar Rental</a></li>
+                    <li class="mb-2"><a href="{{ route('rental.daftar') }}">Pendaftaran Rental</a></li>
                     <li class="mb-2"><a href="{{ route('laporan.buat') }}">Lapor Masalah</a></li>
                     <li class="mb-2"><a href="{{ route('api.dokumentasi') }}">API Access</a></li>
                 </ul>
@@ -70,7 +70,7 @@
                     </a>
                 </div>
                 @endif
-                
+
                 @if(isset($footerSponsors) && $footerSponsors->count() > 0)
                 <div class="mt-4">
                     <h6 class="fw-bold mb-3">Didukung oleh:</h6>

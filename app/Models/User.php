@@ -106,6 +106,24 @@ class User extends Authenticatable
         return $this->hasOne(RentalRegistration::class);
     }
 
+    // Relasi rental blacklists (laporan yang dibuat user)
+    public function rentalBlacklists()
+    {
+        return $this->hasMany(RentalBlacklist::class);
+    }
+
+    // Relasi sponsors (untuk badge sponsor)
+    public function sponsors()
+    {
+        return $this->hasMany(\App\Models\Sponsor::class);
+    }
+
+    // Relasi donations (untuk badge donatur)
+    public function donations()
+    {
+        return $this->hasMany(\App\Models\Donation::class, 'donor_email', 'email');
+    }
+
 
 
     // Check if user has unlocked specific blacklist data

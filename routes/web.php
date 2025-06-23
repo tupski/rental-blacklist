@@ -66,8 +66,8 @@ Route::post('/lapor', [ReportController::class, 'store'])->name('laporan.simpan'
 
 // Rental pages
 Route::get('/rental', [RentalController::class, 'index'])->name('rental.indeks');
-Route::get('/daftar-rental', [RentalController::class, 'create'])->name('rental.daftar');
-Route::post('/daftar-rental', [RentalController::class, 'store'])->name('rental.simpan');
+Route::get('/pendaftaran-rental', [RentalController::class, 'create'])->name('rental.daftar');
+Route::post('/pendaftaran-rental', [RentalController::class, 'store'])->name('rental.simpan');
 
 // API Wilayah Indonesia (public)
 Route::prefix('api/wilayah')->name('api.wilayah.')->group(function () {
