@@ -330,11 +330,11 @@
                         <h1 class="display-4 fw-bold mb-3">Detail Laporan Blacklist</h1>
                         <h2 class="mb-3 opacity-90">{{ $showUncensored ? $report->nama_lengkap : $report->sensored_nama }}</h2>
                         <div class="d-flex align-items-center flex-wrap gap-3">
-                            <span class="badge bg-white bg-opacity-20 text-white px-3 py-2 rounded-pill">
+                            <span class="badge bg-danger text-white px-3 py-2 rounded-pill">
                                 <i class="fas fa-id-card me-2"></i>
                                 NIK: {{ $showUncensored ? $report->nik : $report->sensored_nik }}
                             </span>
-                            <span class="badge bg-white bg-opacity-20 text-white px-3 py-2 rounded-pill">
+                            <span class="badge bg-danger text-white px-3 py-2 rounded-pill">
                                 <i class="fas fa-phone me-2"></i>
                                 HP: {{ $showUncensored ? $report->no_hp : $report->sensored_no_hp }}
                             </span>
@@ -358,7 +358,7 @@
                 </p>
             </div>
             <div class="col-lg-4 text-lg-end">
-                <div class="danger-level danger-{{ $dangerLevel }} bg-white bg-opacity-15 text-white border-0">
+                <div class="danger-level danger-{{ $dangerLevel }} bg-white bg-opacity-15 text-danger border-0">
                     <i class="fas fa-shield-alt me-2"></i>
                     Tingkat Risiko: {{ $dangerText }}
                 </div>

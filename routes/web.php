@@ -13,6 +13,9 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PublicRentalController;
 use App\Http\Controllers\RegionController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\DonationController;
+use App\Http\Controllers\RentalListController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -88,6 +91,23 @@ Route::prefix('blog')->name('blog.')->group(function () {
     Route::get('/kategori/{slug}', [BlogController::class, 'category'])->name('kategori');
     Route::get('/sitemap.xml', [BlogController::class, 'sitemap'])->name('sitemap');
     Route::get('/{kategori}/{slug}', [BlogController::class, 'show'])->name('detail');
+});
+
+// Donation routes
+Route::prefix('donasi')->name('donasi.')->group(function () {
+    Route::get('/', [DonationController::class, 'index'])->name('indeks');
+    Route::post('/', [DonationController::class, 'store'])->name('simpan');
+    Route::get('/{donation}/pembayaran', [DonationController::class, 'payment'])->name('pembayaran');
+    Route::post('/{donation}/konfirmasi', [DonationController::class, 'confirmPayment'])->name('konfirmasi-pembayaran');
+    Route::get('/{donation}/terima-kasih', [DonationController::class, 'thankYou'])->name('terima-kasih');
+    Route::get('/api/provinces', [DonationController::class, 'getProvinces'])->name('provinces');
+    Route::get('/api/cities', [DonationController::class, 'getCities'])->name('cities');
+});
+
+// Rental List routes
+Route::prefix('daftar-rental')->name('daftar-rental.')->group(function () {
+    Route::get('/', [RentalListController::class, 'index'])->name('indeks');
+    Route::get('/{rental}', [RentalListController::class, 'show'])->name('tampil');
 });
 
 // Dynamic Pages - Must be at the end to avoid conflicts

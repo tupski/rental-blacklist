@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Rules\BuktiFileRule;
+use App\Models\Attribute;
 
 class StoreBlacklistReportRequest extends FormRequest
 {
@@ -31,9 +32,10 @@ class StoreBlacklistReportRequest extends FormRequest
             'foto_ktp_sim.*' => ['nullable', 'file', new BuktiFileRule()],
 
             // Detail Masalah
-            'jenis_rental' => 'required|in:Rental Mobil,Rental Motor,Kamera,Lainnya',
+            'jenis_rental' => 'required|string',
             'jenis_laporan' => 'required|array|min:1',
-            'jenis_laporan.*' => 'in:Tidak Mengembalikan,Merusak Barang,Tidak Bayar,Kabur,Lainnya',
+            'jenis_laporan.*' => 'string',
+            'jenis_laporan_lainnya' => 'nullable|string|max:255',
             'tanggal_sewa' => 'required|date|before_or_equal:today',
             'tanggal_kejadian' => 'required|date|before_or_equal:today|after_or_equal:tanggal_sewa',
             'jenis_kendaraan' => 'required|string|max:255',
@@ -44,8 +46,8 @@ class StoreBlacklistReportRequest extends FormRequest
 
             // Status Penanganan
             'status_penanganan' => 'required|array|min:1',
-            'status_penanganan.*' => 'in:dilaporkan_polisi,tidak_ada_respon,proses_penyelesaian,lainnya',
-            'status_lainnya' => 'required_if:status_penanganan.*,lainnya|nullable|string|max:255',
+            'status_penanganan.*' => 'string',
+            'status_penanganan_lainnya' => 'nullable|string|max:255',
 
             // Persetujuan
             'persetujuan' => 'required|accepted',

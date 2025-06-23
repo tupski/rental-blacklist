@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\RentalBlacklist;
+use App\Models\Attribute;
 use App\Http\Requests\StoreBlacklistReportRequest;
 use App\Traits\HandlesFileWatermark;
 use App\Helpers\FileNamingHelper;
@@ -14,7 +15,20 @@ class ReportController extends Controller
 
     public function create()
     {
-        return view('report.create-new');
+        // Get dynamic attributes
+        $jenisRental = Attribute::getByType('jenis_rental');
+        $kategoriMasalah = Attribute::getByType('kategori_masalah');
+        $statusPenanganan = Attribute::getByType('status_penanganan');
+        $jenisKendaraan = Attribute::getByType('jenis_kendaraan');
+        $merkKendaraan = Attribute::getByType('merk_kendaraan');
+
+        return view('report.create-new', compact(
+            'jenisRental',
+            'kategoriMasalah',
+            'statusPenanganan',
+            'jenisKendaraan',
+            'merkKendaraan'
+        ));
     }
 
     public function store(StoreBlacklistReportRequest $request)

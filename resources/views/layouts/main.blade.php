@@ -357,41 +357,69 @@
             <!-- Navigation Links -->
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('report.*') ? 'active fw-bold' : '' }}" href="{{ route('laporan.buat') }}">
-                            <i class="fas fa-exclamation-triangle me-1"></i>
-                            Lapor
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('sponsor.*') ? 'active fw-bold' : '' }}" href="{{ route('sponsor.indeks') }}">
-                            <i class="fas fa-handshake me-1"></i>
-                            Sponsor
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('verifikasi.*') ? 'active fw-bold' : '' }}" href="{{ route('verifikasi.index') }}">
-                            <i class="fas fa-shield-alt me-1"></i>
-                            Verifikasi
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('blog.*') ? 'active fw-bold' : '' }}" href="{{ route('blog.indeks') }}">
-                            <i class="fas fa-blog me-1"></i>
-                            Blog
-                        </a>
-                    </li>
-                    @auth
+                    @if(isset($navbarMenus) && $navbarMenus->count() > 0)
+                        @foreach($navbarMenus as $menu)
+                            <li class="nav-item {{ $menu->children->count() > 0 ? 'dropdown' : '' }}">
+                                @if($menu->children->count() > 0)
+                                    <a class="nav-link dropdown-toggle {{ $menu->isCurrentlyActive() ? 'active fw-bold' : '' }}"
+                                       href="#"
+                                       id="navbarDropdown{{ $menu->id }}"
+                                       role="button"
+                                       data-bs-toggle="dropdown">
+                                        @if($menu->icon)
+                                            <i class="{{ $menu->icon }} me-1"></i>
+                                        @endif
+                                        {{ $menu->title }}
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        @foreach($menu->children->where('is_active', true) as $child)
+                                            <li>
+                                                <a class="dropdown-item"
+                                                   href="{{ $child->full_url }}"
+                                                   {{ $child->open_new_tab ? 'target="_blank"' : '' }}>
+                                                    @if($child->icon)
+                                                        <i class="{{ $child->icon }} me-2"></i>
+                                                    @endif
+                                                    {{ $child->title }}
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                @else
+                                    <a class="nav-link {{ $menu->isCurrentlyActive() ? 'active fw-bold' : '' }}"
+                                       href="{{ $menu->full_url }}"
+                                       {{ $menu->open_new_tab ? 'target="_blank"' : '' }}>
+                                        @if($menu->icon)
+                                            <i class="{{ $menu->icon }} me-1"></i>
+                                        @endif
+                                        {{ $menu->title }}
+                                    </a>
+                                @endif
+                            </li>
+                        @endforeach
+                    @else
+                        <!-- Fallback default menu if no dynamic menus -->
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('dasbor*') ? 'active fw-bold' : '' }}" href="{{ route('dasbor') }}">
-                                <i class="fas fa-tachometer-alt me-1"></i>
-                                Dashboard
+                            <a class="nav-link {{ request()->routeIs('laporan.*') ? 'active fw-bold' : '' }}" href="{{ route('laporan.buat') }}">
+                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                Lapor
                             </a>
                         </li>
-                    @endauth
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('blog.*') ? 'active fw-bold' : '' }}" href="{{ route('blog.indeks') }}">
+                                <i class="fas fa-blog me-1"></i>
+                                Blog
+                            </a>
+                        </li>
+                        @auth
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('dasbor*') ? 'active fw-bold' : '' }}" href="{{ route('dasbor') }}">
+                                    <i class="fas fa-tachometer-alt me-1"></i>
+                                    Dashboard
+                                </a>
+                            </li>
+                        @endauth
+                    @endif
                 </ul>
 
                 <!-- User Menu -->

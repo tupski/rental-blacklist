@@ -18,6 +18,8 @@ use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\BlogCategoryController as AdminBlogCategoryController;
 use App\Http\Controllers\Admin\PageController as AdminPageController;
+use App\Http\Controllers\Admin\NavbarMenuController as AdminNavbarMenuController;
+use App\Http\Controllers\Admin\AttributeController as AdminAttributeController;
 
 
 /*
@@ -142,6 +144,36 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         'update' => 'halaman.perbarui',
         'destroy' => 'halaman.hapus'
     ]);
+
+    // Navbar Menu Management
+    Route::resource('menu-navbar', AdminNavbarMenuController::class)->parameters([
+        'menu-navbar' => 'menu'
+    ])->names([
+        'index' => 'menu-navbar.indeks',
+        'create' => 'menu-navbar.buat',
+        'store' => 'menu-navbar.simpan',
+        'show' => 'menu-navbar.tampil',
+        'edit' => 'menu-navbar.edit',
+        'update' => 'menu-navbar.perbarui',
+        'destroy' => 'menu-navbar.hapus'
+    ]);
+    Route::post('menu-navbar/{menu}/toggle-status', [AdminNavbarMenuController::class, 'toggleStatus'])->name('menu-navbar.toggle-status');
+    Route::post('menu-navbar/update-order', [AdminNavbarMenuController::class, 'updateOrder'])->name('menu-navbar.update-order');
+
+    // Attribute Management
+    Route::resource('atribut', AdminAttributeController::class)->parameters([
+        'atribut' => 'attribute'
+    ])->names([
+        'index' => 'atribut.indeks',
+        'create' => 'atribut.buat',
+        'store' => 'atribut.simpan',
+        'show' => 'atribut.tampil',
+        'edit' => 'atribut.edit',
+        'update' => 'atribut.perbarui',
+        'destroy' => 'atribut.hapus'
+    ]);
+    Route::post('atribut/{attribute}/toggle-status', [AdminAttributeController::class, 'toggleStatus'])->name('atribut.toggle-status');
+    Route::post('atribut/update-order', [AdminAttributeController::class, 'updateOrder'])->name('atribut.update-order');
     Route::post('blog/{post}/auto-save', [AdminBlogController::class, 'autoSave'])->name('blog.auto-save');
     Route::post('blog/generate-slug', [AdminBlogController::class, 'generateSlug'])->name('blog.generate-slug');
     Route::post('blog/analyze-seo', [AdminBlogController::class, 'analyzeSeo'])->name('blog.analyze-seo');
