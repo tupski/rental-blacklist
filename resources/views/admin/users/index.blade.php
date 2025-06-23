@@ -82,46 +82,43 @@
         background-color: #fff;
         border-color: #dee2e6;
     }
+    .cursor-pointer {
+        cursor: pointer;
+    }
+    .cursor-pointer:hover {
+        opacity: 0.8;
+        transform: scale(1.05);
+        transition: all 0.2s ease;
+    }
 </style>
 @endpush
 
 @section('content')
 <!-- Statistics Cards -->
 <div class="row">
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-info">
-            <div class="inner">
-                <h3 id="userBiasaCount">{{ $statistics['user_biasa'] }}</h3>
-                <p>User Biasa</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-user"></i>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3 col-6">
+    <div class="col-lg-4 col-6">
         <div class="small-box bg-warning">
             <div class="inner">
                 <h3 id="pengusahaRentalCount">{{ $statistics['pengusaha_rental'] }}</h3>
-                <p>Pengusaha Rental</p>
+                <p>Total Rental</p>
             </div>
             <div class="icon">
                 <i class="fas fa-car"></i>
             </div>
         </div>
     </div>
-    <div class="col-lg-3 col-6">
+    <div class="col-lg-4 col-6">
         <div class="small-box bg-success">
             <div class="inner">
                 <h3 id="emailVerifiedCount">{{ $statistics['email_verified'] }}</h3>
-                <p>Email Terverifikasi</p>
+                <p>Rental Terverifikasi</p>
             </div>
             <div class="icon">
                 <i class="fas fa-check"></i>
             </div>
         </div>
     </div>
-    <div class="col-lg-3 col-6">
+    <div class="col-lg-4 col-6">
         <div class="small-box bg-danger">
             <div class="inner">
                 <h3 id="emailUnverifiedCount">{{ $statistics['email_unverified'] }}</h3>
@@ -405,6 +402,21 @@ $(document).ready(function() {
 
     // Initialize reset button state
     updateResetButton();
+
+    // Handle status change in modal
+    $(document).on('change', '[id^="status"]', function() {
+        const userId = $(this).attr('id').replace('status', '');
+        const selectedStatus = $(this).val();
+        const reasonDiv = $('#suspendReason' + userId);
+
+        if (selectedStatus === 'suspended') {
+            reasonDiv.show();
+            reasonDiv.find('textarea').attr('required', true);
+        } else {
+            reasonDiv.hide();
+            reasonDiv.find('textarea').removeAttr('required');
+        }
+    });
 });
 </script>
 @endpush

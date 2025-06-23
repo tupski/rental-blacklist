@@ -161,9 +161,26 @@ class UserController extends Controller
 
     public function toggleStatus(User $user)
     {
-        // Implementasi toggle status jika diperlukan
+        $request = request();
+
+        $request->validate([
+            'account_status' => 'required|in:pending,active,suspended',
+            'reason' => 'required_if:account_status,suspended|nullable|string|max:500'
+        ]);
+
+        $oldStatus = $user->account_status;
+        $newStatus = $request->account_status;
+
+        if ($newStatus === 'suspended') {
+            $user->suspend($request->reason, 'permanent', null, auth()->id());
+        } elseif ($newStatus === 'active') {
+            $user->approve(auth()->id());
+        } else {
+            $user->update(['account_status' => $newStatus]);
+        }
+
         return redirect()->back()
-            ->with('success', 'Status user berhasil diubah.');
+            ->with('success', "Status user berhasil diubah dari {$oldStatus} ke {$newStatus}.");
     }
 
     public function ban(Request $request, User $user)

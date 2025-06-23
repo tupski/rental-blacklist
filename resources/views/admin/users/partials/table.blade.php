@@ -42,13 +42,29 @@
                         <span class="badge badge-danger px-3 py-2">
                             <i class="fas fa-ban"></i> BANNED
                         </span>
-                    @elseif($user->email_verified_at)
-                        <span class="badge badge-success px-3 py-2">
-                            <i class="fas fa-check-circle"></i> Terverifikasi
+                    @elseif($user->account_status === 'active')
+                        <span class="badge badge-success px-3 py-2 cursor-pointer"
+                              data-toggle="modal" data-target="#statusModal{{ $user->id }}"
+                              title="Klik untuk ubah status">
+                            <i class="fas fa-check-circle"></i> Aktif
+                        </span>
+                    @elseif($user->account_status === 'pending')
+                        <span class="badge badge-warning px-3 py-2 cursor-pointer"
+                              data-toggle="modal" data-target="#statusModal{{ $user->id }}"
+                              title="Klik untuk ubah status">
+                            <i class="fas fa-clock"></i> Pending
+                        </span>
+                    @elseif($user->account_status === 'suspended')
+                        <span class="badge badge-danger px-3 py-2 cursor-pointer"
+                              data-toggle="modal" data-target="#statusModal{{ $user->id }}"
+                              title="Klik untuk ubah status">
+                            <i class="fas fa-pause"></i> Suspend
                         </span>
                     @else
-                        <span class="badge badge-secondary px-3 py-2">
-                            <i class="fas fa-clock"></i> Belum Verifikasi
+                        <span class="badge badge-secondary px-3 py-2 cursor-pointer"
+                              data-toggle="modal" data-target="#statusModal{{ $user->id }}"
+                              title="Klik untuk ubah status">
+                            <i class="fas fa-question"></i> {{ ucfirst($user->account_status) }}
                         </span>
                     @endif
                 </td>
@@ -138,13 +154,29 @@
                         <span class="badge badge-danger px-3 py-2">
                             <i class="fas fa-ban"></i> BANNED
                         </span>
-                    @elseif($user->email_verified_at)
-                        <span class="badge badge-success px-3 py-2">
-                            <i class="fas fa-check-circle"></i> Terverifikasi
+                    @elseif($user->account_status === 'active')
+                        <span class="badge badge-success px-3 py-2 cursor-pointer"
+                              data-toggle="modal" data-target="#statusModal{{ $user->id }}"
+                              title="Klik untuk ubah status">
+                            <i class="fas fa-check-circle"></i> Aktif
+                        </span>
+                    @elseif($user->account_status === 'pending')
+                        <span class="badge badge-warning px-3 py-2 cursor-pointer"
+                              data-toggle="modal" data-target="#statusModal{{ $user->id }}"
+                              title="Klik untuk ubah status">
+                            <i class="fas fa-clock"></i> Pending
+                        </span>
+                    @elseif($user->account_status === 'suspended')
+                        <span class="badge badge-danger px-3 py-2 cursor-pointer"
+                              data-toggle="modal" data-target="#statusModal{{ $user->id }}"
+                              title="Klik untuk ubah status">
+                            <i class="fas fa-pause"></i> Suspend
                         </span>
                     @else
-                        <span class="badge badge-secondary px-3 py-2">
-                            <i class="fas fa-clock"></i> Belum Verifikasi
+                        <span class="badge badge-secondary px-3 py-2 cursor-pointer"
+                              data-toggle="modal" data-target="#statusModal{{ $user->id }}"
+                              title="Klik untuk ubah status">
+                            <i class="fas fa-question"></i> {{ ucfirst($user->account_status) }}
                         </span>
                     @endif
                     <br><br>
@@ -212,6 +244,49 @@
     @endforelse
 </div>
 
+<!-- Status Change Modals -->
+@foreach($users as $user)
+    @if($user->role !== 'admin')
+        <div class="modal fade" id="statusModal{{ $user->id }}" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel{{ $user->id }}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="statusModalLabel{{ $user->id }}">Ubah Status: {{ $user->name }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form action="{{ route('admin.pengguna.ubah-status', $user) }}" method="POST">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="status{{ $user->id }}">Status Akun <span class="text-danger">*</span></label>
+                                <select name="account_status" id="status{{ $user->id }}" class="form-control" required>
+                                    <option value="pending" {{ $user->account_status === 'pending' ? 'selected' : '' }}>Pending</option>
+                                    <option value="active" {{ $user->account_status === 'active' ? 'selected' : '' }}>Aktif</option>
+                                    <option value="suspended" {{ $user->account_status === 'suspended' ? 'selected' : '' }}>Suspend</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group" id="suspendReason{{ $user->id }}" style="display: {{ $user->account_status === 'suspended' ? 'block' : 'none' }};">
+                                <label for="reason{{ $user->id }}">Alasan Suspend</label>
+                                <textarea name="reason" id="reason{{ $user->id }}" class="form-control" rows="3"
+                                          placeholder="Masukkan alasan suspend...">{{ $user->suspension_reason }}</textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Simpan Perubahan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
+@endforeach
+
 <!-- Ban User Modals -->
 @foreach($users as $user)
     @if($user->role !== 'admin' && !$user->isBanned())
@@ -233,8 +308,8 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="reason{{ $user->id }}">Alasan Ban <span class="text-danger">*</span></label>
-                                <textarea name="reason" id="reason{{ $user->id }}" class="form-control" rows="4"
+                                <label for="banReason{{ $user->id }}">Alasan Ban <span class="text-danger">*</span></label>
+                                <textarea name="reason" id="banReason{{ $user->id }}" class="form-control" rows="4"
                                           placeholder="Masukkan alasan mengapa user ini dibanned..." required></textarea>
                                 <small class="form-text text-muted">Alasan ini akan dikirimkan ke email user.</small>
                             </div>
