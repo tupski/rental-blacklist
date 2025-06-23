@@ -152,10 +152,7 @@
                         <td><strong>Update Terakhir:</strong></td>
                         <td>{{ $user->updated_at->format('d/m/Y H:i') }}</td>
                     </tr>
-                    <tr>
-                        <td><strong>Saldo:</strong></td>
-                        <td>{{ $user->getFormattedBalance() }}</td>
-                    </tr>
+
                 </table>
             </div>
         </div>

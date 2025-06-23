@@ -128,29 +128,6 @@
     </div>
 
     <div class="col-md-4">
-        <!-- Statistik Saldo -->
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Informasi Saldo</h3>
-            </div>
-            <div class="card-body">
-                <div class="text-center">
-                    <h4 class="text-primary">{{ $user->getFormattedBalance() }}</h4>
-                    <p class="text-muted">Saldo Saat Ini</p>
-                </div>
-                <hr>
-                <div class="row text-center">
-                    <div class="col-6">
-                        <h6>{{ $user->balanceTransactions->where('type', 'topup')->count() }}</h6>
-                        <small class="text-muted">Total Topup</small>
-                    </div>
-                    <div class="col-6">
-                        <h6>{{ $user->balanceTransactions->where('type', 'usage')->count() }}</h6>
-                        <small class="text-muted">Total Penggunaan</small>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Aksi Cepat -->
         <div class="card">

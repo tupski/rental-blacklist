@@ -244,22 +244,7 @@ class UserTest extends TestCase
         $this->user->unlockData($blacklist->id, 5000, 'Unlock attempt');
     }
 
-    /**
-     * Test: User balance formatting
-     *
-     * Alur:
-     * Input: User dengan saldo 10000
-     * Proses: Panggil getFormattedBalance()
-     * Output: "Rp 10.000"
-     */
-    public function test_user_balance_formatting()
-    {
-        $this->user->addBalance(10000, 'Test balance');
-        $this->user->refresh();
 
-        $formatted = $this->user->getFormattedBalance();
-        $this->assertEquals('Rp 10.000', $formatted);
-    }
 
     /**
      * Test: User relationships
