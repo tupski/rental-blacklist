@@ -1,12 +1,12 @@
 @extends('layouts.admin')
 
-@section('title', 'Tambah User')
-@section('page-title', 'Tambah User')
+@section('title', 'Tambah Rental')
+@section('page-title', 'Tambah Rental')
 
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('admin.dasbor') }}">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('admin.pengguna.indeks') }}">Manajemen User</a></li>
-    <li class="breadcrumb-item active">Tambah User</li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.pengguna.indeks') }}">Manajemen Rental</a></li>
+    <li class="breadcrumb-item active">Tambah Rental</li>
 @endsection
 
 @section('content')
@@ -14,7 +14,7 @@
     <div class="col-md-8">
         <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title">Form Tambah User</h3>
+                <h3 class="card-title">Form Tambah Rental</h3>
             </div>
             <form action="{{ route('admin.pengguna.simpan') }}" method="POST">
                 @csrf

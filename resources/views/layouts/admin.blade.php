@@ -374,12 +374,12 @@
                         </ul>
                     </li>
 
-                    <!-- Manajemen User -->
+                    <!-- Manajemen Rental -->
                     <li class="nav-item {{ request()->routeIs('admin.pengguna*') ? 'menu-open' : '' }}">
                         <a href="#" class="nav-link {{ request()->routeIs('admin.pengguna*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-users"></i>
                             <p>
-                                Manajemen User
+                                Manajemen Rental
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
@@ -387,33 +387,19 @@
                             <li class="nav-item">
                                 <a href="{{ route('admin.pengguna.indeks') }}" class="nav-link {{ request()->routeIs('admin.pengguna.indeks') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>Daftar User</p>
+                                    <p>List Rental</p>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.pengguna.buat') }}" class="nav-link {{ request()->routeIs('admin.pengguna.buat') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>Tambah User</p>
+                                    <p>Tambah Rental</p>
                                 </a>
                             </li>
                         </ul>
                     </li>
 
-                    <!-- Persetujuan Akun -->
-                    <li class="nav-item">
-                        <a href="{{ route('admin.persetujuan-akun.indeks') }}" class="nav-link {{ request()->routeIs('admin.persetujuan-akun*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-user-clock"></i>
-                            <p>
-                                Persetujuan Akun
-                                @php
-                                    $pendingCount = \App\Models\User::where('account_status', 'pending')->count();
-                                @endphp
-                                @if($pendingCount > 0)
-                                    <span class="badge badge-warning right">{{ $pendingCount }}</span>
-                                @endif
-                            </p>
-                        </a>
-                    </li>
+
 
                     <!-- Laporan Guest -->
                     <li class="nav-item">

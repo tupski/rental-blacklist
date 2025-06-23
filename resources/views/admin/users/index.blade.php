@@ -1,11 +1,11 @@
 @extends('layouts.admin')
 
-@section('title', 'Manajemen User')
-@section('page-title', 'Manajemen User')
+@section('title', 'Manajemen Rental')
+@section('page-title', 'Manajemen Rental')
 
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('admin.dasbor') }}">Dashboard</a></li>
-    <li class="breadcrumb-item active">Manajemen User</li>
+    <li class="breadcrumb-item active">Manajemen Rental</li>
 @endsection
 
 @push('styles')
@@ -199,11 +199,11 @@
             <div class="card-header">
                 <h3 class="card-title">
                     <i class="fas fa-users mr-2"></i>
-                    <span id="dataCount">Daftar User ({{ $users->total() }} data)</span>
+                    <span id="dataCount">List Rental ({{ $users->total() }} data)</span>
                 </h3>
                 <div class="card-tools">
                     <a href="{{ route('admin.pengguna.buat') }}" class="btn btn-primary btn-sm">
-                        <i class="fas fa-plus"></i> <span class="d-none d-sm-inline">Tambah User</span>
+                        <i class="fas fa-plus"></i> <span class="d-none d-sm-inline">Tambah Rental</span>
                     </a>
                 </div>
             </div>
@@ -355,7 +355,7 @@ $(document).ready(function() {
 
     // Update data count
     function updateDataCount(total) {
-        $('#dataCount').text('Daftar User (' + total + ' data)');
+        $('#dataCount').text('List Rental (' + total + ' data)');
     }
 
     // Update reset button visibility
