@@ -37,19 +37,7 @@
                         @enderror
                     </div>
 
-                    <div class="form-group">
-                        <label for="role">Role <span class="text-danger">*</span></label>
-                        <select class="form-control @error('role') is-invalid @enderror"
-                                id="role" name="role" required>
-                            <option value="">Pilih Role</option>
-                            <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>User Biasa</option>
-                            <option value="pengusaha_rental" {{ old('role') == 'pengusaha_rental' ? 'selected' : '' }}>Pengusaha Rental</option>
-                            <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
-                        </select>
-                        @error('role')
-                            <span class="invalid-feedback">{{ $message }}</span>
-                        @enderror
-                    </div>
+
 
                     <div class="form-group">
                         <label for="password">Password <span class="text-danger">*</span></label>
@@ -106,44 +94,21 @@
     </div>
 
     <div class="col-md-4">
-        <div class="card card-info">
-            <div class="card-header">
-                <h3 class="card-title">Informasi Role</h3>
-            </div>
-            <div class="card-body">
-                <h6><strong>User Biasa:</strong></h6>
-                <ul class="list-unstyled">
-                    <li><i class="fas fa-check text-success"></i> Dapat melakukan topup saldo</li>
-                    <li><i class="fas fa-check text-success"></i> Dapat membuka data blacklist</li>
-                    <li><i class="fas fa-check text-success"></i> Akses terbatas</li>
-                </ul>
-
-                <h6><strong>Pengusaha Rental:</strong></h6>
-                <ul class="list-unstyled">
-                    <li><i class="fas fa-check text-success"></i> Dapat menambah data blacklist</li>
-                    <li><i class="fas fa-check text-success"></i> Dapat mengelola API key</li>
-                    <li><i class="fas fa-check text-success"></i> Akses dashboard rental</li>
-                </ul>
-
-                <h6><strong>Admin:</strong></h6>
-                <ul class="list-unstyled">
-                    <li><i class="fas fa-check text-success"></i> Akses penuh sistem</li>
-                    <li><i class="fas fa-check text-success"></i> Dapat mengelola semua data</li>
-                    <li><i class="fas fa-check text-success"></i> Dapat validasi blacklist</li>
-                </ul>
-            </div>
-        </div>
-
         <div class="card card-warning">
             <div class="card-header">
                 <h3 class="card-title">Catatan Penting</h3>
             </div>
             <div class="card-body">
-                <ul class="list-unstyled">
-                    <li><i class="fas fa-exclamation-triangle text-warning"></i> Password akan dikirim via email jika notifikasi diaktifkan</li>
-                    <li><i class="fas fa-exclamation-triangle text-warning"></i> User dapat mengubah password setelah login</li>
-                    <li><i class="fas fa-exclamation-triangle text-warning"></i> Email harus unik dalam sistem</li>
-                </ul>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Informasi:</strong>
+                    <ul class="mb-0 mt-2">
+                        <li>User yang dibuat akan memiliki role <strong>Pengusaha Rental</strong></li>
+                        <li>Password akan dikirim via email jika notifikasi diaktifkan</li>
+                        <li>User dapat mengubah password setelah login</li>
+                        <li>Email harus unik dalam sistem</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>

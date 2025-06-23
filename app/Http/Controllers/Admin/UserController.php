@@ -80,14 +80,13 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'role' => 'required|in:user,pengusaha_rental,admin',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
         $userData = [
             'name' => $request->name,
             'email' => $request->email,
-            'role' => $request->role,
+            'role' => 'pengusaha_rental', // Default role untuk user yang dibuat admin
             'password' => Hash::make($request->password),
         ];
 
