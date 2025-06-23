@@ -87,7 +87,7 @@
                                   method="POST" class="d-inline">
                                 @csrf
                                 <button type="submit" class="dropdown-item text-dark font-weight-medium"
-                                        onclick="return confirm('Reset password user ini ke \'password123\'?')">
+                                        onclick="return confirm('Kirim link reset password ke email user ini?')">
                                     <i class="fas fa-key text-secondary"></i> Reset Password
                                 </button>
                             </form>
@@ -197,7 +197,7 @@
                                   method="POST" class="d-inline">
                                 @csrf
                                 <button type="submit" class="dropdown-item text-dark font-weight-medium"
-                                        onclick="return confirm('Reset password user ini ke \'password123\'?')">
+                                        onclick="return confirm('Kirim link reset password ke email user ini?')">
                                     <i class="fas fa-key text-secondary"></i> Reset Password
                                 </button>
                             </form>

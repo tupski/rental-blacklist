@@ -230,11 +230,29 @@ class UserController extends Controller
 
     public function resetPassword(User $user)
     {
-        $newPassword = 'password123';
-        $user->update(['password' => Hash::make($newPassword)]);
+        // Generate password reset token
+        $token = \Str::random(64);
 
-        return redirect()->back()
-            ->with('success', 'Password berhasil direset ke: ' . $newPassword);
+        // Store token in password_resets table
+        \DB::table('password_reset_tokens')->updateOrInsert(
+            ['email' => $user->email],
+            [
+                'email' => $user->email,
+                'token' => \Hash::make($token),
+                'created_at' => now()
+            ]
+        );
+
+        // Send password reset email
+        try {
+            $user->notify(new \App\Notifications\ResetPasswordNotification($token));
+
+            return redirect()->back()
+                ->with('success', 'Link reset password telah dikirim ke email: ' . $user->email);
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Gagal mengirim email reset password: ' . $e->getMessage());
+        }
     }
 
     public function checkEmail(Request $request)
