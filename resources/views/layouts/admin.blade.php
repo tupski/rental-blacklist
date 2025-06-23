@@ -375,8 +375,8 @@
                     </li>
 
                     <!-- Manajemen Rental -->
-                    <li class="nav-item {{ request()->routeIs('admin.pengguna*') ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ request()->routeIs('admin.pengguna*') ? 'active' : '' }}">
+                    <li class="nav-item {{ request()->routeIs('admin.pengguna*') || request()->routeIs('admin.rental-accounts*') ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ request()->routeIs('admin.pengguna*') || request()->routeIs('admin.rental-accounts*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-users"></i>
                             <p>
                                 Manajemen Rental
@@ -394,6 +394,12 @@
                                 <a href="{{ route('admin.pengguna.buat') }}" class="nav-link {{ request()->routeIs('admin.pengguna.buat') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Tambah Rental</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.rental-accounts.index') }}" class="nav-link {{ request()->routeIs('admin.rental-accounts*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Akun Rental</p>
                                 </a>
                             </li>
                         </ul>
@@ -448,12 +454,12 @@
 
 
 
-                    <!-- Manajemen Blog -->
-                    <li class="nav-item {{ request()->routeIs('admin.blog*') ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ request()->routeIs('admin.blog*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-blog"></i>
+                    <!-- Manajemen Konten -->
+                    <li class="nav-item {{ request()->routeIs('admin.blog*') || request()->routeIs('admin.halaman*') || request()->routeIs('admin.menu-navbar*') ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ request()->routeIs('admin.blog*') || request()->routeIs('admin.halaman*') || request()->routeIs('admin.menu-navbar*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-edit"></i>
                             <p>
-                                Manajemen Blog
+                                Manajemen Konten
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
@@ -473,7 +479,7 @@
                             <li class="nav-item">
                                 <a href="{{ route('admin.blog.kategori.indeks') }}" class="nav-link {{ request()->routeIs('admin.blog.kategori*') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>Kategori</p>
+                                    <p>Kategori Blog</p>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -488,12 +494,24 @@
                                     @endif
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.halaman.indeks') }}" class="nav-link {{ request()->routeIs('admin.halaman*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Halaman</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.menu-navbar.indeks') }}" class="nav-link {{ request()->routeIs('admin.menu-navbar*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Menu Navbar</p>
+                                </a>
+                            </li>
                         </ul>
                     </li>
 
                     <!-- Laporan & Analitik -->
-                    <li class="nav-item {{ request()->routeIs('admin.reports*') || request()->routeIs('admin.analytics*') ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ request()->routeIs('admin.reports*') || request()->routeIs('admin.analytics*') ? 'active' : '' }}">
+                    <li class="nav-item {{ request()->routeIs('admin.reports*') || request()->routeIs('admin.analytics*') || request()->routeIs('admin.laporan*') || request()->routeIs('admin.analitik*') ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ request()->routeIs('admin.reports*') || request()->routeIs('admin.analytics*') || request()->routeIs('admin.laporan*') || request()->routeIs('admin.analitik*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-chart-bar"></i>
                             <p>
                                 Laporan & Analitik
@@ -514,6 +532,30 @@
                                 </a>
                             </li>
                         </ul>
+                    </li>
+
+                    <!-- Notifikasi -->
+                    <li class="nav-item">
+                        <a href="{{ route('admin.notifikasi.indeks') }}" class="nav-link {{ request()->routeIs('admin.notifikasi*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-bell"></i>
+                            <p>
+                                Notifikasi
+                                @php
+                                    $unreadCount = auth()->user()->unreadNotifications->count();
+                                @endphp
+                                @if($unreadCount > 0)
+                                    <span class="badge badge-warning right">{{ $unreadCount }}</span>
+                                @endif
+                            </p>
+                        </a>
+                    </li>
+
+                    <!-- Atribut -->
+                    <li class="nav-item">
+                        <a href="{{ route('admin.atribut.indeks') }}" class="nav-link {{ request()->routeIs('admin.atribut*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-tags"></i>
+                            <p>Atribut</p>
+                        </a>
                     </li>
 
                     <!-- Pengaturan -->

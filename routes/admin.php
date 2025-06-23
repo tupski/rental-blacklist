@@ -37,8 +37,10 @@ use App\Http\Controllers\Admin\AttributeController as AdminAttributeController;
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
 
     // Dashboard
-    Route::get('/', [AdminDashboardController::class, 'index'])->name('dasbor');
-    Route::get('/dasbor', [AdminDashboardController::class, 'index'])->name('dasbor.indeks');
+    Route::get('/', function() {
+        return redirect()->route('admin.dasbor');
+    });
+    Route::get('/dasbor', [AdminDashboardController::class, 'index'])->name('dasbor');
 
     // Blacklist Management
     Route::resource('daftar-hitam', AdminBlacklistController::class)->parameters([
