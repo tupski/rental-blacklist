@@ -114,9 +114,6 @@ Route::prefix('daftar-rental')->name('daftar-rental.')->group(function () {
     Route::get('/{rental}', [RentalListController::class, 'show'])->name('tampil');
 });
 
-// Dynamic Pages - Must be at the end to avoid conflicts
-Route::get('/{slug}', [PageController::class, 'show'])->name('halaman.tampil')->where('slug', '[a-zA-Z0-9\-]+');
-
 /*
 |--------------------------------------------------------------------------
 | Authenticated User Routes
@@ -231,3 +228,6 @@ Route::middleware(['auth', 'verified', 'role:pengusaha_rental'])->group(function
 
 // Include authentication routes
 require __DIR__.'/auth.php';
+
+// Dynamic Pages - Must be at the very end to avoid conflicts with other routes
+Route::get('/{slug}', [PageController::class, 'show'])->name('halaman.tampil')->where('slug', '[a-zA-Z0-9\-]+');
