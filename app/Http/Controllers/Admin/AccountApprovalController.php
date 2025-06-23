@@ -26,7 +26,7 @@ class AccountApprovalController extends Controller
 
         $user->approve(Auth::id());
 
-        return redirect()->back()->with('success', "Akun {$user->name} berhasil disetujui dan diaktifkan.");
+        return redirect()->back()->with('success', "Akun {$user->name} berhasil disetujui dan diaktifkan. Email aktivasi telah dikirim.");
     }
 
     public function reject(Request $request, User $user)
@@ -65,6 +65,6 @@ class AccountApprovalController extends Controller
 
         $user->approve(Auth::id());
 
-        return redirect()->back()->with('success', "Akun {$user->name} berhasil diaktifkan.");
+        return redirect()->back()->with('success', "Akun {$user->name} berhasil diaktifkan. Email aktivasi telah dikirim.");
     }
 }

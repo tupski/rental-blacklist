@@ -64,10 +64,15 @@ Route::get('/berbagi/{token}/laporan', [App\Http\Controllers\SharedReportControl
 Route::get('/lapor', [ReportController::class, 'create'])->name('laporan.buat');
 Route::post('/lapor', [ReportController::class, 'store'])->name('laporan.simpan');
 
+// Registration revision (for rental owners who need to revise their data)
+Route::middleware(['auth', 'role:pengusaha_rental'])->group(function () {
+    Route::get('/daftar/revisi', [App\Http\Controllers\RegistrationRevisionController::class, 'show'])->name('daftar.revisi');
+    Route::put('/daftar/revisi', [App\Http\Controllers\RegistrationRevisionController::class, 'update'])->name('daftar.revisi.update');
+    Route::delete('/daftar/revisi/file', [App\Http\Controllers\RegistrationRevisionController::class, 'removeFile'])->name('daftar.revisi.remove-file');
+});
+
 // Rental pages
 Route::get('/rental', [RentalController::class, 'index'])->name('rental.indeks');
-Route::get('/pendaftaran-rental', [RentalController::class, 'create'])->name('rental.daftar');
-Route::post('/pendaftaran-rental', [RentalController::class, 'store'])->name('rental.simpan');
 
 // API Wilayah Indonesia (public)
 Route::prefix('api/wilayah')->name('api.wilayah.')->group(function () {

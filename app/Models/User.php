@@ -36,6 +36,17 @@ class User extends Authenticatable
         'banned_reason',
         'banned_at',
         'banned_by',
+        'suspension_reason',
+        'suspension_type',
+        'suspension_days',
+        'suspended_at',
+        'suspension_ends_at',
+        'suspended_by',
+        'revision_notes',
+        'revision_requested_at',
+        'revision_requested_by',
+        'activation_email_sent_at',
+        'activation_email_count',
     ];
 
     /**
@@ -59,6 +70,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'approved_at' => 'datetime',
             'banned_at' => 'datetime',
+            'suspended_at' => 'datetime',
+            'suspension_ends_at' => 'datetime',
+            'revision_requested_at' => 'datetime',
+            'activation_email_sent_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
@@ -191,6 +206,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if account needs revision
+     */
+    public function needsRevision()
+    {
+        return $this->account_status === 'needs_revision';
+    }
+
+    /**
      * Check if account is banned
      */
     public function isBanned()
@@ -199,24 +222,102 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if suspension is temporary and still active
+     */
+    public function isSuspensionActive()
+    {
+        if ($this->account_status !== 'suspended') {
+            return false;
+        }
+
+        if ($this->suspension_type === 'permanent') {
+            return true;
+        }
+
+        if ($this->suspension_type === 'temporary' && $this->suspension_ends_at) {
+            return now()->lt($this->suspension_ends_at);
+        }
+
+        return true;
+    }
+
+    /**
      * Approve account
      */
     public function approve($approvedBy = null)
     {
+        $wasNotActive = $this->account_status !== 'active';
+
         $this->update([
             'account_status' => 'active',
             'approved_at' => now(),
             'approved_by' => $approvedBy
         ]);
+
+        // Send activation email only if account was not active before
+        if ($wasNotActive) {
+            $this->sendActivationEmailIfNeeded();
+        }
+    }
+
+    /**
+     * Send activation email with duplication check
+     */
+    public function sendActivationEmailIfNeeded($forceResend = false)
+    {
+        // Check if email was already sent recently (within 24 hours) unless forced
+        if (!$forceResend && $this->activation_email_sent_at &&
+            $this->activation_email_sent_at->gt(now()->subHours(24))) {
+            return false; // Email already sent recently
+        }
+
+        try {
+            $this->notify(new \App\Notifications\AccountApprovedNotification());
+
+            // Update tracking fields
+            $this->update([
+                'activation_email_sent_at' => now(),
+                'activation_email_count' => $this->activation_email_count + 1
+            ]);
+
+            return true;
+        } catch (\Exception $e) {
+            \Log::warning('Failed to send activation email to user ' . $this->id . ': ' . $e->getMessage());
+            return false;
+        }
     }
 
     /**
      * Suspend account
      */
-    public function suspend()
+    public function suspend($reason = null, $type = 'permanent', $days = null, $suspendedBy = null)
+    {
+        $data = [
+            'account_status' => 'suspended',
+            'suspension_reason' => $reason,
+            'suspension_type' => $type,
+            'suspended_at' => now(),
+            'suspended_by' => $suspendedBy
+        ];
+
+        if ($type === 'temporary' && $days) {
+            $data['suspension_days'] = $days;
+            $data['suspension_ends_at'] = now()->addDays($days);
+        }
+
+        $this->update($data);
+    }
+
+    /**
+     * Request revision for account
+     */
+    public function requestRevision($notes, $requestedBy = null)
     {
         $this->update([
-            'account_status' => 'suspended'
+            'account_status' => 'needs_revision',
+            'revision_notes' => $notes,
+            'revision_requested_at' => now(),
+            'revision_requested_by' => $requestedBy
         ]);
     }
 

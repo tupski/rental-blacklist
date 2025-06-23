@@ -18,39 +18,50 @@ class RentalListController extends Controller
 
         $rentals = User::where('role', 'pengusaha_rental')
                       ->where('account_status', 'active')
+                      ->with('rentalRegistration')
                       ->when($search, function ($query, $search) {
                           return $query->where(function ($q) use ($search) {
                               $q->where('name', 'like', "%{$search}%")
-                                ->orWhere('company_name', 'like', "%{$search}%")
-                                ->orWhere('email', 'like', "%{$search}%");
+                                ->orWhere('email', 'like', "%{$search}%")
+                                ->orWhereHas('rentalRegistration', function($subQuery) use ($search) {
+                                    $subQuery->where('nama_rental', 'like', "%{$search}%");
+                                });
                           });
                       })
                       ->when($province, function ($query, $province) {
-                          return $query->where('province', $province);
+                          return $query->whereHas('rentalRegistration', function($subQuery) use ($province) {
+                              $subQuery->where('provinsi', $province);
+                          });
                       })
                       ->when($city, function ($query, $city) {
-                          return $query->where('city', $city);
+                          return $query->whereHas('rentalRegistration', function($subQuery) use ($city) {
+                              $subQuery->where('kota', $city);
+                          });
                       })
                       ->orderBy('created_at', 'desc')
                       ->paginate(12);
 
-        // Get unique provinces and cities for filter
-        $provinces = User::where('role', 'pengusaha_rental')
-                        ->where('account_status', 'active')
-                        ->whereNotNull('province')
-                        ->distinct()
-                        ->pluck('province')
-                        ->sort();
+        // Get unique provinces and cities for filter from rental_registrations
+        $provinces = \App\Models\RentalRegistration::whereHas('user', function($query) {
+                        $query->where('role', 'pengusaha_rental')
+                              ->where('account_status', 'active');
+                    })
+                    ->whereNotNull('provinsi')
+                    ->distinct()
+                    ->pluck('provinsi')
+                    ->sort();
 
-        $cities = User::where('role', 'pengusaha_rental')
-                     ->where('account_status', 'active')
-                     ->whereNotNull('city')
-                     ->when($province, function ($query, $province) {
-                         return $query->where('province', $province);
-                     })
-                     ->distinct()
-                     ->pluck('city')
-                     ->sort();
+        $cities = \App\Models\RentalRegistration::whereHas('user', function($query) {
+                     $query->where('role', 'pengusaha_rental')
+                           ->where('account_status', 'active');
+                 })
+                 ->whereNotNull('kota')
+                 ->when($province, function ($query, $province) {
+                     return $query->where('provinsi', $province);
+                 })
+                 ->distinct()
+                 ->pluck('kota')
+                 ->sort();
 
         return view('rental-list.index', compact('rentals', 'provinces', 'cities', 'search', 'province', 'city'));
     }

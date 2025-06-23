@@ -412,7 +412,7 @@
                             <div class="col-md-6">
                                 <h6 class="text-primary">1. Daftar Rental</h6>
                                 <p class="text-muted mb-3">Daftarkan bisnis rental Anda untuk mendapatkan akses penuh</p>
-                                <a href="{{ route('rental.daftar') }}" class="btn btn-primary">
+                                <a href="{{ route('daftar') }}" class="btn btn-primary">
                                     <i class="fas fa-user-plus me-2"></i>
                                     Daftar Sekarang
                                 </a>

@@ -299,7 +299,7 @@
                 <p class="text-muted mb-4">
                     Daftarkan rental Anda di platform CekPenyewa.com dan dapatkan akses ke database blacklist pelanggan bermasalah.
                 </p>
-                <a href="{{ route('rental.daftar') }}" class="btn btn-primary btn-lg">
+                <a href="{{ route('daftar') }}" class="btn btn-primary btn-lg">
                     <i class="fas fa-user-plus me-2"></i>
                     Daftar Rental Sekarang
                 </a>

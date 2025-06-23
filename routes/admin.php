@@ -79,6 +79,16 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('pengguna/{user}/ban', [AdminUserController::class, 'ban'])->name('pengguna.ban');
     Route::post('pengguna/{user}/unban', [AdminUserController::class, 'unban'])->name('pengguna.unban');
 
+    // Rental Account Management
+    Route::prefix('akun-rental')->name('rental-accounts.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\RentalAccountController::class, 'index'])->name('index');
+        Route::get('/{account}', [App\Http\Controllers\Admin\RentalAccountController::class, 'show'])->name('show');
+        Route::post('/{account}/approve', [App\Http\Controllers\Admin\RentalAccountController::class, 'approve'])->name('approve');
+        Route::post('/{account}/request-revision', [App\Http\Controllers\Admin\RentalAccountController::class, 'requestRevision'])->name('request-revision');
+        Route::post('/{account}/suspend', [App\Http\Controllers\Admin\RentalAccountController::class, 'suspend'])->name('suspend');
+        Route::post('/{account}/reactivate', [App\Http\Controllers\Admin\RentalAccountController::class, 'reactivate'])->name('reactivate');
+    });
+
     // Guest Reports Management
     Route::resource('laporan-tamu', AdminGuestReportController::class)->parameters([
         'laporan-tamu' => 'guestReport'
