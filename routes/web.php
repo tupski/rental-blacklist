@@ -5,7 +5,7 @@ use App\Http\Controllers\PublicController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BlacklistController;
 use App\Http\Controllers\ReportController;
-use App\Http\Controllers\RentalController;
+
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\SponsorController;
 use App\Http\Controllers\InvoiceController;
@@ -71,8 +71,7 @@ Route::middleware(['auth', 'role:pengusaha_rental'])->group(function () {
     Route::delete('/daftar/revisi/file', [App\Http\Controllers\RegistrationRevisionController::class, 'removeFile'])->name('daftar.revisi.remove-file');
 });
 
-// Rental pages
-Route::get('/rental', [RentalController::class, 'index'])->name('rental.indeks');
+// Rental pages (moved to rental-list routes)
 
 // API Wilayah Indonesia (public)
 Route::prefix('api/wilayah')->name('api.wilayah.')->group(function () {

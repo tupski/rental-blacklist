@@ -18,7 +18,7 @@
                 <h1 class="display-1 fw-bold text-danger mb-3">404</h1>
                 <h2 class="h3 text-dark mb-4">Halaman Tidak Ditemukan</h2>
                 <p class="lead text-muted mb-5">
-                    Maaf, halaman yang Anda cari tidak dapat ditemukan. 
+                    Maaf, halaman yang Anda cari tidak dapat ditemukan.
                     Mungkin halaman telah dipindahkan, dihapus, atau URL yang Anda masukkan salah.
                 </p>
 
@@ -39,7 +39,7 @@
                     <h5 class="text-dark mb-3">Atau coba cari blacklist:</h5>
                     <form action="{{ route('beranda') }}" method="GET" class="d-flex justify-content-center">
                         <div class="input-group" style="max-width: 400px;">
-                            <input type="text" name="cari" class="form-control form-control-lg" 
+                            <input type="text" name="cari" class="form-control form-control-lg"
                                    placeholder="Masukkan NIK, nama, atau nomor HP">
                             <button class="btn btn-primary" type="submit">
                                 <i class="fas fa-search"></i>
@@ -60,7 +60,7 @@
                             <i class="fas fa-envelope text-info me-1"></i>
                             Hubungi Kami
                         </a>
-                        <a href="{{ route('rental.daftar') }}" class="text-decoration-none">
+                        <a href="{{ route('daftar') }}" class="text-decoration-none">
                             <i class="fas fa-store text-success me-1"></i>
                             Daftar Rental
                         </a>
