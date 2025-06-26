@@ -141,8 +141,9 @@
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">Nomor KTP <span class="text-muted">(opsional)</span></label>
                                     <input type="text" class="form-control @error('nik') is-invalid @enderror"
-                                           name="nik" value="{{ old('nik') }}"
+                                           name="nik" value="{{ old('nik') }}" id="nik_input"
                                            placeholder="1234567890123456" maxlength="16">
+                                    <div class="form-text">Maksimal 16 digit angka</div>
                                     @error('nik')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -150,16 +151,17 @@
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">Nomor Telepon/WhatsApp <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control @error('no_hp') is-invalid @enderror"
-                                           name="no_hp" value="{{ old('no_hp') }}"
-                                           placeholder="081234567890">
+                                           name="no_hp" value="{{ old('no_hp') }}" id="no_hp_input"
+                                           placeholder="081234567890" maxlength="13">
+                                    <div class="form-text">Maksimal 13 digit angka</div>
                                     @error('no_hp')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-12">
                                     <label class="form-label fw-semibold">Alamat Lengkap <span class="text-muted">(jika diketahui)</span></label>
                                     <textarea class="form-control @error('alamat') is-invalid @enderror"
-                                              name="alamat" rows="2"
+                                              name="alamat" rows="3"
                                               placeholder="Jl. Contoh No. 123, RT/RW, Kelurahan, Kecamatan, Kota">{{ old('alamat') }}</textarea>
                                     @error('alamat')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -213,10 +215,11 @@
                                     <label class="form-label fw-semibold">Kategori Rental <span class="text-danger">*</span></label>
                                     <select class="form-select @error('jenis_rental') is-invalid @enderror" name="jenis_rental">
                                         <option value="">Pilih kategori rental</option>
-                                        <option value="Rental Mobil" {{ old('jenis_rental') == 'Rental Mobil' ? 'selected' : '' }}>Rental Mobil</option>
-                                        <option value="Rental Motor" {{ old('jenis_rental') == 'Rental Motor' ? 'selected' : '' }}>Rental Motor</option>
-                                        <option value="Kamera" {{ old('jenis_rental') == 'Kamera' ? 'selected' : '' }}>Kamera</option>
-                                        <option value="Lainnya" {{ old('jenis_rental') == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
+                                        @foreach($jenisRental as $jenis)
+                                            <option value="{{ $jenis->value }}" {{ old('jenis_rental') == $jenis->value ? 'selected' : '' }}>
+                                                {{ $jenis->name }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                     @error('jenis_rental')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -234,18 +237,15 @@
                                 <div class="col-12">
                                     <label class="form-label fw-semibold">Jenis Masalah <span class="text-danger">*</span></label>
                                     <div class="row g-2">
-                                        @php
-                                            $jenisLaporan = ['Tidak Mengembalikan', 'Merusak Barang', 'Tidak Bayar', 'Kabur', 'Lainnya'];
-                                        @endphp
-                                        @foreach($jenisLaporan as $jenis)
+                                        @foreach($kategoriMasalah as $kategori)
                                         <div class="col-md-4">
                                             <div class="form-check">
                                                 <input class="form-check-input @error('jenis_laporan') is-invalid @enderror"
-                                                       type="checkbox" name="jenis_laporan[]" value="{{ $jenis }}"
-                                                       id="jenis_{{ $loop->index }}"
-                                                       {{ in_array($jenis, old('jenis_laporan', [])) ? 'checked' : '' }}>
-                                                <label class="form-check-label" for="jenis_{{ $loop->index }}">
-                                                    {{ $jenis }}
+                                                       type="checkbox" name="jenis_laporan[]" value="{{ $kategori->value }}"
+                                                       id="jenis_{{ $kategori->id }}"
+                                                       {{ in_array($kategori->value, old('jenis_laporan', [])) ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="jenis_{{ $kategori->id }}">
+                                                    {{ $kategori->name }}
                                                 </label>
                                             </div>
                                         </div>
@@ -258,8 +258,9 @@
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">Nomor Polisi <span class="text-muted">(jika kendaraan)</span></label>
                                     <input type="text" class="form-control @error('nomor_polisi') is-invalid @enderror"
-                                           name="nomor_polisi" value="{{ old('nomor_polisi') }}"
-                                           placeholder="B 1234 ABC">
+                                           name="nomor_polisi" value="{{ old('nomor_polisi') }}" id="nomor_polisi_input"
+                                           placeholder="B 1234 ABC" style="text-transform: uppercase;">
+                                    <div class="form-text">Format: B 1234 ABC atau AB 1234 AC</div>
                                     @error('nomor_polisi')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -268,10 +269,11 @@
                                     <label class="form-label fw-semibold">Nilai Kerugian <span class="text-muted">(estimasi)</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text">Rp</span>
-                                        <input type="number" class="form-control @error('nilai_kerugian') is-invalid @enderror"
-                                               name="nilai_kerugian" value="{{ old('nilai_kerugian') }}"
-                                               placeholder="0" min="0" step="1000">
+                                        <input type="text" class="form-control @error('nilai_kerugian') is-invalid @enderror"
+                                               name="nilai_kerugian" value="{{ old('nilai_kerugian') }}" id="nilai_kerugian_input"
+                                               placeholder="0">
                                     </div>
+                                    <div class="form-text">Contoh: Rp 1.000.000</div>
                                     @error('nilai_kerugian')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -311,50 +313,18 @@
                                 <div class="col-12">
                                     <label class="form-label fw-semibold">Pilih status yang sesuai <span class="text-danger">*</span></label>
                                     <div class="row g-2">
+                                        @foreach($statusPenanganan as $status)
                                         <div class="col-md-6">
                                             <div class="form-check">
                                                 <input class="form-check-input @error('status_penanganan') is-invalid @enderror"
-                                                       type="checkbox" name="status_penanganan[]" value="dilaporkan_polisi"
-                                                       id="status_polisi" {{ in_array('dilaporkan_polisi', old('status_penanganan', [])) ? 'checked' : '' }}>
-                                                <label class="form-check-label" for="status_polisi">
-                                                    <i class="fas fa-shield-alt me-1"></i>
-                                                    Sudah dilaporkan ke polisi
+                                                       type="checkbox" name="status_penanganan[]" value="{{ $status->value }}"
+                                                       id="status_{{ $status->id }}" {{ in_array($status->value, old('status_penanganan', [])) ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="status_{{ $status->id }}">
+                                                    {{ $status->name }}
                                                 </label>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="form-check">
-                                                <input class="form-check-input @error('status_penanganan') is-invalid @enderror"
-                                                       type="checkbox" name="status_penanganan[]" value="tidak_ada_respon"
-                                                       id="status_respon" {{ in_array('tidak_ada_respon', old('status_penanganan', [])) ? 'checked' : '' }}>
-                                                <label class="form-check-label" for="status_respon">
-                                                    <i class="fas fa-phone-slash me-1"></i>
-                                                    Sudah dicoba dihubungi tapi tidak ada respon
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-check">
-                                                <input class="form-check-input @error('status_penanganan') is-invalid @enderror"
-                                                       type="checkbox" name="status_penanganan[]" value="proses_penyelesaian"
-                                                       id="status_proses" {{ in_array('proses_penyelesaian', old('status_penanganan', [])) ? 'checked' : '' }}>
-                                                <label class="form-check-label" for="status_proses">
-                                                    <i class="fas fa-hourglass-half me-1"></i>
-                                                    Masih proses penyelesaian
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-check">
-                                                <input class="form-check-input @error('status_penanganan') is-invalid @enderror"
-                                                       type="checkbox" name="status_penanganan[]" value="lainnya"
-                                                       id="status_lainnya" {{ in_array('lainnya', old('status_penanganan', [])) ? 'checked' : '' }}>
-                                                <label class="form-check-label" for="status_lainnya">
-                                                    <i class="fas fa-ellipsis-h me-1"></i>
-                                                    Lainnya
-                                                </label>
-                                            </div>
-                                        </div>
+                                        @endforeach
                                     </div>
                                     @error('status_penanganan')
                                         <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -421,11 +391,11 @@
                             </div>
                         </div>
 
-                        <!-- Tambahan (opsional) -->
+                        <!-- Pemeriksaan Keamanan -->
                         <div class="mb-5">
                             <h4 class="text-primary mb-3 border-bottom pb-2">
-                                <i class="fas fa-plus-circle me-2"></i>
-                                Tambahan (opsional)
+                                <i class="fas fa-shield-alt me-2"></i>
+                                Pemeriksaan Keamanan
                             </h4>
                             <div class="row g-3">
                                 <div class="col-12">
@@ -433,6 +403,20 @@
                                         <i class="fas fa-robot me-2"></i>
                                         <strong>Verifikasi Keamanan:</strong> Sistem akan melakukan verifikasi otomatis untuk mencegah spam dan laporan palsu.
                                     </div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">Verifikasi Captcha <span class="text-danger">*</span></label>
+                                    @if(config('services.recaptcha.site_key'))
+                                        <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
+                                        @error('g-recaptcha-response')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                        @enderror
+                                    @else
+                                        <div class="alert alert-warning">
+                                            <i class="fas fa-exclamation-triangle me-2"></i>
+                                            reCAPTCHA belum dikonfigurasi. Silakan hubungi administrator.
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -456,8 +440,71 @@
 </div>
 
 @push('scripts')
+@if(config('services.recaptcha.site_key'))
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+@endif
 <script>
 $(document).ready(function() {
+    // NIK validation - only numbers, max 16 digits
+    $('#nik_input').on('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+        if (this.value.length > 16) {
+            this.value = this.value.slice(0, 16);
+        }
+    });
+
+    // Phone number validation - only numbers, max 13 digits
+    $('#no_hp_input').on('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+        if (this.value.length > 13) {
+            this.value = this.value.slice(0, 13);
+        }
+    });
+
+    // License plate formatting
+    $('#nomor_polisi_input').on('input', function() {
+        let value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+        // Format license plate: B1234ABC -> B 1234 ABC
+        if (value.length > 0) {
+            let formatted = '';
+            let cityCode = '';
+            let numbers = '';
+            let suffix = '';
+
+            // Extract city code (1-2 letters at start)
+            let match = value.match(/^([A-Z]{1,2})(.*)$/);
+            if (match) {
+                cityCode = match[1];
+                let remaining = match[2];
+
+                // Extract numbers (1-4 digits)
+                let numberMatch = remaining.match(/^(\d{1,4})(.*)$/);
+                if (numberMatch) {
+                    numbers = numberMatch[1];
+                    suffix = numberMatch[2].substring(0, 3); // Max 3 letters for suffix
+                }
+            }
+
+            // Build formatted string
+            if (cityCode) formatted += cityCode;
+            if (numbers) formatted += (formatted ? ' ' : '') + numbers;
+            if (suffix) formatted += (formatted ? ' ' : '') + suffix;
+
+            this.value = formatted;
+        }
+    });
+
+    // Currency formatting for nilai kerugian
+    $('#nilai_kerugian_input').on('input', function() {
+        let value = this.value.replace(/[^\d]/g, '');
+        if (value) {
+            // Format as currency
+            let formatted = parseInt(value).toLocaleString('id-ID');
+            this.value = formatted;
+        }
+    });
+
     // Show/hide status lainnya input
     function toggleStatusLainnya() {
         if ($('#status_lainnya').is(':checked')) {
@@ -493,9 +540,27 @@ $(document).ready(function() {
             isValid = false;
         }
 
+        // Check reCAPTCHA if enabled
+        @if(config('services.recaptcha.site_key'))
+        if (typeof grecaptcha !== 'undefined') {
+            let recaptchaResponse = grecaptcha.getResponse();
+            if (!recaptchaResponse) {
+                alert('Silakan selesaikan verifikasi reCAPTCHA.');
+                isValid = false;
+            }
+        }
+        @endif
+
         if (!isValid) {
             e.preventDefault();
             return false;
+        }
+
+        // Convert currency format back to number for nilai_kerugian
+        let nilaiKerugian = $('#nilai_kerugian_input').val();
+        if (nilaiKerugian) {
+            let numericValue = nilaiKerugian.replace(/[^\d]/g, '');
+            $('#nilai_kerugian_input').val(numericValue);
         }
 
         // Show loading state
@@ -516,11 +581,7 @@ $(document).ready(function() {
         }
     });
 
-    // Auto-format currency input
-    $('input[name="nilai_kerugian"]').on('input', function() {
-        let value = this.value.replace(/[^\d]/g, '');
-        this.value = value;
-    });
+
 
     // Character counter for kronologi
     $('textarea[name="kronologi"]').on('input', function() {

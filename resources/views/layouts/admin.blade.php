@@ -396,12 +396,6 @@
                                     <p>Tambah Rental</p>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a href="{{ route('admin.rental-accounts.index') }}" class="nav-link {{ request()->routeIs('admin.rental-accounts*') ? 'active' : '' }}">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Akun Rental</p>
-                                </a>
-                            </li>
                         </ul>
                     </li>
 

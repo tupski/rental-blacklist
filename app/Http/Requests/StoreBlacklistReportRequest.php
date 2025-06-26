@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Rules\BuktiFileRule;
+use App\Rules\RecaptchaRule;
 use App\Models\Attribute;
 
 class StoreBlacklistReportRequest extends FormRequest
@@ -25,33 +26,61 @@ class StoreBlacklistReportRequest extends FormRequest
             // Data Penyewa
             'nama_lengkap' => 'required|string|max:255',
             'jenis_kelamin' => 'required|in:L,P',
-            'nik' => 'nullable|string|size:16',
-            'no_hp' => 'required|string|max:20',
+            'nik' => 'nullable|string|max:16|regex:/^[0-9]+$/',
+            'no_hp' => 'required|string|max:13|regex:/^[0-9]+$/',
             'alamat' => 'nullable|string|max:1000',
             'foto_penyewa.*' => ['nullable', 'file', new BuktiFileRule()],
             'foto_ktp_sim.*' => ['nullable', 'file', new BuktiFileRule()],
 
             // Detail Masalah
-            'jenis_rental' => 'required|string',
+            'jenis_rental' => [
+                'required',
+                'string',
+                function ($attribute, $value, $fail) {
+                    $validValues = Attribute::getByType('jenis_rental')->pluck('value')->toArray();
+                    if (!in_array($value, $validValues)) {
+                        $fail('Jenis rental yang dipilih tidak valid.');
+                    }
+                }
+            ],
             'jenis_laporan' => 'required|array|min:1',
-            'jenis_laporan.*' => 'string',
+            'jenis_laporan.*' => [
+                'string',
+                function ($attribute, $value, $fail) {
+                    $validValues = Attribute::getByType('kategori_masalah')->pluck('value')->toArray();
+                    if (!in_array($value, $validValues)) {
+                        $fail('Jenis masalah yang dipilih tidak valid.');
+                    }
+                }
+            ],
             'jenis_laporan_lainnya' => 'nullable|string|max:255',
             'tanggal_sewa' => 'required|date|before_or_equal:today',
             'tanggal_kejadian' => 'required|date|before_or_equal:today|after_or_equal:tanggal_sewa',
             'jenis_kendaraan' => 'required|string|max:255',
-            'nomor_polisi' => 'nullable|string|max:20',
-            'nilai_kerugian' => 'nullable|numeric|min:0|max:999999999999.99',
+            'nomor_polisi' => 'nullable|string|max:20|regex:/^[A-Z]{1,2}\s\d{1,4}\s[A-Z]{0,3}$/',
+            'nilai_kerugian' => 'nullable|string',
             'kronologi' => 'required|string|min:50',
             'bukti.*' => ['nullable', 'file', new BuktiFileRule()],
 
             // Status Penanganan
             'status_penanganan' => 'required|array|min:1',
-            'status_penanganan.*' => 'string',
+            'status_penanganan.*' => [
+                'string',
+                function ($attribute, $value, $fail) {
+                    $validValues = Attribute::getByType('status_penanganan')->pluck('value')->toArray();
+                    if (!in_array($value, $validValues)) {
+                        $fail('Status penanganan yang dipilih tidak valid.');
+                    }
+                }
+            ],
             'status_penanganan_lainnya' => 'nullable|string|max:255',
 
             // Persetujuan
             'persetujuan' => 'required|accepted',
             'nama_pelapor_ttd' => 'required|string|max:255',
+
+            // reCAPTCHA
+            'g-recaptcha-response' => config('services.recaptcha.secret_key') ? ['required', new RecaptchaRule()] : 'nullable',
         ];
 
         // Jika user tidak login (guest), tambah validasi pelapor
@@ -150,22 +179,33 @@ class StoreBlacklistReportRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         // Set tanggal pelaporan to now
-        $this->merge([
+        $mergeData = [
             'tanggal_pelaporan' => now(),
             'tipe_pelapor' => auth()->check() ? 'rental' : 'guest'
-        ]);
+        ];
+
+        // Convert formatted currency back to numeric value
+        if ($this->has('nilai_kerugian') && $this->nilai_kerugian) {
+            $mergeData['nilai_kerugian'] = (float) preg_replace('/[^\d]/', '', $this->nilai_kerugian);
+        }
+
+        // Format nomor polisi to uppercase and proper spacing
+        if ($this->has('nomor_polisi') && $this->nomor_polisi) {
+            $nopol = strtoupper(trim($this->nomor_polisi));
+            // Remove extra spaces and format properly
+            $nopol = preg_replace('/\s+/', ' ', $nopol);
+            $mergeData['nomor_polisi'] = $nopol;
+        }
 
         // Normalize phone numbers
         if ($this->has('no_hp')) {
-            $this->merge([
-                'no_hp' => \App\Helpers\PhoneHelper::normalize($this->no_hp)
-            ]);
+            $mergeData['no_hp'] = \App\Helpers\PhoneHelper::normalize($this->no_hp);
         }
 
         if ($this->has('no_wa_pelapor')) {
-            $this->merge([
-                'no_wa_pelapor' => \App\Helpers\PhoneHelper::normalize($this->no_wa_pelapor)
-            ]);
+            $mergeData['no_wa_pelapor'] = \App\Helpers\PhoneHelper::normalize($this->no_wa_pelapor);
         }
+
+        $this->merge($mergeData);
     }
 }
