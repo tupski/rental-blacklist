@@ -44,7 +44,6 @@ class UserController extends Controller
         $allUsers = User::where('role', '!=', 'admin')->get();
         $statistics = [
             'total' => $allUsers->count(),
-            'user_biasa' => $allUsers->where('role', 'user')->count(),
             'pengusaha_rental' => $allUsers->where('role', 'pengusaha_rental')->count(),
             'email_verified' => $allUsers->whereNotNull('email_verified_at')->count(),
             'email_unverified' => $allUsers->whereNull('email_verified_at')->count(),
@@ -80,7 +79,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'role' => 'required|in:user,pengusaha_rental,admin',
+            'role' => 'required|in:pengusaha_rental,admin',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
@@ -121,7 +120,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
-            'role' => 'required|in:user,pengusaha_rental',
+            'role' => 'required|in:pengusaha_rental',
             'nik' => 'nullable|string|max:16',
             'no_hp' => 'nullable|string|max:15',
             'alamat' => 'nullable|string',

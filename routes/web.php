@@ -8,8 +8,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RentalController;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\SponsorController;
-use App\Http\Controllers\TopupController;
-use App\Http\Controllers\BalanceController;
+
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PublicRentalController;
@@ -92,11 +91,9 @@ Route::middleware('auth')->group(function () {
             return redirect()->route('admin.dasbor');
         } elseif ($user->role === 'pengusaha_rental') {
             return redirect()->route('rental.dasbor');
-        } elseif ($user->role === 'user') {
-            return redirect()->route('pengguna.dasbor');
         }
 
-        // Default fallback
+        // Default fallback - redirect to home if role not recognized
         return redirect()->route('beranda');
     })->name('dasbor');
 
@@ -175,29 +172,7 @@ Route::middleware(['auth', 'verified', 'role:pengusaha_rental'])->group(function
     });
 });
 
-/*
-|--------------------------------------------------------------------------
-| Regular User Routes (User Biasa)
-|--------------------------------------------------------------------------
-*/
 
-Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
-
-    // Dashboard for regular users
-    Route::get('/pengguna/dasbor', [App\Http\Controllers\UserDashboardController::class, 'index'])->name('pengguna.dasbor');
-    Route::post('/pengguna/cari', [App\Http\Controllers\UserDashboardController::class, 'search'])->name('pengguna.cari');
-    Route::post('/pengguna/buka/{id}', [App\Http\Controllers\UserDashboardController::class, 'unlock'])->name('pengguna.buka');
-    Route::post('/pengguna/bagikan/{id}', [App\Http\Controllers\SharedReportController::class, 'create'])->name('pengguna.bagikan');
-
-    // Topup & Balance routes (only for regular users)
-    Route::get('/isi-saldo', [TopupController::class, 'index'])->name('isi-saldo.indeks');
-    Route::get('/isi-saldo/buat', [TopupController::class, 'create'])->name('isi-saldo.buat');
-    Route::post('/isi-saldo', [TopupController::class, 'store'])->name('isi-saldo.simpan');
-    Route::get('/isi-saldo/konfirmasi/{invoice}', [TopupController::class, 'confirm'])->name('isi-saldo.konfirmasi');
-    Route::post('/isi-saldo/unggah-bukti/{invoice}', [TopupController::class, 'uploadProof'])->name('isi-saldo.unggah-bukti');
-    Route::get('/saldo/riwayat', [BalanceController::class, 'history'])->name('saldo.riwayat');
-    Route::get('/saldo/riwayat/export-pdf', [BalanceController::class, 'exportPDF'])->name('saldo.export-pdf');
-});
 
 // Include authentication routes
 require __DIR__.'/auth.php';

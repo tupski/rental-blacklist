@@ -6,11 +6,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\UserBalance;
-use App\Models\BalanceTransaction;
-use App\Models\TopupRequest;
+
 use App\Models\UserUnlock;
 
 class User extends Authenticatable
@@ -88,23 +86,7 @@ class User extends Authenticatable
         ]);
     }
 
-    // Relasi saldo
-    public function balance(): HasOne
-    {
-        return $this->hasOne(UserBalance::class);
-    }
 
-    // Relasi transaksi saldo
-    public function balanceTransactions(): HasMany
-    {
-        return $this->hasMany(BalanceTransaction::class);
-    }
-
-    // Relasi topup requests
-    public function topupRequests(): HasMany
-    {
-        return $this->hasMany(TopupRequest::class);
-    }
 
     // Relasi user unlocks
     public function userUnlocks(): HasMany
@@ -124,76 +106,7 @@ class User extends Authenticatable
         return $this->hasOne(RentalRegistration::class);
     }
 
-    // Get current balance
-    public function getCurrentBalance()
-    {
-        $balance = $this->balance;
-        return $balance ? $balance->balance : 0;
-    }
 
-    // Format balance for display
-    public function getFormattedBalance()
-    {
-        return 'Rp ' . number_format($this->getCurrentBalance(), 0, ',', '.');
-    }
-
-    // Check if user has enough balance
-    public function hasEnoughBalance($amount)
-    {
-        return $this->getCurrentBalance() >= $amount;
-    }
-
-    // Deduct balance
-    public function deductBalance($amount, $description, $referenceType = null, $referenceId = null)
-    {
-        $balance = $this->balance ?? $this->balance()->create(['balance' => 0]);
-
-        if (!$this->hasEnoughBalance($amount)) {
-            throw new \Exception('Saldo tidak mencukupi');
-        }
-
-        $balanceBefore = $balance->balance;
-        $balanceAfter = $balanceBefore - $amount;
-
-        $balance->update(['balance' => $balanceAfter]);
-
-        // Record transaction
-        $this->balanceTransactions()->create([
-            'type' => 'usage',
-            'amount' => $amount,
-            'balance_before' => $balanceBefore,
-            'balance_after' => $balanceAfter,
-            'description' => $description,
-            'reference_type' => $referenceType,
-            'reference_id' => $referenceId
-        ]);
-
-        return $balanceAfter;
-    }
-
-    // Add balance
-    public function addBalance($amount, $description, $referenceType = null, $referenceId = null)
-    {
-        $balance = $this->balance ?? $this->balance()->create(['balance' => 0]);
-
-        $balanceBefore = $balance->balance;
-        $balanceAfter = $balanceBefore + $amount;
-
-        $balance->update(['balance' => $balanceAfter]);
-
-        // Record transaction
-        $this->balanceTransactions()->create([
-            'type' => 'topup',
-            'amount' => $amount,
-            'balance_before' => $balanceBefore,
-            'balance_after' => $balanceAfter,
-            'description' => $description,
-            'reference_type' => $referenceType,
-            'reference_id' => $referenceId
-        ]);
-
-        return $balanceAfter;
-    }
 
     // Check if user has unlocked specific blacklist data
     public function hasUnlockedData($blacklistId)
@@ -217,31 +130,7 @@ class User extends Authenticatable
         return UserUnlock::getUnlockedIds($this->id);
     }
 
-    // Unlock blacklist data
-    public function unlockData($blacklistId, $amount, $description = 'Unlock data blacklist')
-    {
-        // Check if already unlocked
-        if ($this->hasUnlockedData($blacklistId)) {
-            throw new \Exception('Data sudah dibuka sebelumnya');
-        }
 
-        // Check balance
-        if (!$this->hasEnoughBalance($amount)) {
-            throw new \Exception('Saldo tidak mencukupi');
-        }
-
-        // Deduct balance
-        $this->deductBalance($amount, $description, UserUnlock::class, $blacklistId);
-
-        // Create unlock record
-        $unlock = $this->userUnlocks()->create([
-            'blacklist_id' => $blacklistId,
-            'amount_paid' => $amount,
-            'unlocked_at' => now()
-        ]);
-
-        return $unlock;
-    }
 
     /**
      * Check if account is active
@@ -435,19 +324,5 @@ class User extends Authenticatable
         return true;
     }
 
-    /**
-     * Check if balance is low (less than 10,000)
-     */
-    public function hasLowBalance()
-    {
-        return $this->getCurrentBalance() < 10000;
-    }
 
-    /**
-     * Check if balance is zero or negative
-     */
-    public function hasZeroBalance()
-    {
-        return $this->getCurrentBalance() <= 0;
-    }
 }

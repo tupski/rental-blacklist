@@ -36,11 +36,9 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('admin.dasbor');
         } elseif ($user->role === 'pengusaha_rental') {
             return redirect()->route('rental.dasbor');
-        } elseif ($user->role === 'user') {
-            return redirect()->route('pengguna.dasbor');
         }
 
-        // Default fallback
+        // Default fallback - redirect to home if role not recognized
         return redirect()->route('beranda');
     }
 
