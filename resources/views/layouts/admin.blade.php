@@ -593,6 +593,12 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a href="{{ route('admin.pengaturan.legal.indeks') }}" class="nav-link {{ request()->routeIs('admin.pengaturan.legal*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Halaman Legal</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="{{ route('admin.pengaturan.database.indeks') }}" class="nav-link {{ request()->routeIs('admin.pengaturan.database*') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Database</p>
@@ -889,12 +895,7 @@ $(document).ready(function() {
         switch(type) {
             case 'App\\Notifications\\UserRegisteredNotification':
                 return 'fas fa-user-plus text-success';
-            case 'App\\Notifications\\TopupRequestNotification':
-                return 'fas fa-credit-card text-info';
-            case 'App\\Notifications\\NewTopupNotification':
-                return 'fas fa-credit-card text-warning';
-            case 'App\\Notifications\\TopupStatusNotification':
-                return 'fas fa-check-circle text-success';
+
             case 'App\\Notifications\\BlacklistReportNotification':
                 return 'fas fa-ban text-danger';
             default:

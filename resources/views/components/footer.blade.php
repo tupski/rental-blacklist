@@ -49,8 +49,12 @@
                 <ul class="list-unstyled">
                     <li class="mb-2"><a href="#">FAQ</a></li>
                     <li class="mb-2"><a href="#">Kontak</a></li>
-                    <li class="mb-2"><a href="#">Kebijakan Privasi</a></li>
-                    <li class="mb-2"><a href="#">Syarat & Ketentuan</a></li>
+                    @if(\App\Models\Setting::get('show_privacy_link', '1') == '1')
+                    <li class="mb-2"><a href="{{ route('kebijakan-privasi') }}">Kebijakan Privasi</a></li>
+                    @endif
+                    @if(\App\Models\Setting::get('show_terms_link', '1') == '1')
+                    <li class="mb-2"><a href="{{ route('syarat-ketentuan') }}">Syarat & Ketentuan</a></li>
+                    @endif
                 </ul>
             </div>
 
