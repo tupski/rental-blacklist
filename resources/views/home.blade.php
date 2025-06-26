@@ -60,40 +60,7 @@
                 </div>
                 @endif
 
-                <!-- Search Form - Only for Rental Owners and Admin -->
-                @auth
-                    @if(in_array(auth()->user()->role, ['pengusaha_rental', 'admin']))
-                        <div class="row justify-content-center mb-5">
-                            <div class="col-lg-8">
-                                <div class="card shadow-lg border-0">
-                                    <div class="card-body p-4">
-                                        <form id="searchForm">
-                                            <div class="input-group input-group-lg">
-                                                <input
-                                                    type="text"
-                                                    id="searchInput"
-                                                    name="cari"
-                                                    class="form-control border-0 shadow-none"
-                                                    placeholder="Masukkan NIK, Nama Lengkap, atau Nomor HP (min. 3 karakter)"
-                                                    required
-                                                    minlength="3"
-                                                >
-                                                <button
-                                                    type="submit"
-                                                    class="btn btn-danger px-4"
-                                                    id="searchBtn"
-                                                >
-                                                    <i class="fas fa-search"></i>
-                                                    <span class="d-none d-md-inline ms-2">Cari Sekarang</span>
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-                @endauth
+
 
                 <!-- Bottom Sponsors -->
                 @if(isset($homeBottomSponsors) && $homeBottomSponsors->count() > 0)
@@ -233,47 +200,7 @@
         </div>
     </div>
 
-    <!-- Loading -->
-    <div class="container">
-        <div id="loading" class="d-none text-center py-5">
-            <div class="spinner-border text-danger me-2" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <span class="text-muted">Mencari data...</span>
-        </div>
 
-        <!-- Results -->
-        <div id="results" class="d-none">
-            <div class="card border-0 shadow-lg">
-                <div class="card-header bg-light border-0">
-                    <h5 class="card-title mb-1">
-                        <i class="fas fa-list me-2 text-primary"></i>
-                        Hasil Pencarian
-                    </h5>
-                    <p class="text-muted mb-0" id="resultCount"></p>
-                </div>
-
-                <div id="resultsList" class="card-body p-0">
-                    <!-- Results will be populated here -->
-                </div>
-            </div>
-        </div>
-
-        <!-- No Results -->
-        <div id="noResults" class="d-none text-center py-5">
-            <div class="card border-0 shadow-lg">
-                <div class="card-body p-5">
-                    <i class="fas fa-search text-muted display-1 mb-4"></i>
-                    <h4 class="fw-bold mb-3">Tidak Ada Data Ditemukan</h4>
-                    <p class="text-muted mb-3">Data yang Anda cari tidak ditemukan dalam database blacklist.</p>
-                    <div class="alert alert-success">
-                        <i class="fas fa-check-circle me-2"></i>
-                        Pelanggan ini kemungkinan aman untuk disewakan
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Features Section -->
     <div class="container py-5">
@@ -587,186 +514,11 @@ $(document).ready(function() {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
-    // Handle form submission
-    $('#searchForm').on('submit', function(e) {
-        e.preventDefault();
-        performSearch();
-    });
 
-    // Handle input changes for URL updates
-    $('#searchInput').on('input', function() {
-        const search = $(this).val();
-        if (search.length >= 3) {
-            updateURL(search);
-        }
-    });
 
-    // Load search from URL on page load
-    const urlParams = new URLSearchParams(window.location.search);
-    const searchParam = urlParams.get('cari');
-    if (searchParam) {
-        $('#searchInput').val(searchParam);
-        performSearch();
-    }
 
-    function performSearch() {
-        const search = $('#searchInput').val().trim();
 
-        if (search.length < 3) {
-            alert('Pencarian minimal 3 karakter');
-            return;
-        }
 
-        currentSearch = search;
-        updateURL(search);
-
-        // Show loading
-        $('#loading').removeClass('d-none');
-        $('#results').addClass('d-none');
-        $('#noResults').addClass('d-none');
-        $('#searchBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Mencari...');
-
-        // Perform AJAX search
-        $.ajax({
-            url: '{{ route("publik.cari") }}',
-            method: 'POST',
-            data: {
-                cari: search,
-                _token: '{{ csrf_token() }}'
-            },
-            success: function(response) {
-                if (response.success && response.data.length > 0) {
-                    displayResults(response.data, response.total);
-                } else {
-                    showNoResults();
-                }
-            },
-            error: function(xhr) {
-                console.error('Search error:', xhr);
-                alert('Terjadi kesalahan saat mencari data');
-            },
-            complete: function() {
-                $('#loading').addClass('d-none');
-                $('#searchBtn').prop('disabled', false).html('<i class="fas fa-search me-2"></i>Cari Sekarang');
-            }
-        });
-    }
-
-    function displayResults(data, total) {
-        $('#resultCount').text(`Ditemukan ${total} data blacklist`);
-
-        let html = '';
-        data.forEach(function(item) {
-            html += `
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                <div class="d-flex align-items-center">
-                                    <h6 class="fw-bold text-dark mb-0 me-2">${item.nama_lengkap}</h6>
-                                    ${item.is_verified ? '<i class="fas fa-check-circle text-primary" title="Rental Terverifikasi"></i>' : ''}
-                                </div>
-                                <span class="badge bg-danger">
-                                    ${item.jumlah_laporan} Laporan
-                                </span>
-                            </div>
-
-                            <div class="mb-3">
-                                <small class="text-muted d-block">
-                                    <i class="fas fa-id-card me-1"></i>
-                                    NIK: ${item.nik}
-                                </small>
-                                <small class="text-muted d-block">
-                                    <i class="fas fa-phone me-1"></i>
-                                    HP: ${item.no_hp}
-                                </small>
-                                <small class="text-muted d-block">
-                                    <i class="fas fa-car me-1"></i>
-                                    ${item.jenis_rental}
-                                </small>
-                            </div>
-
-                            <div class="mb-3">
-                                <span class="badge bg-warning text-dark me-1">${item.jenis_laporan}</span>
-                            </div>
-
-                            <div class="d-flex justify-content-between align-items-center">
-                                <small class="text-muted">
-                                    <i class="fas fa-calendar me-1"></i>
-                                    ${item.tanggal_kejadian}
-                                </small>
-                                <div class="d-flex flex-column gap-1">
-                                    <a href="/detail-laporan/${item.id}" class="btn btn-success btn-sm">
-                                        <i class="fas fa-file-alt me-1"></i>
-                                        Detail Lengkap
-                                    </a>
-                                    <button onclick="viewDetail(${item.id})" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-eye me-1"></i>
-                                        Lihat
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-
-        $('#resultsList').html(`<div class="row">${html}</div>`);
-        $('#results').removeClass('d-none');
-
-        // Auto-scroll ke hasil pencarian dengan smooth animation
-        setTimeout(function() {
-            scrollToResults();
-        }, 100);
-    }
-
-    function showNoResults() {
-        $('#noResults').removeClass('d-none');
-
-        // Auto-scroll ke no results dengan smooth animation
-        setTimeout(function() {
-            scrollToResults();
-        }, 100);
-    }
-
-    function scrollToResults() {
-        const resultsSection = document.getElementById('results');
-        const noResultsSection = document.getElementById('noResults');
-        const targetElement = resultsSection && !resultsSection.classList.contains('d-none') ? resultsSection : noResultsSection;
-
-        if (targetElement) {
-            // Calculate offset untuk berbagai device
-            let offset = 100; // Default offset
-
-            // Responsive offset berdasarkan screen size
-            if (window.innerWidth <= 576) {
-                // Mobile
-                offset = 80;
-            } else if (window.innerWidth <= 768) {
-                // Tablet
-                offset = 90;
-            } else {
-                // Desktop
-                offset = 100;
-            }
-
-            const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
-            const offsetPosition = elementPosition - offset;
-
-            // Smooth scroll dengan behavior yang kompatibel
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth'
-            });
-        }
-    }
-
-    function updateURL(search) {
-        const url = new URL(window.location);
-        url.searchParams.set('cari', search);
-        window.history.replaceState({}, '', url);
-    }
 
     // View detail function
     window.viewDetail = function(id) {
