@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AdminSeeder::class,
             AttributeSeeder::class,
+            FooterWidgetSeeder::class,
             RentalBlacklistSeeder::class,
             UserIdentitySeeder::class,
             BlacklistReportsSeeder::class,

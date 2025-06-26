@@ -449,8 +449,8 @@
 
 
                     <!-- Manajemen Konten -->
-                    <li class="nav-item {{ request()->routeIs('admin.blog*') || request()->routeIs('admin.halaman*') || request()->routeIs('admin.menu-navbar*') ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ request()->routeIs('admin.blog*') || request()->routeIs('admin.halaman*') || request()->routeIs('admin.menu-navbar*') ? 'active' : '' }}">
+                    <li class="nav-item {{ request()->routeIs('admin.blog*') || request()->routeIs('admin.halaman*') || request()->routeIs('admin.menu-navbar*') || request()->routeIs('admin.footer-widgets*') ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ request()->routeIs('admin.blog*') || request()->routeIs('admin.halaman*') || request()->routeIs('admin.menu-navbar*') || request()->routeIs('admin.footer-widgets*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-edit"></i>
                             <p>
                                 Manajemen Konten
@@ -498,6 +498,12 @@
                                 <a href="{{ route('admin.menu-navbar.indeks') }}" class="nav-link {{ request()->routeIs('admin.menu-navbar*') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Menu Navbar</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.footer-widgets.index') }}" class="nav-link {{ request()->routeIs('admin.footer-widgets*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Footer Widget</p>
                                 </a>
                             </li>
                         </ul>

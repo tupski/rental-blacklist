@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\BlogCategoryController as AdminBlogCategoryContro
 use App\Http\Controllers\Admin\PageController as AdminPageController;
 use App\Http\Controllers\Admin\NavbarMenuController as AdminNavbarMenuController;
 use App\Http\Controllers\Admin\AttributeController as AdminAttributeController;
+use App\Http\Controllers\Admin\FooterWidgetController as AdminFooterWidgetController;
 
 
 /*
@@ -302,6 +303,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('notifikasi/baca', [AdminNotificationController::class, 'markAsRead'])->name('notifikasi.baca');
     Route::post('notifikasi/tandai-dibaca', [AdminNotificationController::class, 'markSingleAsRead'])->name('notifikasi.tandai-dibaca');
     Route::post('notifikasi/tandai-semua-dibaca', [AdminNotificationController::class, 'markAllAsRead'])->name('notifikasi.tandai-semua-dibaca');
+
+    // Footer Widgets
+    Route::resource('footer-widgets', AdminFooterWidgetController::class);
+    Route::post('footer-widgets/update-order', [AdminFooterWidgetController::class, 'updateOrder'])->name('footer-widgets.update-order');
+    Route::post('footer-widgets/{footerWidget}/toggle-status', [AdminFooterWidgetController::class, 'toggleStatus'])->name('footer-widgets.toggle-status');
 
     // System Maintenance
     Route::get('maintenance', [AdminDashboardController::class, 'maintenance'])->name('maintenance');

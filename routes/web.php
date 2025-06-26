@@ -227,8 +227,8 @@ Route::middleware(['auth', 'verified', 'role:pengusaha_rental'])->group(function
 
 
 // Legal pages
-Route::get('/syarat-ketentuan', [App\Http\Controllers\PageController::class, 'termsOfService'])->name('syarat-ketentuan');
-Route::get('/kebijakan-privasi', [App\Http\Controllers\PageController::class, 'privacyPolicy'])->name('kebijakan-privasi');
+// Route::get('/syarat-ketentuan', [App\Http\Controllers\PageController::class, 'termsOfService'])->name('syarat-ketentuan');
+// Route::get('/kebijakan-privasi', [App\Http\Controllers\PageController::class, 'privacyPolicy'])->name('kebijakan-privasi');
 
 // Include authentication routes
 require __DIR__.'/auth.php';

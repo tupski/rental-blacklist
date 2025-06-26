@@ -1,7 +1,12 @@
+@php
+    $footerWidgets = \App\Models\FooterWidget::getActiveWidgets();
+@endphp
+
 <!-- Modern Footer Component -->
 <footer class="footer-modern mt-5">
     <div class="container py-5">
         <div class="row g-4">
+            <!-- Default Brand Section -->
             <div class="col-lg-4">
                 <h4 class="fw-bold mb-3">
                     <i class="fas fa-shield-alt text-danger me-2"></i>
@@ -34,68 +39,81 @@
                 </div>
             </div>
 
-            <div class="col-lg-2 col-md-6">
-                <h5 class="fw-bold mb-3">Layanan</h5>
-                <ul class="list-unstyled">
-                    <li class="mb-2"><a href="{{ route('beranda') }}">Cek Blacklist</a></li>
-                    <li class="mb-2"><a href="{{ route('daftar') }}">Pendaftaran Rental</a></li>
-                    <li class="mb-2"><a href="{{ route('laporan.buat') }}">Lapor Masalah</a></li>
-                    <li class="mb-2"><a href="{{ route('api.dokumentasi') }}">API Access</a></li>
-                </ul>
-            </div>
-
-            <div class="col-lg-2 col-md-6">
-                <h5 class="fw-bold mb-3">Bantuan</h5>
-                <ul class="list-unstyled">
-                    <li class="mb-2"><a href="#">FAQ</a></li>
-                    <li class="mb-2"><a href="#">Kontak</a></li>
-                    @if(\App\Models\Setting::get('show_privacy_link', '1') == '1')
-                    <li class="mb-2"><a href="{{ route('kebijakan-privasi') }}">Kebijakan Privasi</a></li>
-                    @endif
-                    @if(\App\Models\Setting::get('show_terms_link', '1') == '1')
-                    <li class="mb-2"><a href="{{ route('syarat-ketentuan') }}">Syarat & Ketentuan</a></li>
-                    @endif
-                </ul>
-            </div>
-
-            <div class="col-lg-4">
-                <h5 class="fw-bold mb-3">Kontak</h5>
-                <div class="mb-3">
-                    <i class="fas fa-envelope me-2 text-danger"></i>
-                    <a href="mailto:{{ $globalSettings['contact_email'] ?? 'support@rentalguard.id' }}">
-                        {{ $globalSettings['contact_email'] ?? 'support@rentalguard.id' }}
-                    </a>
-                </div>
-                @if($globalSettings['contact_phone'] ?? false)
-                <div class="mb-3">
-                    <i class="fas fa-phone me-2 text-danger"></i>
-                    <a href="tel:{{ $globalSettings['contact_phone'] }}">
-                        {{ $globalSettings['contact_phone'] }}
-                    </a>
-                </div>
-                @endif
-
-                @if(isset($footerSponsors) && $footerSponsors->count() > 0)
-                <div class="mt-4">
-                    <h6 class="fw-bold mb-3">Didukung oleh:</h6>
-                    <div class="d-flex flex-wrap gap-3">
-                        @foreach($footerSponsors as $sponsor)
-                            <a href="{{ $sponsor->website_url }}" target="_blank" class="text-decoration-none">
-                                <img src="{{ $sponsor->logo_url }}"
-                                     alt="{{ $sponsor->name }}"
-                                     class="img-fluid bg-white rounded p-2"
-                                     style="max-height: 40px; max-width: 120px;"
-                                     title="{{ $sponsor->name }}">
-                            </a>
-                        @endforeach
+            <!-- Dynamic Footer Widgets -->
+            @if($footerWidgets->count() > 0)
+                @foreach($footerWidgets as $widget)
+                    <div class="col-lg-{{ $footerWidgets->count() <= 2 ? '4' : '2' }} col-md-6 {{ $widget->css_class }}">
+                        <h5 class="fw-bold mb-3">{{ $widget->title }}</h5>
+                        <div class="footer-widget-content">
+                            {!! $widget->formatted_content !!}
+                        </div>
                     </div>
-                    <a href="{{ route('sponsor.kemitraan') }}" class="btn btn-outline-light btn-sm mt-3">
-                        <i class="fas fa-plus me-1"></i>
-                        Jadi Sponsor
-                    </a>
+                @endforeach
+            @else
+                <!-- Fallback content when no widgets are configured -->
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="fw-bold mb-3">Layanan</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{{ route('beranda') }}">Cek Blacklist</a></li>
+                        <li class="mb-2"><a href="{{ route('daftar') }}">Pendaftaran Rental</a></li>
+                        <li class="mb-2"><a href="{{ route('laporan.buat') }}">Lapor Masalah</a></li>
+                        <li class="mb-2"><a href="{{ route('api.dokumentasi') }}">API Access</a></li>
+                    </ul>
                 </div>
-                @endif
-            </div>
+
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="fw-bold mb-3">Bantuan</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#">FAQ</a></li>
+                        <li class="mb-2"><a href="#">Kontak</a></li>
+                        @if(\App\Models\Setting::get('show_privacy_link', '1') == '1')
+                        <li class="mb-2"><a href="{{ route('kebijakan-privasi') }}">Kebijakan Privasi</a></li>
+                        @endif
+                        @if(\App\Models\Setting::get('show_terms_link', '1') == '1')
+                        <li class="mb-2"><a href="{{ route('syarat-ketentuan') }}">Syarat & Ketentuan</a></li>
+                        @endif
+                    </ul>
+                </div>
+
+                <div class="col-lg-4">
+                    <h5 class="fw-bold mb-3">Kontak</h5>
+                    <div class="mb-3">
+                        <i class="fas fa-envelope me-2 text-danger"></i>
+                        <a href="mailto:{{ $globalSettings['contact_email'] ?? 'support@rentalguard.id' }}">
+                            {{ $globalSettings['contact_email'] ?? 'support@rentalguard.id' }}
+                        </a>
+                    </div>
+                    @if($globalSettings['contact_phone'] ?? false)
+                    <div class="mb-3">
+                        <i class="fas fa-phone me-2 text-danger"></i>
+                        <a href="tel:{{ $globalSettings['contact_phone'] }}">
+                            {{ $globalSettings['contact_phone'] }}
+                        </a>
+                    </div>
+                    @endif
+
+                    @if(isset($footerSponsors) && $footerSponsors->count() > 0)
+                    <div class="mt-4">
+                        <h6 class="fw-bold mb-3">Didukung oleh:</h6>
+                        <div class="d-flex flex-wrap gap-3">
+                            @foreach($footerSponsors as $sponsor)
+                                <a href="{{ $sponsor->website_url }}" target="_blank" class="text-decoration-none">
+                                    <img src="{{ $sponsor->logo_url }}"
+                                         alt="{{ $sponsor->name }}"
+                                         class="img-fluid bg-white rounded p-2"
+                                         style="max-height: 40px; max-width: 120px;"
+                                         title="{{ $sponsor->name }}">
+                                </a>
+                            @endforeach
+                        </div>
+                        <a href="{{ route('sponsor.kemitraan') }}" class="btn btn-outline-light btn-sm mt-3">
+                            <i class="fas fa-plus me-1"></i>
+                            Jadi Sponsor
+                        </a>
+                    </div>
+                    @endif
+                </div>
+            @endif
         </div>
 
         <hr class="my-4 border-light opacity-25">
@@ -170,5 +188,43 @@
     color: #da3544;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Footer Widget Styles */
+.footer-widget-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-widget-content ul li {
+    margin-bottom: 0.5rem;
+}
+
+.footer-widget-content ul li a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.footer-widget-content ul li a:hover {
+    color: white;
+    transform: translateX(5px);
+}
+
+.footer-widget-content p {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0.5rem;
+}
+
+.footer-widget-content .d-flex a {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.footer-widget-content .d-flex a:hover {
+    color: #da3544;
+    transform: scale(1.1);
 }
 </style>
