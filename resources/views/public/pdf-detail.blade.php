@@ -410,11 +410,11 @@
             <div class="info-row">
                 <div class="info-item">
                     <div class="info-label">Nomor Polisi</div>
-                    <div class="info-value">{{ $blacklist->nomor_polisi ?: 'Tidak ada data' }}</div>
+                    <div class="info-value">{{ \App\Helpers\LicensePlateHelper::display($blacklist->nomor_polisi) ?: 'Tidak ada data' }}</div>
                 </div>
                 <div class="info-item">
                     <div class="info-label">Nilai Kerugian</div>
-                    <div class="info-value">{{ $blacklist->nilai_kerugian ? 'Rp ' . number_format($blacklist->nilai_kerugian, 0, ',', '.') : 'Tidak ada data' }}</div>
+                    <div class="info-value">{{ $blacklist->nilai_kerugian ? \App\Helpers\CurrencyHelper::format($blacklist->nilai_kerugian) : 'Tidak ada data' }}</div>
                 </div>
             </div>
             <div class="info-row">

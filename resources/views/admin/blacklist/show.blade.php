@@ -242,13 +242,13 @@
                             </tr>
                             <tr>
                                 <td><strong>Nomor Polisi:</strong></td>
-                                <td>{{ $blacklist->nomor_polisi ?: 'N/A' }}</td>
+                                <td class="font-monospace">{{ \App\Helpers\LicensePlateHelper::display($blacklist->nomor_polisi) }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Nilai Kerugian:</strong></td>
                                 <td>
                                     @if($blacklist->nilai_kerugian)
-                                        <span class="text-danger font-weight-bold">Rp {{ number_format($blacklist->nilai_kerugian, 0, ',', '.') }}</span>
+                                        <span class="text-danger font-weight-bold">{{ \App\Helpers\CurrencyHelper::format($blacklist->nilai_kerugian) }}</span>
                                     @else
                                         N/A
                                     @endif

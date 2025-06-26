@@ -203,13 +203,13 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-medium text-muted">Nomor Polisi</label>
-                            <p class="mb-0">{{ $blacklist->nomor_polisi ?: 'N/A' }}</p>
+                            <p class="mb-0 font-monospace">{{ \App\Helpers\LicensePlateHelper::display($blacklist->nomor_polisi) }}</p>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-medium text-muted">Nilai Kerugian</label>
                             <p class="mb-0">
                                 @if($blacklist->nilai_kerugian)
-                                    <span class="text-danger fw-bold">Rp {{ number_format($blacklist->nilai_kerugian, 0, ',', '.') }}</span>
+                                    <span class="text-danger fw-bold">{{ \App\Helpers\CurrencyHelper::format($blacklist->nilai_kerugian) }}</span>
                                 @else
                                     N/A
                                 @endif

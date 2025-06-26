@@ -590,13 +590,13 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold text-muted">Nomor Polisi</label>
-                                <p class="mb-0 fs-5 font-monospace">{{ $report->nomor_polisi ?: 'N/A' }}</p>
+                                <p class="mb-0 fs-5 font-monospace">{{ \App\Helpers\LicensePlateHelper::display($report->nomor_polisi) }}</p>
                             </div>
                             <div class="col-12">
                                 <label class="form-label fw-bold text-muted">Nilai Kerugian</label>
                                 <p class="mb-0">
                                     @if($report->nilai_kerugian)
-                                        <span class="fs-4 fw-bold text-danger">Rp {{ number_format($report->nilai_kerugian, 0, ',', '.') }}</span>
+                                        <span class="fs-4 fw-bold text-danger">{{ \App\Helpers\CurrencyHelper::format($report->nilai_kerugian) }}</span>
                                     @else
                                         <span class="text-muted">Tidak ada data</span>
                                     @endif
