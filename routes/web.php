@@ -139,7 +139,7 @@ Route::middleware('auth')->group(function () {
         return redirect()->route('beranda');
     })->name('dasbor');
 
-    // Data unlock (for rental owners - now free)
+    // Data access for rental owners (free access)
     Route::post('/buka-data/{id}', [PublicController::class, 'unlockData'])->name('publik.buka');
 
     // Full detail access for unlocked data
@@ -225,6 +225,10 @@ Route::middleware(['auth', 'verified', 'role:pengusaha_rental'])->group(function
 });
 
 
+
+// Legal pages
+Route::get('/syarat-ketentuan', [App\Http\Controllers\PageController::class, 'termsOfService'])->name('syarat-ketentuan');
+Route::get('/kebijakan-privasi', [App\Http\Controllers\PageController::class, 'privacyPolicy'])->name('kebijakan-privasi');
 
 // Include authentication routes
 require __DIR__.'/auth.php';

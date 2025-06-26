@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\ApplicationSettingController as AdminApplicationS
 use App\Http\Controllers\Admin\SystemSettingController as AdminSystemSettingController;
 use App\Http\Controllers\Admin\EmailSettingController as AdminEmailSettingController;
 use App\Http\Controllers\Admin\PaymentSettingController as AdminPaymentSettingController;
+use App\Http\Controllers\Admin\LegalSettingController as AdminLegalSettingController;
 use App\Http\Controllers\Admin\DatabaseSettingController as AdminDatabaseSettingController;
 use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
@@ -251,6 +252,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Settings - Payment
     Route::get('pengaturan/pembayaran', [AdminPaymentSettingController::class, 'index'])->name('pengaturan.pembayaran.indeks');
     Route::put('pengaturan/pembayaran', [AdminPaymentSettingController::class, 'update'])->name('pengaturan.pembayaran.perbarui');
+
+    // Settings - Legal
+    Route::get('pengaturan/legal', [AdminLegalSettingController::class, 'index'])->name('pengaturan.legal.indeks');
+    Route::put('pengaturan/legal', [AdminLegalSettingController::class, 'update'])->name('pengaturan.legal.perbarui');
 
     // Settings - Database
     Route::get('pengaturan/database', [AdminDatabaseSettingController::class, 'index'])->name('pengaturan.database.indeks');
